@@ -1,9 +1,11 @@
+**ATTEMPT 1**
 Voice: Will
 Sentence: 'Fractal Metasurface Absorbers with Octave-Spanning' Bandwidth (rerecord with good mic)
 Sampling Rate 96kHz
 Encoding: Signed 24-bit PCM
 Recorded in Mono
-
+---
+**ATTEMPT 2**
 
 **TDL**
 - Record 2x Audio Files (5cm & 1cm)
