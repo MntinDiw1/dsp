@@ -2,7 +2,7 @@
 
 # The loop
 git status                  # what changed
-git add ASS01/              # stage (or: git add . for everything)
+git add <directory>         # stage (or: git add . for everything)
 git commit -m "message"
 git push
 
