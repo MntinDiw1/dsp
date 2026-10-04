@@ -44,7 +44,13 @@ Note: AI was used in this assignment:
 Claude Code, Sonnet 5.5, Anthropic -> debugging faulty code syntax AND logic + suggesting methods of increasing code efficiency.
 
 **Task 1**
+
+*General Approach*
 - linspace used to mark the point at which the audio was sampled.
 - normalised by dividing the audio by its maximum absolute value.
 - defined x-axis for frequency-domain plot with sample_rate / number of samples (n). spanning DC noise to Nyquist Frequency of sample_rate / 2 (thus only the +ve half is plotted as spectrum is mirrored)
-- 
+
+*Report Deliverables*
+
+- iii. 'Identify fundamental frequencies, explain':
+BLABLABLABLAA
