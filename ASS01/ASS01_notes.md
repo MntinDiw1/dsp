@@ -26,8 +26,9 @@ Recorded in Mono
 2. How to identify consonants/vowels as per the assignment doc?
 3. Are our plots accurate/expected?
 4. Normalise both axis?
-5. How to fix arbitrary reference for dB scale (currently says 250dB)
+5. How to fix arbitrary reference for dB scale (currently reaches 250dB)
 6. can audio files be loaded more efficiently?
+7. Why does vscode change code formatting when CTRL+S pressed?
 
 ## TDL
 
