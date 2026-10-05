@@ -19,14 +19,6 @@ Encoding:
 Recorded in Mono
 ---
 
-## TDL
-
-- Record 2x Audio Files (5cm & 1cm) with good microphone
-
-1. i. Plot audio in the time domain (linear/normalised)
-   ii. Plot audio in the frequency domain (logarithmic)
-
-2.    
 
 ## Questions (remove or add answer once closed)
 
@@ -37,6 +29,9 @@ Recorded in Mono
 5. How to fix arbitrary reference for dB scale (currently says 250dB)
 6. can audio files be loaded more efficiently?
 
+## TDL
+
+- look into audio enhancement for task 2
 
 ## Notes for report
 
