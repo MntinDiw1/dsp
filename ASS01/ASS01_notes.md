@@ -1,52 +1,61 @@
+# ASS01 Notes
 
 ## Recording
 
 ### Attempt 1
 
-Voice: Will
-Sentence: 'Fractal Metasurface Absorbers with Octave-Spanning' Bandwidth (rerecord with good mic)
-Sampling Rate 96kHz
-Encoding: Signed 24-bit PCM
-Recorded in Mono
+- **Voice:** Will
+- **Sentence:** 'Fractal Metasurface Absorbers with Octave-Spanning Bandwidth' (rerecord with good mic)
+- **Sampling rate:** 96 kHz
+- **Encoding:** Signed 24-bit PCM
+- **Channels:** Mono
+
+### Attempt 2
+
+- **Voice:** Gabe
+- **Sentence:**
+- **Sampling rate:**
+- **Encoding:**
+- **Channels:** Mono
+
 ---
 
-### ATTEMPT 2
+## Questions
 
-Voice: Gabe
-Sentence: 
-Sampling Rate:
-Encoding:
-Recorded in Mono
----
+*Remove or add answer once closed.*
 
-
-## Questions (remove or add answer once closed)
-
-1. Can we use built-in functions from libraries (e.g. np.fft)?
+1. Can we use built-in functions from libraries (e.g. `np.fft`)?
 2. How to identify consonants/vowels as per the assignment doc?
 3. Are our plots accurate/expected?
-4. Normalise both axis?
-5. How to fix arbitrary reference for dB scale (currently reaches 250dB)
-6. can audio files be loaded more efficiently?
-7. Why does vscode change code formatting when CTRL+S pressed?
+4. Normalise both axes?
+5. How to fix arbitrary reference for dB scale (currently reaches 250 dB)?
+6. Can audio files be loaded more efficiently?
+7. Why does VS Code change code formatting when Ctrl+S is pressed?
 
 ## TDL
 
-- look into audio enhancement for task 2
+- [ ] dBFS y-axis scaling for freq. domain
+- [ ] Look into audio enhancement for task 2
+
+---
 
 ## Notes for report
 
-Note: AI was used in this assignment:
-Claude Code, Sonnet 5.5, Anthropic -> debugging faulty code syntax AND logic + suggesting methods of increasing code efficiency.
+**AI use:** Claude Code, Sonnet 5.5, Anthropic
 
-**Task 1**
+- Debugging faulty code syntax and logic, and suggesting methods of increasing code efficiency
+- Using dBFS scale for freq. domain magnitude
 
-*General Approach*
-- linspace used to mark the point at which the audio was sampled.
-- normalised by dividing the audio by its maximum absolute value.
-- defined x-axis for frequency-domain plot with sample_rate / number of samples (n). spanning DC noise to Nyquist Frequency of sample_rate / 2 (thus only the +ve half is plotted as spectrum is mirrored)
+### Task 1
 
-*Report Deliverables*
+#### General approach
 
-- iii. 'Identify fundamental frequencies, explain':
-BLABLABLABLAA
+- `linspace` used to mark the point at which the audio was sampled.
+- Normalised by dividing the audio by its maximum absolute value.
+- Defined x-axis for frequency-domain plot with `sample_rate / n` (n = number of samples), spanning DC to the Nyquist frequency of `sample_rate / 2`. Only the positive half is plotted as the spectrum is mirrored.
+
+#### Report deliverables
+
+- **iii.** 'Identify fundamental frequencies, explain':
+- **iv.**
+- **v.**
