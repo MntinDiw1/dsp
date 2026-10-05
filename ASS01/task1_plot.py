@@ -16,8 +16,12 @@ def plot_audio(name, sample_rate, audio):
 
     # frequency (logarithmic)
     audio_fft = fft(audio)
-    a_fft = 20 * np.log10(np.abs(audio_fft))  # magnitude of complex value in dB (20*log10(|x|))
-    freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting (//2 returns integer not float)
+    a_fft = 20 * np.log10(
+        np.abs(audio_fft)
+    )  # magnitude of complex value in dB (20*log10(|x|))
+    freqs = (
+        np.arange(n // 2) * sample_rate / n
+    )  # frequency bins for plotting (//2 returns integer not float)
 
     print(f"File: {name}, Sample Rate: {sample_rate}")
 
@@ -34,7 +38,7 @@ def plot_audio(name, sample_rate, audio):
     plt.xlabel("frequency (Hz)")
     plt.xscale("log")  # make logarithmic scale like standard EQ's/visualisers
     plt.ylabel("magnitude (dB)")
-    plt.xlim(20, 20000)  # TOGGLE DEPENDING ON ANALYSIS
+    # plt.xlim(20, 20000)  # TOGGLE DEPENDING ON ANALYSIS
 
     plt.tight_layout()  # stop axes overlapping
 
