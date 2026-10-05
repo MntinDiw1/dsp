@@ -8,20 +8,19 @@ from scipy.fft import fft
 def plot_audio(name, sample_rate, audio):
     plt.figure(figsize=(12, 5))
 
-    # time (linear/normalised)
+    # --- TIME (linear/normalised) ---
     n = len(audio)
     time = np.linspace(0, n / sample_rate, num=n)  # array of times
 
     a_norm = audio / np.max(np.abs(audio))  # normalise to +-1
 
-    # frequency (logarithmic)
+    # --- FREQUENCY (logarithmic) ---
     audio_fft = fft(audio)
-    a_fft = 20 * np.log10(
-        np.abs(audio_fft)
-    )  # magnitude of complex value in dB (20*log10(|x|))
-    freqs = (
-        np.arange(n // 2) * sample_rate / n
-    )  # frequency bins for plotting (//2 returns integer not float)
+
+    # decibels relative to full scale (dBFS) - the loudest level possible in a digital system.
+    # frmula: dBFS = 20 * log10(|x| / |x_max|)
+    a_fft = 20 * np.log10(np.abs(audio_fft) / np.max(np.abs(audio_fft)))
+    freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting (//2 returns integer not float)
 
     print(f"File: {name}, Sample Rate: {sample_rate}")
 
@@ -45,16 +44,14 @@ def plot_audio(name, sample_rate, audio):
     return None  # for task 1, may change later
 
 
-"""Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative)"""
+# --- Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative) ---
 
 # Load audio files
-# sample_rate_1m, audio_1m = wavfile.read("wav/1m.wav")
+"""sample_rate_1m, audio_1m = wavfile.read("wav/1m.wav")"""
 sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 
 # Load audio files
-# plot_audio("1m", sample_rate_1m, audio_1m)
-plot_audio(
-    "5cm", sample_rate_5cm, audio_5cm
-)  # how to plot both sets of data in seperate windows?
+"""plot_audio("1m", sample_rate_1m, audio_1m)"""
+plot_audio("5cm", sample_rate_5cm, audio_5cm)  # how to plot both sets of data in seperate windows?
 
 plt.show()
