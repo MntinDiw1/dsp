@@ -24,17 +24,15 @@
 
 *Remove or add answer once closed.*
 
-1. Can we use built-in functions from libraries (e.g. `np.fft`)?
-2. How to identify consonants/vowels as per the assignment doc?
-3. Are our plots accurate/expected?
-4. Normalise both axes?
-5. How to fix arbitrary reference for dB scale (currently reaches 250 dB)?
-6. Can audio files be loaded more efficiently?
-7. Why does VS Code change code formatting when Ctrl+S is pressed?
+1. How to identify consonants/vowels as per the assignment doc? (internet/Bernd)
+2. Are our plots accurate/expected? (Bernd)
+3. Normalise both axes? (Bernd)
+4. is dBFS scaling correct (Bernd)
+5. Can audio files be loaded more efficiently?
 
 ## TDL
 
-- [ ] dBFS y-axis scaling for freq. domain
+- [X] dBFS y-axis scaling for freq. domain
 - [ ] Look into audio enhancement for task 2
 
 ---
