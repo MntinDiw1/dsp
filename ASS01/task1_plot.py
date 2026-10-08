@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.io import wavfile
 from scipy.fft import fft
 
+# ---- TASK1: AUDIO PLOTTING & ANALYSIS ----
 
 # Function to plot audio data in time and frequency domain
 def plot_audio(name, sample_rate, audio):
@@ -19,7 +20,7 @@ def plot_audio(name, sample_rate, audio):
 
     # decibels relative to full scale (dBFS) - the loudest level possible in a digital system.
     # frmula: dBFS = 20 * log10(|x| / |x_max|)
-    a_fft = 20 * np.log10(np.abs(audio_fft) / np.max(np.abs(audio_fft)))
+    mag_fft = 20 * np.log10(np.abs(audio_fft) / np.max(np.abs(audio_fft)))
     freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting (//2 returns integer not float)
 
     print(f"File: {name}, Sample Rate: {sample_rate}")
@@ -33,7 +34,7 @@ def plot_audio(name, sample_rate, audio):
 
     plt.subplot(1, 2, 2)
     plt.title("frequency domain")
-    plt.plot(freqs, a_fft[: n // 2])
+    plt.plot(freqs, mag_fft[: n // 2])
     plt.xlabel("frequency (Hz)")
     plt.xscale("log")  # make logarithmic scale like standard EQ's/visualisers
     plt.ylabel("magnitude (dB)")
@@ -42,7 +43,6 @@ def plot_audio(name, sample_rate, audio):
     plt.tight_layout()  # stop axes overlapping
 
     return None  # for task 1, may change later
-
 
 # --- Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative) ---
 
@@ -53,5 +53,25 @@ sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 # Load audio files
 """plot_audio("1m", sample_rate_1m, audio_1m)"""
 plot_audio("5cm", sample_rate_5cm, audio_5cm)  # how to plot both sets of data in seperate windows?
+
+
+# ---- TASK2: AUDIO ENHANCER ----
+#a) make voice sound clearer + more 'interesting' as heard on radio shows
+#b) remove noise
+#c) explain what kind of noise needs to be removed and which frequency range it has.
+#d) explain how you would like to improve the speech by looking into the loss of base freqs. with distance, and pop sounds when mic is close.
+
+def enhancer(sample_rate, audio):
+
+    audio_fft = fft(audio)
+
+
+    return None
+
+
+
+
+
+
 
 plt.show()
