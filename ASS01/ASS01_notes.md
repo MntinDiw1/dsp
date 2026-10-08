@@ -12,11 +12,11 @@
 
 ### Attempt 2
 
-- **Voice:** Gabe
+- **Voice:** 
 - **Sentence:**
 - **Sampling rate:**
 - **Encoding:**
-- **Channels:** Mono
+- **Channels:** 
 
 ---
 
@@ -56,4 +56,4 @@
 
 - **iii.** 'Identify fundamental frequencies, explain':
 - **iv.**
-- **v.**
+- **v.** The region that probably just contains noise is (the frequencies outside 20Hz-20kHz and frequencies that cannot be reached by male human voice (RESEARCH))
