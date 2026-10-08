@@ -14,9 +14,9 @@
 
 - **Voice:** Will
 - **Sentence:** 'Saad and Will are electrowizards'
-- **Sampling rate:**
-- **Encoding:**
-- **Channels:** 
+- **Sampling rate:** 48kHz
+- **Encoding:** 24bits
+- **Channels:** Mono
 
 ---
 
@@ -29,15 +29,14 @@
 3. Normalise both axes? (Bernd)
 4. is dBFS scaling correct (Bernd)
 5. Can audio files be loaded more efficiently?
-6. Full-scale or Peak??
-7. Am i normalising in the correct places (v important)?
 
 ## TDL
 
 - [X] dBFS y-axis scaling for freq. domain
 - [ ] Look into audio enhancement for task 2
 - [ ] Implement global x_axis_Hz function for all tasks (use FOLD DOWN (DFT stuff))
-- [ ] Optimise code by avoiding repeated logic!!!!
+- [ ] Optimise code by avoiding repeated/wasteful logic!!!!
+- [ ] implement 1/n to FFT - calculate average
 
 ---
 
@@ -56,6 +55,7 @@
 - Normalised by dividing the audio by its maximum absolute value.
 - Defined x-axis for frequency-domain plot with `sample_rate / n` (n = number of samples), spanning DC to the Nyquist frequency of `sample_rate / 2`. Only the positive half is plotted as the spectrum is mirrored.
 - dB to linear amplitude = 10^(dB/20)
+- Normalised according to full scale (24bits in 32bit{float?} (31bit division since its half the range)).
 
 #### Report deliverables
 
