@@ -26,6 +26,7 @@ class task1:
         audio_fft = (1/n) * fft(audio)
 
         # decibels relative to full scale (dBFS) - the loudest level possible in a digital system.
+        complex_mag_fft = 20 * np.log10(audio_fft)
         mag_fft = 20 * np.log10(np.abs(audio_fft))
         freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting (//2 returns integer not float)
 
@@ -49,6 +50,6 @@ class task1:
         plt.tight_layout()  # stop axes overlapping
 
         # full FFT sepctrum output to mark-up and apply transforms in task 2:
-        fft_output = {freqs[i]: n*audio_fft[i] for i in range(len(freqs))}  # dictionary of frequency bins and their corresponding magnitudes
+        fft_output = {freqs[i]: complex_mag_fft[i] for i in range(len(freqs))}  # dictionary of frequency bins and their corresponding magnitudes
 
         return fft_output  # for task 1, may change later
