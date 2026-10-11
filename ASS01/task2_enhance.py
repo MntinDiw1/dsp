@@ -1,3 +1,5 @@
+from email.mime import audio
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
@@ -20,7 +22,7 @@ class task2:
         Interpolates the transform matrix gains to match the exact frequency bins of the FFT data.
         '''        
         # Extract frequencies. np.interp requires 1D arrays of real numbers
-        fft_freqs = np.real(fft_data[:, 0])
+        fft_freqs = np.real(fft_data[:, 0]) #REMOVE???????
         
         transform_freqs = np.real(transform_matrix[:, 0])
         transform_gains = transform_matrix[:, 1]
@@ -77,50 +79,48 @@ class task2:
 
         return None
 
-    @staticmethod
-    def enhancement_matrix(sample_rate, audio):
-        '''
-        Generate a frequency domain audioo enhancement matrix
-        Due to the method of applying enhancement and doing thr IFFT only the poitive frequencies need to be considered in this function.
 
-        '''
+    # --- GAIN CONTROL (dB) ---
+    #function that applied gain adjustments to specific frequency ranges.
 
-        #FILTER PARAMETERS
-        LOW_CUT = 20  #Hz
-        HIGH_CUT = 20000  #Hz
-        #BASS BOOST PARAMETERS
-        BB_dB = 12 #dB
-        BB_LOW, BB_HI = 60, 240 #Hz
-        #BRIGHTNESS PARAMETERS    
-        Brt_dB = 6
-        Brt_LOW, Brt_HI  = 1000, 4000 #Hz
+    #TDL: 
+    # where is gain_array coming from?
+    #nest within larger Task 2 function (rember to create 2 arrays for each audio file)
+    def gain_ctrl(low, high, amp_dB, sample_rate, gain_array):
 
+        n = len(gain_array) #full spectrum
 
-        # --- GAIN CONTROL (dB) ---
-        n = len(audio) #full spectrum
-        gain = np.ones(n) #array of n ones (floits). Each value is a multiplier for the corresponding bin
+        LO_bin = (low * n) // sample_rate #Hz->bin
+        HI_bin = (high * n) // sample_rate #Hz->bin
 
-        #LOW CUT
-        #There are as many bins per Hz as time (s)
-        #(n / F_s) = length of recording (s)
-        LC_bin = (LOW_CUT * n) // sample_rate #Hz->bin 
-        
-        #HIGH CUT
-        HC_bin = (HIGH_CUT * n) // sample_rate #Hz->bin
+        dB__2_lin = 10 ** (amp_dB / 20)  # convert dB to linear gain
 
-        #BASS BOOST
-        BB_GAIN = 10 ** (BB_dB / 20)  # convert dB to linear gain
-
-        BB_LO_bin = (BB_LOW * n) // sample_rate    # Hz -> bin number, same as your LC_bin
-        BB_HI_bin = (BB_HI * n) // sample_rate
-        gain[BB_LO_bin:BB_HI_bin] *= BB_GAIN #x = x * y #MUST APPLY TO MIRROR (SEE BERND ADVICE)
-        #BRIGHTNESS?
-
-        #NOISE REMOVAL
-
-        # AXIS
-        # SCALE
+        gain_array[LO_bin:HI_bin+1] *= dB__2_lin #x = x * y #MUST APPLY TO MIRROR (SEE BERND ADVICE)
+        gain_array[n-HI_bin:n-LO_bin+1] *= dB__2_lin #mirror
 
 
-        return enhancement_transform_matrix # matrix output
-    
+        return None
+
+    #audio enhancement
+    #array of n ones (floits). Each value is a multiplier for the corresponding bin
+    gain_array_5cm = np.ones(len(audio_5cm))
+    gain_array_1m = np.ones(len(audio_1m))
+  # ^where to put this (embded into a function?)
+
+    #NOISE REMOVAL
+    # AXIS
+    # SCALE
+
+    # 5cm
+    #BASS BOOST
+    gain_ctrl(60, 240, 12, sample_rate_5cm, gain_array_5cm) #TUNE
+    #BRIGHTNESS
+    gain_ctrl(1000, 4000, 6, sample_rate_5cm, gain_array_5cm) #TUNE
+
+    # 1m
+    #BASS BOOST
+    gain_ctrl(60, 240, 12, sample_rate_1m, gain_array_1m) #TUNE
+    #BRIGHTNESS
+    gain_ctrl(1000, 4000, 6, sample_rate_1m, gain_array_1m) #TUNE
+
+    ##PLOT TO CHECK
