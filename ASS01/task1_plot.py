@@ -49,6 +49,6 @@ class task1:
         plt.tight_layout()  # stop axes overlapping
 
         # full FFT sepctrum output to mark-up and apply transforms in task 2:
-        fft_output = {freqs[i]: mag_fft[i] for i in range(len(freqs))}  # dictionary of frequency bins and their corresponding magnitudes
+        fft_output = {freqs[i]: n*audio_fft[i] for i in range(len(freqs))}  # dictionary of frequency bins and their corresponding magnitudes
 
         return fft_output  # for task 1, may change later
