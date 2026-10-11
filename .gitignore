@@ -1,2 +1,6 @@
 __pycache__/
 .ipynb_checkpoints/
+
+./ASS01/__pycache__/
+./ASS01/fft_output_1m.csv
+./ASS01/fft_output_5cm.csv
