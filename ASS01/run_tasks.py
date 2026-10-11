@@ -13,7 +13,7 @@ from task2_enhance import task2
 
 # Load audio files
 sample_rate_1m, audio_1m = wavfile.read("wav/1m.wav")
-audio_1m = audio_1m / (2**23)
+audio_1m = audio_1m / (2**31)
 
 sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 audio_5cm = audio_5cm / (2**31)  # NORMALISE (32bits to store 24bit audio, bitwise shift?)

@@ -1,0 +1,18 @@
+11/10/2026
+- notes for "Rearranged Code" commit
+    So the main issue i think was gonna happen was that we would end up with huge blocks of code annoying to parse and unclear so ive put all the outputs into their own py file
+- notes for "Tasks progress"
+    Goals
+        (Complete) Classes used now: primarily so we dont have to keep adding to the list of functions that get imported
+        (complete) edit task1 to store the fft data so we dont have to do it again and again for different
+        (complete) IFFT code
+
+
+
+AI Info:
+    Microsoft Github Copilot
+        inline autocomplete
+    Google Gemini 3.1 pro
+        debuggingw
+    Google Gemini (Various Ver)
+        AI overview 
