@@ -92,8 +92,8 @@ class task2:
 
         dB__2_lin = 10 ** (amp_dB / 20)  # convert dB to linear gain
 
-        gain_array[LO_bin:HI_bin+1] *= dB__2_lin #x = x * y #MUST APPLY TO MIRROR (SEE BERND ADVICE)
-        gain_array[n-HI_bin:n-LO_bin+1] *= dB__2_lin #mirror
+        gain_array[LO_bin:HI_bin + 1] *= dB__2_lin #x = x * y
+        gain_array[n - HI_bin:n - LO_bin + 1] *= dB__2_lin #mirror
 
 
         return None
