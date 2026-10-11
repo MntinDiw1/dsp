@@ -24,20 +24,16 @@
 
 *Remove or add answer once closed.*
 
-1. How to identify consonants/vowels as per the assignment doc? (internet/Bernd)
-2. Are our plots accurate/expected? (Bernd)
-3. Normalise both axes? (Bernd)
-4. is dBFS scaling correct (Bernd)
-5. Can audio files be loaded more efficiently?
 
 ## TDL
 
-- [X] dBFS y-axis scaling for freq. domain
-- [ ] Look into audio enhancement for task 2
 - [ ] Implement global x_axis_Hz function for all tasks (use FOLD DOWN (DFT stuff))
 - [ ] Optimise code by avoiding repeated/wasteful logic!!!!
 - [ ] implement 1/n to FFT - calculate average
 
+## FIXING SAADS CODE:
+
+- REMOVE ALL UNNECESSARY BULLSHIT... Goal is simply and readable code.
 ---
 
 ## Notes for report
