@@ -108,6 +108,9 @@ class task2:
     # AXIS
     # SCALE
 
+    '''start by boosting 6kHz - BERND'''
+    '''FIND OPTIMAL EQ SETTING (USING ABLETON) AND JUSTIFY FOR REPORT'''
+
     # 5cm
     #BASS BOOST
     gain_ctrl(60, 240, 12, sample_rate_5cm, gain_array_5cm) #TUNE
