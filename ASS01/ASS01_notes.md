@@ -27,6 +27,7 @@
 - to Class or not to Class?
 - Generalised code better or not (i.e. apply to different audoi files)
 - compute FFT once or multiple times?
+- use for loop to iterate thru each band and make the change (what r Bernd's thoughts on for loops?)
 - mirror/half spectrum shenanigans
 - can irfft be used?
 
