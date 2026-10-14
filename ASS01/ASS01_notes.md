@@ -29,11 +29,9 @@
 
 - [ ] Implement global x_axis_Hz function for all tasks (use FOLD DOWN (DFT stuff))
 - [ ] Optimise code by avoiding repeated/wasteful logic!!!!
-- [ ] implement 1/n to FFT - calculate average
+- [ ] Compute FFT of RE and IM or just RE (abs). Is this more efficient?
+- [ ] compute X = fft(audio) once in run_tasks.py and pass X into both functions. (tradeoffs?)
 
-## FIXING SAADS CODE:
-
-- REMOVE ALL UNNECESSARY BULLSHIT... Goal is simply and readable code.
 ---
 
 ## Notes for report
