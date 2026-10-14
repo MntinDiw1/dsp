@@ -42,6 +42,3 @@ def enhancer(audio, gain_array):
     audio_ifft_real = np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored)
 
     return audio_ifft_real
-
-
-#TO DO: noise removal, filtering
