@@ -46,6 +46,6 @@ target_band = enhancer(nonlin, gain_array_5cm_6kHz)
 
 #MIXER
 mix_ratio = 0.25 #TUNE
-output = audio_5cm + (mix * target_band)
+output = audio_5cm + (mix_ratio * target_band)
 
 #TO DO: REMOVE THE POP!!
