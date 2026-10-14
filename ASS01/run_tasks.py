@@ -18,7 +18,7 @@ sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 audio_5cm = audio_5cm / (2**31)  # NORMALISE (32bits to store 24bit audio, bitwise shift?)
 
 
-# --- TASK 1 ---
+# ------ TASK 1 ------
 
 # Plot audio files
 plot_audio("1m", sample_rate_1m, audio_1m)
@@ -26,43 +26,49 @@ plot_audio("5cm", sample_rate_5cm, audio_5cm)
 
 
 
-# --- TASK 2 ---
-#COLLAPSE GAIN ARRAYS INTO 'EQ' LISTS (VOID FOR LOOPS!!!)
+# ------ TASK 2 ------
 
-#make ones array the length of audio
 #array of n ones (floits). Each value is a multiplier for the corresponding bin
 gain_array_5cm = np.ones(len(audio_5cm))
 gain_array_1m = np.ones(len(audio_1m))
-# ^where to put this (embded into a function?)
 
 
 # --- ENHANCER TEST ---
 #does input match output with no changes applied ?
-gain_ctrl(20, 20000, 0, sample_rate_5cm, gain_array_5cm) #unnecessary but useful for test isolation
-gain_ctrl(20, 20000, 0, sample_rate_1m, gain_array_1m )
-
-test_5cm = np.ones(len(audio_5cm))   # fresh, untouched gain arrays
+test_5cm = np.ones(len(audio_5cm)) #untouched gain arrays
 test_1m = np.ones(len(audio_1m))
-
 print("Identity test 5cm:", np.allclose(enhancer(audio_5cm, test_5cm), audio_5cm))
 print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
 # --- END OF TEST ---
 
 
-'''start by boosting 6kHz - BERND'''
-'''FIND OPTIMAL EQ SETTING (USING ABLETON) AND JUSTIFY FOR REPORT'''
-'''Increase global audio (match both distances and compare to reference)'''
-# 5cm
-#BASS BOOST
-gain_ctrl(60, 240, 12, sample_rate_5cm, gain_array_5cm) #TUNE
-#BRIGHTNESS
-gain_ctrl(1000, 4000, 6, sample_rate_5cm, gain_array_5cm) #TUNE
+#PUT IN ANOTHER FUNCTION: build gain -> enhance -> save -> plot
 
-# 1m
-#BASS BOOST
-gain_ctrl(60, 240, 12, sample_rate_1m, gain_array_1m) #TUNE
-#BRIGHTNESS
-gain_ctrl(1000, 4000, 6, sample_rate_1m, gain_array_1m) #TUNE
+#start by boosting 6kHz - BERND
+#FIND OPTIMAL EQ SETTING (USING ABLETON) AND JUSTIFY FOR REPORT
+#Increase global audio (match both distances and compare to reference)
+
+# --- 5cm ---
+#gain curve
+gain_ctrl(60, 240, 6, sample_rate_5cm, gain_array_5cm) #BASS BOOST
+gain_ctrl(1000, 4000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS
+#NOISE REMOVAL
+#POP FILTER
+
+#apply gain + save
+enhanced_5cm = enhancer(audio_5cm, gain_array_5cm)
+wavfile.write("enhanced_5cm.wav", sample_rate_5cm, enhanced_5cm.astype(np.float32))
+
+# --- 1m ---
+#gain curve
+gain_ctrl(60, 240, 12, sample_rate_1m, gain_array_1m) #BASS BOOST
+gain_ctrl(1000, 4000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
+#NOISE REMOVAL
+#POP FILTER
+
+#apply gain + save
+enhanced_1m = enhancer(audio_1m, gain_array_1m)
+wavfile.write("enhanced_1m.wav", sample_rate_1m, enhanced_1m.astype(np.float32))
 
 ##PLOT (envelope or delta - see what was removed) TO CHECK
 

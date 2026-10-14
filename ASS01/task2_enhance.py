@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt #plot the envelope/EQ visualisation?
-from scipy.io import wavfile
 from scipy.fft import fft, ifft
 
 # ---- TASK2: AUDIO ENHANCER ----
@@ -35,13 +34,14 @@ def enhancer(audio, gain_array):
     #FFT the full signal (all (n) bins)
     audio_fft = fft(audio)
 
-    #multiple the bins by gain_array
+    #multiply the bins by gain_array
     audio_enhanced = audio_fft * gain_array
-
-    #IDEA: loop over bands (low,high,dB tuples) and call the band function or each (DONT DO RN)
 
     #IFFT gives back all (n) samples, then keep the real part
     audio_ifft = ifft(audio_enhanced) #is this wrong? half the spectrum? (RE vs IM)
-    audio_ifft_real = np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored), removing noise from mirror.
+    audio_ifft_real = np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored)
 
     return audio_ifft_real
+
+
+#TO DO: noise removal, filtering

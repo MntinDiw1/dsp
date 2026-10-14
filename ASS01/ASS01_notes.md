@@ -2,16 +2,6 @@
 
 ## Recording
 
-### Attempt 1
-
-- **Voice:** Will
-- **Sentence:** 'Fractal Metasurface Absorbers with Octave-Spanning Bandwidth' (rerecord with good mic)
-- **Sampling rate:** 96 kHz
-- **Encoding:** Signed 24-bit PCM
-- **Channels:** Mono
-
-### Attempt 2
-
 - **Voice:** Will
 - **Sentence:** 'Saad and Will are electrowizards'
 - **Sampling rate:** 48kHz
@@ -25,11 +15,12 @@
 *Remove or add answer once closed.*
 
 - to Class or not to Class?
-- Generalised code better or not (i.e. apply to different audoi files)
 - compute FFT once or multiple times?
 - use for loop to iterate thru each band and make the change (what r Bernd's thoughts on for loops?)
-- mirror/half spectrum shenanigans
-- can irfft be used?
+is it okay that we call the function for each specific band?
+- HOW DOES np.real reduce rounding rounding error????
+- what format/size to export for task2
+- create function for the enhancer loop.
 
 
 ## TDL
@@ -37,7 +28,7 @@
 - [ ] Implement global x_axis_Hz function for all tasks (use FOLD DOWN (DFT stuff))
 - [ ] Optimise code by avoiding repeated/wasteful logic!!!!
 - [ ] INTERPOLATE THE EQUALISER
-- [ ] compute X = fft(audio) once in run_tasks.py and pass X into both functions. (tradeoffs?)
+- [ ] compute X = fft(audio) ONCE in run_tasks.py and pass X into both functions. (tradeoffs?)
 
 ---
 
@@ -75,3 +66,6 @@ Fundamental frequency lies at 100Hz and successive harmonics
 - dB to linear amplitude = 10^(dB/20)
 - Normalised according to full scale (24bits in 32bit{float?} (31bit division since its half the range)). - '#a_norm = audio / np.max(np.abs(audio))  # normalise to +-1' was incorrect
 
+### Report Deliverables
+
+- Justification of decisions for enhancer:
