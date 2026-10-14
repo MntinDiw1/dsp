@@ -11,7 +11,6 @@ from scipy.fft import fft
 
 
 # Function to plot audio data in time and frequency domain
-
 def plot_audio(name, sample_rate, audio):
     plt.figure(figsize=(12, 5))
 
@@ -45,4 +44,4 @@ def plot_audio(name, sample_rate, audio):
 
     plt.tight_layout()  # stop axes overlapping
 
-    return None  # for task 1, may change later
+    return None
