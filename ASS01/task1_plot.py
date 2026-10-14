@@ -20,13 +20,12 @@ class task1:
         n = len(audio)
         time = np.linspace(0, n / sample_rate, num=n)  # array of times
 
-        #a_norm = audio / np.max(np.abs(audio))  # normalise to +-1
-
         # --- FREQUENCY (logarithmic) ---
         audio_fft = (1/n) * fft(audio)
 
         # decibels relative to full scale (dBFS) - the loudest level possible in a digital system.
-        complex_mag_fft = 20 * np.log10(audio_fft)
+        complex_mag_fft = 20 * np.log10(audio_fft) # i dont like this - I need complex fft data for task 2 but we need abs mag to plot, we are doing the same-ish log function twice 
+        
         mag_fft = 20 * np.log10(np.abs(audio_fft))
         freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting (//2 returns integer not float)
 

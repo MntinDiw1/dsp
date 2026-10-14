@@ -30,7 +30,7 @@ class task2:
         # Interpolate the gains to match the FFT frequency bins.
         # Frequencies outside the transform range will use the nearest end-point gain.
         interpolated_gains = np.interp(fft_freqs, transform_freqs, transform_gains)
-        
+               
         # Create output array of the exact same shape and type
         transformed_fft_data = np.zeros_like(fft_data, dtype=complex)
         
@@ -97,7 +97,7 @@ class task2:
 
 
         return None
-
+'''
     #audio enhancement
     #array of n ones (floits). Each value is a multiplier for the corresponding bin
     gain_array_5cm = np.ones(len(audio_5cm))
@@ -121,4 +121,4 @@ class task2:
     gain_ctrl(1000, 4000, 6, sample_rate_1m, gain_array_1m) #TUNE
 
     ##PLOT TO CHECK
-    
+'''
