@@ -13,12 +13,12 @@ from scipy.fft import fft, ifft
 #input audio should be MONO, FLOAT, and NORMALISED.
 
 # --- GAIN CONTROL (dB) ---
-#function that applied gain adjustments to specific frequency ranges.
+#function that describes gain adjustments to specific frequency ranges.
 
 #TDL: 
 # where is gain_array coming from?
-#nest within larger Task 2 function (rember to create 2 arrays for each audio file)
-def enhancer(low, high, amp_dB, sample_rate, gain_array):
+#only controls one frequency band at a time (improve?)
+def gain_ctrl(low, high, amp_dB, sample_rate, gain_array):
 
     n = len(gain_array) #full spectrum
 
@@ -32,3 +32,23 @@ def enhancer(low, high, amp_dB, sample_rate, gain_array):
 
 
     return None
+
+# --- ENHANCER --- 
+#takes gain array and applies it to audio
+
+def enhancer(audio, gain_array):
+
+    #FFT the full signal (all (n) bins)
+    audio_fft = fft(audio)
+
+    #multiple the bins by gain_array
+    audio_enhanced = audio_fft * gain_array
+
+    #TO DO: loop over bands (low,high,dB tuples) and call the band function or each (DONT DO RN)
+
+    #IFFT gives back all (n) samples, then keep the real part
+    audio_ifft = ifft(audio_enhanced) #is this wrong? half the spectrum? (RE vs IM)
+    audio_ifft_real = np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored), removing noise from mirror.
+
+    #return the result
+    return audio_ifft_real
