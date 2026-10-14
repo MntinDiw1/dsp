@@ -36,7 +36,7 @@
 
 - [ ] Implement global x_axis_Hz function for all tasks (use FOLD DOWN (DFT stuff))
 - [ ] Optimise code by avoiding repeated/wasteful logic!!!!
-- [ ] Compute FFT of RE and IM or just RE (abs). Is this more efficient?
+- [ ] INTERPOLATE THE EQUALISER
 - [ ] compute X = fft(audio) once in run_tasks.py and pass X into both functions. (tradeoffs?)
 
 ---
@@ -60,9 +60,11 @@
 
 #### Report deliverables
 
-- **iii.** 'Identify fundamental frequencies, explain':
-- **iv.**
-- **v.** The region that probably just contains noise is (the frequencies outside 20Hz-20kHz and frequencies that cannot be reached by male human voice (RESEARCH))
+- **iii.** Visually identify vowel fundamental frequencies and mark these on a frequency spectrum.
+Fundamental frequency lies at 100Hz and successive harmonics 
+
+- **iv.** Mark the consonant frequency ranges on a frequency spectrum.
+- **v.** Mark the noise frequency ranges on a frequency spectrum.
 
 ---
 

@@ -64,7 +64,7 @@ gain_ctrl(60, 240, 12, sample_rate_1m, gain_array_1m) #TUNE
 #BRIGHTNESS
 gain_ctrl(1000, 4000, 6, sample_rate_1m, gain_array_1m) #TUNE
 
-##PLOT (envelope or delta - what was removed) TO CHECK
+##PLOT (envelope or delta - see what was removed) TO CHECK
 
 
 # Show audio plots
