@@ -48,4 +48,9 @@ target_band = enhancer(nonlin, gain_array_5cm_6kHz)
 mix_ratio = 0.25 #TUNE
 output = audio_5cm + (mix_ratio * target_band)
 
+#Figure out where the sidechain peaks so that the input reaches near +-1 (generalise the system so exciter always works on incoming audio)
+#PLOT BEFORE AND AFTER EXCITER FOR REPORT
+#ALSO PLOT COMPARISONS OF DIFFERENT DRIVE LEVELS
+#TUNE THE SYSTEM AND RECORD IT TO SHOWCASE ITERATIVE DEVELOPMENT (REPORT)
+
 #TO DO: REMOVE THE POP!!

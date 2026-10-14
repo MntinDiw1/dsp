@@ -62,7 +62,7 @@ gain_ctrl(0, sample_rate_1m//2 - 1, 38, sample_rate_1m, gain_array_1m) #VOLUME
 gain_ctrl(100, 300, 6, sample_rate_1m, gain_array_1m)  #BASS BOOST
 gain_ctrl(5000, 7000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
 gain_ctrl(12000, sample_rate_1m//2 - 1, -60, sample_rate_1m, gain_array_1m) #NOISE REMOVAL
-gain_ctrl(5500, 6500, 6, sample_rate_1m, gain_array_1m) #LOW-CUT (for room rumble)
+gain_ctrl(0, 60, -20, sample_rate_1m, gain_array_1m) #LOW-CUT (for room rumble)
 
 #apply gain + save
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
