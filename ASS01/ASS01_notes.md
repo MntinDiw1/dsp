@@ -50,11 +50,19 @@
 - `linspace` used to mark the point at which the audio was sampled.
 - Normalised by dividing the audio by its maximum absolute value.
 - Defined x-axis for frequency-domain plot with `sample_rate / n` (n = number of samples), spanning DC to the Nyquist frequency of `sample_rate / 2`. Only the positive half is plotted as the spectrum is mirrored.
-- dB to linear amplitude = 10^(dB/20)
-- Normalised according to full scale (24bits in 32bit{float?} (31bit division since its half the range)). - '#a_norm = audio / np.max(np.abs(audio))  # normalise to +-1' was incorrect
 
 #### Report deliverables
 
 - **iii.** 'Identify fundamental frequencies, explain':
 - **iv.**
 - **v.** The region that probably just contains noise is (the frequencies outside 20Hz-20kHz and frequencies that cannot be reached by male human voice (RESEARCH))
+
+---
+
+### Task 2
+
+#### General approach
+
+- dB to linear amplitude = 10^(dB/20)
+- Normalised according to full scale (24bits in 32bit{float?} (31bit division since its half the range)). - '#a_norm = audio / np.max(np.abs(audio))  # normalise to +-1' was incorrect
+
