@@ -102,14 +102,14 @@ Note: increasing 1m distance volume will increase noise floor alongside ti which
 
 ### Task 3
 
-*Explained by Claude*
 An exciter built on the 5cm recording, developed iteratively: an initial deisng, an examination of the result, a change, and at least two annotated graphs showing why. THE PROCESS IS GRADED - KEEP A LOG.
 
 Feeding a pure sine into tanh will squash the peaks when the drive is high enough. This creates a square shape, introducing extra sine waves at multiples of the fundamental (harmonics). Since tan is an odd function (symmetric about 0), top and bottom are squashed equally which produces only the odd harmonics.
 
-tanh only starts distorting once the input reaches +-1. Th
+tanh only starts distorting once the input reaches +-1.
 
-Initial band selection: 
+**Initial band selection:**
+
 - 3f = 6kHz -> f = 2kHz (5f = 10kHz (not too high))
 - width: 500Hz (wider input = wider output -> MUD)
 - drive: starting value = (how to set it so that it doesnt depend on how loud the recording is).
