@@ -17,14 +17,11 @@ audio_1m = audio_1m / (2**31)
 sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 audio_5cm = audio_5cm / (2**31)  # NORMALISE (32bits to store 24bit audio, bitwise shift?)
 
-
 # ------ TASK 1 ------
 
 # Plot audio files
 plot_audio("1m", sample_rate_1m, audio_1m)
 plot_audio("5cm", sample_rate_5cm, audio_5cm)
-
-
 
 # ------ TASK 2 ------
 
@@ -43,7 +40,6 @@ gain_array_1m = np.ones(len(audio_1m))
 #PUT IN ANOTHER FUNCTION: build gain -> enhance -> save -> plot
 
 #start by boosting 6kHz - BERND
-#FIND OPTIMAL EQ SETTING (USING ABLETON) AND JUSTIFY FOR REPORT
 #Increase global audio (match both distances and compare to reference)
 
 # --- 5cm ---
@@ -73,6 +69,10 @@ wavfile.write("enhanced_1m.wav", sample_rate_1m, enhanced_1m.astype(np.float32))
 
 ##PLOT (envelope or delta - see what was removed) TO CHECK
 
+# ------ TASK 3 ------
+
+
+
 
 # Show audio plots
-#plt.show()
+plt.show()

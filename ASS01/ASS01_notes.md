@@ -42,6 +42,7 @@
 
 - Debugging faulty code syntax and logic, and suggesting methods of increasing code efficiency
 - Using dBFS scale for freq. domain magnitude
+- Suggested optimised pipeline for task 2.
 
 - remember to cd into ASS01
 
@@ -96,3 +97,10 @@ Note: increasing 1m distance volume will increase noise floor alongside ti which
 - __dB of Brightness added between __Hz and __Hz
 - Noise reduction of __dB (WHYYYY)
 - Low-cut to remove ambient rumble
+
+---
+
+### Task 3
+
+An exciter built on the 5cm recording, developed iteratively: an initial deisng, an examination of the result, a change, and at least two annotated graphs showing why. THE PROCESS IS GRADED - KEEP A LOG.
+
