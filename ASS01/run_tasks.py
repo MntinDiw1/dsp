@@ -68,7 +68,6 @@ gain_ctrl(0, 60, -20, sample_rate_1m, gain_array_1m) #LOW-CUT (for room rumble)
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
 wavfile.write("enhanced_1m.wav", sample_rate_1m, enhanced_1m.astype(np.float32))
 
-##PLOT (envelope or delta - see what was removed) TO CHECK
 
 # ------ TASK 3 ------
 
