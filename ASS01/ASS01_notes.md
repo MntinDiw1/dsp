@@ -32,8 +32,9 @@
 - [ ] INTERPOLATE THE EQUALISER
 - [ ] compute X = fft(audio) ONCE in run_tasks.py and pass X into both functions. (tradeoffs?)
 - [ ] send enhanced wav files to dedicated audio folder?
-- [ ] annotate frequency plot with analysis for report
+- [ ] annotate frequency plot (task 1) with analysis for report
 - [ ] LINUX COMPATIBLE SUBMISSION
+- [ ] Collect evidence of iteration for task 3 (with plots/param values)
 
 ---
 
@@ -76,7 +77,7 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 
 - dB to linear amplitude = 10^(dB/20)
 - Normalised according to full scale (24bits in 32bit int, left shifted by 8 bits (31bit division since its half the range)). - '#a_norm = audio / np.max(np.abs(audio))  # normalise to +-1' was incorrect
-- np.real discards the imaginary axis (WHY IS THIS NEEDED?)
+- np.real discards the imaginary axis (ADD TO REPORT !)
 
 ### Report Deliverables
 
@@ -112,9 +113,12 @@ Feeding a pure sine into tanh will squash the peaks when the drive is high enoug
 
 tanh only starts distorting once the input reaches +-1.
 
-**Initial band selection:**
+**Attempt 1**
 
 - 3f = 6kHz -> f = 2kHz (5f = 10kHz (not too high))
 - Bandpass filter used instead of tunable Highpass filter (see guide), reduces mud.
 - width: 500Hz (wider input = wider output -> MUD)
-- drive: starting value = (how to set it so that it doesnt depend on how loud the recording is).
+- drive: starting value = (how to set it so that it doesnt depend on how loud the recording is?).
+- mix: 
+
+**Attempt 2**
