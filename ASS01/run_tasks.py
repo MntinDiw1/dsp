@@ -28,11 +28,6 @@ plot_audio("5cm", sample_rate_5cm, audio_5cm)
 
 # ------ TASK 2 ------
 
-#array of n ones (floits). Each value is a multiplier for the corresponding bin
-gain_array_5cm = np.ones(len(audio_5cm))
-gain_array_1m = np.ones(len(audio_1m))
-
-
 # --- ENHANCER TEST ---
 #does input match output with no changes applied ?
 test_5cm = np.ones(len(audio_5cm)) #untouched gain arrays
@@ -41,6 +36,9 @@ print("Identity test 5cm:", np.allclose(enhancer(audio_5cm, test_5cm), audio_5cm
 print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
 # --- END OF TEST ---
 
+#array of n ones (floits). Each value is a multiplier for the corresponding bin
+gain_array_5cm = np.ones(len(audio_5cm))
+gain_array_1m = np.ones(len(audio_1m))
 
 #PUT IN ANOTHER FUNCTION: build gain -> enhance -> save -> plot
 
@@ -49,9 +47,9 @@ print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
 #Increase global audio (match both distances and compare to reference)
 
 # --- 5cm ---
-#gain curve
+#gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ...)
 gain_ctrl(60, 240, 6, sample_rate_5cm, gain_array_5cm) #BASS BOOST
-gain_ctrl(1000, 4000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS
+gain_ctrl(5500, 6500, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS
 #NOISE REMOVAL
 #POP FILTER
 
@@ -61,8 +59,8 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, enhanced_5cm.astype(np.float3
 
 # --- 1m ---
 #gain curve
-gain_ctrl(60, 240, 12, sample_rate_1m, gain_array_1m) #BASS BOOST
-gain_ctrl(1000, 4000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
+gain_ctrl(60, 240, 6, sample_rate_1m, gain_array_1m) #BASS BOOST
+gain_ctrl(5500, 6500, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
 #NOISE REMOVAL
 #POP FILTER
 

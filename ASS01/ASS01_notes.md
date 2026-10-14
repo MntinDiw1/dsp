@@ -16,8 +16,9 @@
 
 - to Class or not to Class?
 - compute FFT once or multiple times?
+- Task 1 audio analysis: (fundamentals or DIFFERENT vowels?)
 - use for loop to iterate thru each band and make the change (what r Bernd's thoughts on for loops?)
-is it okay that we call the function for each specific band?
+- is it okay that we call the function for each specific band?
 - HOW DOES np.real reduce rounding rounding error????
 - what format/size to export for task2
 - create function for the enhancer loop.
@@ -29,6 +30,9 @@ is it okay that we call the function for each specific band?
 - [ ] Optimise code by avoiding repeated/wasteful logic!!!!
 - [ ] INTERPOLATE THE EQUALISER
 - [ ] compute X = fft(audio) ONCE in run_tasks.py and pass X into both functions. (tradeoffs?)
+- [ ] send enhanced wav files to dedicated audio folder?
+- [ ] annotate frequency plot with analysis for report
+- [ ] LINUX COMPATIBLE SUBMISSION
 
 ---
 
@@ -51,11 +55,14 @@ is it okay that we call the function for each specific band?
 
 #### Report deliverables
 
-- **iii.** Visually identify vowel fundamental frequencies and mark these on a frequency spectrum.
-Fundamental frequency lies at 100Hz and successive harmonics 
+- **iii.** **Visually identify vowel fundamental frequencies and mark these on a frequency spectrum:**
+In both recordings, the vowel energy appears as a series of peaks starting at 95-110Hz (the fundamental). Peaks above the fundamental fall roughly at 100Hz increments between eachother. This spacing is expected for a harmonic series of an adult male speaking (include evidence). The slight variation between takes is due to minor changes in pitch between takes.
 
-- **iv.** Mark the consonant frequency ranges on a frequency spectrum.
-- **v.** Mark the noise frequency ranges on a frequency spectrum.
+- **iv.** **Mark the consonant frequency ranges on a frequency spectrum.**
+Above ~2kHz the harmonic series fades, and a broad hump appears with a peak around 4-8kHz. This appears to be consonant energy and appears as noise. It extends to further frequencies in the 5cm recording because the quieter distant recording loses its consonant energy to the noise floor sooner.
+
+- **v.** **Mark the noise frequency ranges on a frequency spectrum.**
+Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change with distance, it doesn't come from the voice an it can thus be concluded that it is electronic noise.
 
 ---
 
