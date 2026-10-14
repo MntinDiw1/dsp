@@ -10,26 +10,25 @@ from scipy.fft import fft, ifft
 #d) explain how you would like to improve the speech by looking into the loss of base freqs. with distance, and pop sounds when mic is close.
 
 
-class task2:
-    #input audio should be MONO, FLOAT, and NORMALISED.
-    
-    # --- GAIN CONTROL (dB) ---
-    #function that applied gain adjustments to specific frequency ranges.
+#input audio should be MONO, FLOAT, and NORMALISED.
 
-    #TDL: 
-    # where is gain_array coming from?
-    #nest within larger Task 2 function (rember to create 2 arrays for each audio file)
-    def gain_ctrl(low, high, amp_dB, sample_rate, gain_array):
+# --- GAIN CONTROL (dB) ---
+#function that applied gain adjustments to specific frequency ranges.
 
-        n = len(gain_array) #full spectrum
+#TDL: 
+# where is gain_array coming from?
+#nest within larger Task 2 function (rember to create 2 arrays for each audio file)
+def enhancer(low, high, amp_dB, sample_rate, gain_array):
 
-        LO_bin = (low * n) // sample_rate #Hz->bin
-        HI_bin = (high * n) // sample_rate #Hz->bin
+    n = len(gain_array) #full spectrum
 
-        dB__2_lin = 10 ** (amp_dB / 20)  # convert dB to linear gain
+    LO_bin = (low * n) // sample_rate #Hz->bin
+    HI_bin = (high * n) // sample_rate #Hz->bin
 
-        gain_array[LO_bin:HI_bin + 1] *= dB__2_lin #x = x * y
-        gain_array[n - HI_bin:n - LO_bin + 1] *= dB__2_lin #mirror
+    dB__2_lin = 10 ** (amp_dB / 20)  # convert dB to linear gain
+
+    gain_array[LO_bin:HI_bin + 1] *= dB__2_lin #x = x * y
+    gain_array[n - HI_bin:n - LO_bin + 1] *= dB__2_lin #mirror
 
 
-        return None
+    return None
