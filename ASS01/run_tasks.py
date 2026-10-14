@@ -32,7 +32,10 @@ plt.show()
 
 
 # Task 2: Audio Enhancement:
-enhancement_Matrix = np.array([[100, 2], 
+enhancement_Matrix = np.array([[100, 2],
+                               [110, -1],
+                               [120, -1],
+                               [125, 2],
                                [500, 1.5], 
                                [1000, 1], 
                                [2000, 0.8], 
