@@ -17,7 +17,7 @@
 - to Class or not to Class?
 - compute FFT once or multiple times?
 - Task 1 audio analysis: (fundamentals or DIFFERENT vowels?)
-- use for loop to iterate thru each band and make the change (what r Bernd's thoughts on for loops?)
+- how to remove POP?
 - is it okay that we call the function for each specific band?
 - HOW DOES np.real reduce rounding rounding error????
 - what format/size to export for task2
@@ -75,4 +75,24 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 
 ### Report Deliverables
 
-- Justification of decisions for enhancer:
+#### Justification of decisions for enhancer:
+
+- Pop filter for 5cm, Low-cut for 1m
+
+#### 5cm:
+
+- Volume increase of __dB (WHY?)
+- Bass boost of __dB between __Hz and __Hz (small because bass is already clear)
+- __dB of Brightness added between __Hz and __Hz
+- Noise reduction of __dB (why??)
+- Pop filter @__Hz (below the fundamental)
+Pop was identified to sit at 1.3s and lasts around 50ms (measured in Ableton). Most of it sits below 150Hz, however it exists throughout the spectrum and thus cannot be completely isolated/removed. (LOOK INTO WHY POP OCCURS)
+
+#### 1m:
+
+- Volume increase of __dB (WHY?). 
+Note: increasing 1m distance volume will increase noise floor alongside ti which isnt ideal
+- Bass boost of __dB between __Hz and __Hz (larger to compensate for distance cutting low end - DO FURTHER RESEARCH!)
+- __dB of Brightness added between __Hz and __Hz
+- Noise reduction of __dB (WHYYYY)
+- Low-cut to remove ambient rumble

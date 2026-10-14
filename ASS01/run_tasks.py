@@ -48,10 +48,12 @@ gain_array_1m = np.ones(len(audio_1m))
 
 # --- 5cm ---
 #gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ...)
-gain_ctrl(60, 240, 6, sample_rate_5cm, gain_array_5cm) #BASS BOOST
-gain_ctrl(5500, 6500, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS
-#NOISE REMOVAL
-#POP FILTER
+gain_ctrl(0, sample_rate_5cm //2 - 1, 20, sample_rate_5cm, gain_array_5cm) #VOLUME: doesn't multiply the Nyquist bin twice (?)
+gain_ctrl(100, 250, 3, sample_rate_5cm, gain_array_5cm) #BASS BOOST
+gain_ctrl(5000, 7000, 4, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS
+gain_ctrl(14000, sample_rate_5cm //2 - 1, -60, sample_rate_5cm, gain_array_5cm) #NOISE REMOVAL
+gain_ctrl(0, 90, -30, sample_rate_5cm, gain_array_5cm) #POP FILTER
+#REMOVE THE POP BY CUTTING LOWS FOR A FEW MILLISECONDS???
 
 #apply gain + save
 enhanced_5cm = enhancer(audio_5cm, gain_array_5cm)
@@ -59,10 +61,11 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, enhanced_5cm.astype(np.float3
 
 # --- 1m ---
 #gain curve
-gain_ctrl(60, 240, 6, sample_rate_1m, gain_array_1m) #BASS BOOST
-gain_ctrl(5500, 6500, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
-#NOISE REMOVAL
-#POP FILTER
+gain_ctrl(0, sample_rate_1m//2 - 1, 38, sample_rate_1m, gain_array_1m) #VOLUME
+gain_ctrl(100, 300, 6, sample_rate_1m, gain_array_1m)  #BASS BOOST
+gain_ctrl(5000, 7000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
+gain_ctrl(12000, sample_rate_1m//2 - 1, -60, sample_rate_1m, gain_array_1m) #NOISE REMOVAL
+gain_ctrl(5500, 6500, 6, sample_rate_1m, gain_array_1m) #LOW-CUT (for room rumble)
 
 #apply gain + save
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
@@ -72,4 +75,4 @@ wavfile.write("enhanced_1m.wav", sample_rate_1m, enhanced_1m.astype(np.float32))
 
 
 # Show audio plots
-plt.show()
+#plt.show()
