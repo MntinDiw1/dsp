@@ -24,6 +24,12 @@
 
 *Remove or add answer once closed.*
 
+- to Class or not to Class?
+- Generalised code better or not (i.e. apply to different audoi files)
+- compute FFT once or multiple times?
+- mirror/half spectrum shenanigans
+- can irfft be used?
+
 
 ## TDL
 
@@ -40,6 +46,8 @@
 
 - Debugging faulty code syntax and logic, and suggesting methods of increasing code efficiency
 - Using dBFS scale for freq. domain magnitude
+
+- remember to cd into ASS01
 
 ### Task 1
 
