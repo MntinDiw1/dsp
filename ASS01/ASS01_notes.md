@@ -14,7 +14,6 @@
 
 *Remove or add answer once closed.*
 
-- to Class or not to Class?
 - compute FFT once or multiple times?
 - Task 1 audio analysis: (fundamentals or DIFFERENT vowels?)
 - how to remove POP?
@@ -37,11 +36,12 @@
 
 ## Notes for report
 
-**AI use:** Claude Code, Sonnet 5.5, Anthropic
+**AI use:** Claude, Opus 5.5, Anthropic
 
 - Debugging faulty code syntax and logic, and suggesting methods of increasing code efficiency
 - Using dBFS scale for freq. domain magnitude
 - Suggested optimised pipeline for task 2.
+- Checking task 1 readings against my analysis for report (verification)
 - Explained the exciter and how non-linearity creates harmonics.
 
 - remember to cd into ASS01
@@ -51,7 +51,7 @@
 #### General approach
 
 - `linspace` used to mark the point at which the audio was sampled.
-- Normalised by dividing the audio by its maximum absolute value.
+- Normalised by dividing the audio 2**31 full scale.
 - Defined x-axis for frequency-domain plot with `sample_rate / n` (n = number of samples), spanning DC to the Nyquist frequency of `sample_rate / 2`. Only the positive half is plotted as the spectrum is mirrored.
 
 #### Report deliverables
@@ -72,7 +72,8 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 #### General approach
 
 - dB to linear amplitude = 10^(dB/20)
-- Normalised according to full scale (24bits in 32bit{float?} (31bit division since its half the range)). - '#a_norm = audio / np.max(np.abs(audio))  # normalise to +-1' was incorrect
+- Normalised according to full scale (24bits in 32bit int, left shifted by 8 bits (31bit division since its half the range)). - '#a_norm = audio / np.max(np.abs(audio))  # normalise to +-1' was incorrect
+- np.real discards the imaginary axis (WHY IS THIS NEEDED?)
 
 ### Report Deliverables
 
@@ -111,5 +112,6 @@ tanh only starts distorting once the input reaches +-1.
 **Initial band selection:**
 
 - 3f = 6kHz -> f = 2kHz (5f = 10kHz (not too high))
+- Bandpass filter used instead of tunable Highpass filter (see guide), reduces mud.
 - width: 500Hz (wider input = wider output -> MUD)
 - drive: starting value = (how to set it so that it doesnt depend on how loud the recording is).
