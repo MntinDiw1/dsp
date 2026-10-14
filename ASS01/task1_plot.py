@@ -40,7 +40,10 @@ def plot_audio(name, sample_rate, audio):
     plt.xlabel("frequency (Hz)")
     plt.xscale("log")  # make logarithmic scale like standard EQ's/visualisers
     plt.ylabel("magnitude (dB)")
-    # plt.xlim(20, 20000)  # TOGGLE DEPENDING ON ANALYSIS
+
+    # Analysis
+    # plt.xlim(50, 1000) # TOGGLE DEPENDING ON ANALYSIS
+    # plt.ylim(-140,-80)
 
     plt.tight_layout()  # stop axes overlapping
 
