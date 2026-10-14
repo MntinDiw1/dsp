@@ -14,8 +14,6 @@ from task2_enhance import gain_ctrl, enhancer
 
     #Plot spectrum zoomed between 2-12kHz before and after each change (report: annotated graphs)
 
-
-
 #Import audio and normalise
 sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 audio_5cm = audio_5cm / (2**31)
@@ -42,13 +40,11 @@ gain_ctrl(7000, sample_rate_5cm//2 -1, -np.inf, sample_rate_5cm, gain_array_5cm_
 
 target_band = enhancer(nonlin, gain_array_5cm_6kHz)
 
-#TUNABLE HIGHPASS FILTER
-
 #MIXER
 mix_ratio = 0.25 #TUNE
 output = audio_5cm + (mix_ratio * target_band)
 
-#Figure out where the sidechain peaks so that the input reaches near +-1 (generalise the system so exciter always works on incoming audio)
+#Figure out where the sidechain peaks so that the input reaches near +-1 (generalise the system so drive is always effective)
 #PLOT BEFORE AND AFTER EXCITER FOR REPORT
 #ALSO PLOT COMPARISONS OF DIFFERENT DRIVE LEVELS
 #TUNE THE SYSTEM AND RECORD IT TO SHOWCASE ITERATIVE DEVELOPMENT (REPORT)

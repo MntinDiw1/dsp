@@ -14,6 +14,8 @@
 
 *Remove or add answer once closed.*
 
+- Should all tasks be independant from eachother?
+- must the whole assignment be run from 1 command?
 - compute FFT once or multiple times?
 - Task 1 audio analysis: (fundamentals or DIFFERENT vowels?)
 - how to remove POP?
@@ -21,6 +23,7 @@
 - HOW DOES np.real reduce rounding rounding error????
 - what format/size to export for task2
 - create function for the enhancer loop.
+- TASK 3 Feedback
 
 
 ## TDL
