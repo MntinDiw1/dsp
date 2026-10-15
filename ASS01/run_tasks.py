@@ -60,9 +60,9 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).asty
 #gain curve
 gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME: Match to  5cm recording (matching peaks)
 gain_ctrl(0, 80, -12, sample_rate_1m, gain_array_1m) #LOW CUT: trim room rumble (less 'boxy')
-gain_ctrl(95, 240, 6, sample_rate_1m, gain_array_1m)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
+gain_ctrl(95, 180, 6, sample_rate_1m, gain_array_1m)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
 gain_ctrl(180, 240, -6, sample_rate_1m, gain_array_1m)  #Reduce the 2nd harmonic
-gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m)  #Reduce the 500Hz spike/whine
+gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m)  #Reduce the 500Hz spike/whine (10th harmonic of MAINS HUM??)
 gain_ctrl(3000, 10000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
 gain_ctrl(13000, sample_rate_1m//2 - 1, -30, sample_rate_1m, gain_array_1m) #HIGH CUT consonants end lower
 
