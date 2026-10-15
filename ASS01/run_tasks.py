@@ -21,11 +21,12 @@ audio_1m = audio_1m / (2**31)
 # ------ TASK 1 ------
 
 # Plot audio files
-#plot_audio("5cm", sample_rate_5cm, audio_5cm)
-#plot_audio("1m", sample_rate_1m, audio_1m)
+plot_audio("5cm", sample_rate_5cm, audio_5cm)
+plot_audio("1m", sample_rate_1m, audio_1m)
 
 # ------ TASK 2 ------
 
+##TRIMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 # --- ENHANCER TEST ---
 #does input match output with no changes applied ?
 test_5cm = np.ones(len(audio_5cm)) #untouched gain arrays
@@ -41,9 +42,6 @@ gain_array_5cm = np.ones(len(audio_5cm))
 gain_array_1m = np.ones(len(audio_1m))
 
 #PUT IN ANOTHER FUNCTION: build gain -> enhance -> save -> plot
-
-#start by boosting 6kHz - BERND
-#Increase global audio (match both distances and compare to reference)
 
 # --- 5cm ---
 #gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ...)
@@ -72,8 +70,7 @@ plot_gain_array(gain_array_1m,sample_rate_1m,"1m")
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
 wavfile.write("enhanced_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(np.int32)) #int32 scaled up (mention in report)
 
-#PLOT GAIN CURVE - I want to see the volume
-
+##TRIMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 # --- AUDIO OVERLAY ---
 def plot_overlay(signals):
     # signals: list of (label, sample_rate, audio)
