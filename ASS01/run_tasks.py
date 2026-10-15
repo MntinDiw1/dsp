@@ -47,11 +47,6 @@ gain_array_1m = np.ones(len(audio_1m))
 
 # --- 5cm ---
 #gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ...)
-#gain_ctrl(0, sample_rate_5cm //2 - 1, 12, sample_rate_5cm, gain_array_5cm) #VOLUME: doesn't multiply the Nyquist bin twice (?)
-gain_ctrl(0, 60, -12, sample_rate_5cm, gain_array_5cm, 100) #LOW CUT: Remove rumble and some POP energy
-gain_ctrl(95, 400, 3.5, sample_rate_5cm, gain_array_5cm, 100) #BASS BOOST: The first couple harmonics for depth
-gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm, 100) #BRIGHTNESS: The noisy consonant region + extra for clarity
-gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm, 100) #HIGH CUT: Remove any hiss
 gain_ctrl(0, 80, -16, sample_rate_5cm, gain_array_5cm) #LOW CUT: Remove rumble and some POP energy
 gain_ctrl(95, 400, 3.5, sample_rate_5cm, gain_array_5cm) #BASS BOOST: The first couple harmonics for depth
 gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS: The noisy consonant region + extra for clarity
@@ -65,16 +60,6 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).asty
 # --- 1m ---
 #gain curve
 gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME: Match to  5cm recording (matching peaks)
-gain_ctrl(0, 85, -12, sample_rate_1m, gain_array_1m) #LOW CUT: trim room rumble (less 'boxy')
-gain_ctrl(105, 300, 5.5, sample_rate_1m, gain_array_1m)  #BASS BOOST: fundamental higher @1m + restoring depth 
-#gain_ctrl(300, 700, -0.5, sample_rate_1m, gain_array_1m) #MIDS: Making the sample less 'muddy'
-gain_ctrl(2800, 10000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
-gain_ctrl(13000, sample_rate_1m//2 - 1, -12, sample_rate_1m, gain_array_1m) #HIGH CUT consonants end lower
-#gain_ctrl(0, sample_rate_1m//2 - 1, 38, sample_rate_1m, gain_array_1m) #VOLUME
-gain_ctrl(100, 300, 6, sample_rate_1m, gain_array_1m, 10)  #BASS BOOST
-gain_ctrl(5000, 7000, 6, sample_rate_1m, gain_array_1m, 20) #BRIGHTNESS
-gain_ctrl(16000, sample_rate_1m//2 - 1, -60, sample_rate_1m, gain_array_1m, 30) #NOISE REMOVAL
-gain_ctrl(0, 60, -20, sample_rate_1m, gain_array_1m, 50) #LOW-CUT (for room rumble)
 gain_ctrl(0, 80, -12, sample_rate_1m, gain_array_1m) #LOW CUT: trim room rumble (less 'boxy')
 gain_ctrl(95, 180, 6, sample_rate_1m, gain_array_1m)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
 gain_ctrl(180, 240, -6, sample_rate_1m, gain_array_1m)  #Reduce the 2nd harmonic
