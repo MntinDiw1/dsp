@@ -52,6 +52,10 @@ gain_ctrl(0, 60, -12, sample_rate_5cm, gain_array_5cm, 100) #LOW CUT: Remove rum
 gain_ctrl(95, 400, 3.5, sample_rate_5cm, gain_array_5cm, 100) #BASS BOOST: The first couple harmonics for depth
 gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm, 100) #BRIGHTNESS: The noisy consonant region + extra for clarity
 gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm, 100) #HIGH CUT: Remove any hiss
+gain_ctrl(0, 80, -16, sample_rate_5cm, gain_array_5cm) #LOW CUT: Remove rumble and some POP energy
+gain_ctrl(95, 400, 3.5, sample_rate_5cm, gain_array_5cm) #BASS BOOST: The first couple harmonics for depth
+gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS: The noisy consonant region + extra for clarity
+gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm) #HIGH CUT: Remove any hiss
 
 #apply gain + save
 plot_gain_array(gain_array_5cm,sample_rate_5cm,"5cm")
@@ -71,6 +75,12 @@ gain_ctrl(100, 300, 6, sample_rate_1m, gain_array_1m, 10)  #BASS BOOST
 gain_ctrl(5000, 7000, 6, sample_rate_1m, gain_array_1m, 20) #BRIGHTNESS
 gain_ctrl(16000, sample_rate_1m//2 - 1, -60, sample_rate_1m, gain_array_1m, 30) #NOISE REMOVAL
 gain_ctrl(0, 60, -20, sample_rate_1m, gain_array_1m, 50) #LOW-CUT (for room rumble)
+gain_ctrl(0, 80, -12, sample_rate_1m, gain_array_1m) #LOW CUT: trim room rumble (less 'boxy')
+gain_ctrl(95, 240, 6, sample_rate_1m, gain_array_1m)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
+gain_ctrl(180, 240, -6, sample_rate_1m, gain_array_1m)  #Reduce the 2nd harmonic
+gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m)  #Reduce the 500Hz spike/whine
+gain_ctrl(3000, 10000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
+gain_ctrl(13000, sample_rate_1m//2 - 1, -30, sample_rate_1m, gain_array_1m) #HIGH CUT consonants end lower
 
 #apply gain + save
 plot_gain_array(gain_array_1m,sample_rate_1m,"1m")
