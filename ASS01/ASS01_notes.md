@@ -79,7 +79,8 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 - Normalised according to full scale (24bits in 32bit int, left shifted by 8 bits (31bit division since its half the range)). - '#a_norm = audio / np.max(np.abs(audio))  # normalise to +-1' was incorrect
 - np.real discards the imaginary axis (ADD TO REPORT !)
 - Ringing (Gibbs phenomenon): interpolation required
-- int32 type instead of float32
+- export int32 type instead of float32 (why?)
+- Cannot avoid reverb and thus there will always be an audible difference
 
 
 ### Report Deliverables
