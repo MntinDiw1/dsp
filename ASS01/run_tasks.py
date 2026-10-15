@@ -6,7 +6,7 @@ import numpy as np
 # Assignmnet files
 #CAN ALSO IMPORT THE WHOLE FILE
 from task1_plot import plot_audio
-from task2_enhance import gain_ctrl, enhancer
+from task2_enhance import gain_ctrl, enhancer, plot_gain_array, smooth_array
 
 # --- Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative) ---
 
@@ -53,6 +53,9 @@ gain_ctrl(0, 90, -30, sample_rate_5cm, gain_array_5cm) #POP FILTER
 #REMOVE THE POP BY CUTTING LOWS FOR A FEW MILLISECONDS???
 
 #apply gain + save
+plot_gain_array(gain_array_5cm, sample_rate_5cm)
+gain_array_5cm = smooth_array(gain_array_5cm, 100) 
+plot_gain_array(gain_array_5cm, sample_rate_5cm)
 enhanced_5cm = enhancer(audio_5cm, gain_array_5cm)
 wavfile.write("enhanced_5cm.wav", sample_rate_5cm, enhanced_5cm.astype(np.float32))
 
@@ -65,6 +68,7 @@ gain_ctrl(12000, sample_rate_1m//2 - 1, -60, sample_rate_1m, gain_array_1m) #NOI
 gain_ctrl(0, 60, -20, sample_rate_1m, gain_array_1m) #LOW-CUT (for room rumble)
 
 #apply gain + save
+plot_gain_array(gain_array_1m, sample_rate_1m) #plot gain curve
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
 wavfile.write("enhanced_1m.wav", sample_rate_1m, enhanced_1m.astype(np.float32))
 

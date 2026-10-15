@@ -27,6 +27,20 @@ def gain_ctrl(low, high, amp_dB, sample_rate, gain_array):
 
     return None
 
+def plot_gain_array(gain_array, sample_rate):
+    n = len(gain_array)
+    freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting
+
+    plt.figure(figsize=(10, 5))
+    plt.title("Gain Control Curve")
+    plt.plot(freqs, 20 * np.log10(np.abs(gain_array[:n // 2])), color='green')
+    plt.xscale("log")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Gain (dB)")
+    plt.grid(which='both', linestyle='--', linewidth=0.5)
+    plt.tight_layout()
+    plt.show()
+
 # --- ENHANCER --- 
 #takes gain array and applies it to audio
 def enhancer(audio, gain_array):
@@ -38,7 +52,10 @@ def enhancer(audio, gain_array):
     audio_enhanced = audio_fft * gain_array
 
     #IFFT gives back all (n) samples, then keep the real part
-    audio_ifft = ifft(audio_enhanced) #is this wrong? half the spectrum? (RE vs IM)
-    audio_ifft_real = np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored)
+    audio_ifft = ifft(audio_enhanced) 
 
     return audio_ifft
+
+def smooth_array(gain_array, q_factor):
+    window = np.ones(q_factor) / q_factor
+    return np.convolve(gain_array, window, mode="valid")
