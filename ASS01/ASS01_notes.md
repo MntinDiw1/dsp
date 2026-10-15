@@ -102,11 +102,11 @@ Pop was identified to sit at 1.28-1.3s and lasts around 50ms (measured in Ableto
 #### 1m:
 
 - Volume increase of __dB (WHY?). 
-Note: increasing 1m distance volume will increase noise floor alongside ti which isnt ideal
 - Bass boost of __dB between __Hz and __Hz (larger to compensate for distance cutting low end - DO FURTHER RESEARCH!)
 - __dB of Brightness added between __Hz and __Hz
 - Noise reduction of __dB (WHYYYY)
 - Low-cut to remove ambient rumble
+- Noise audible once vocal ends, due to volume increase pushing SNR up!
 
 MATCH BOTH VOLUMES!!!
 
