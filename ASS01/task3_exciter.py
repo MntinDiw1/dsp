@@ -14,35 +14,38 @@ from task2_enhance import gain_ctrl, enhancer
 
     #Plot spectrum zoomed between 2-12kHz before and after each change (report: annotated graphs)
 
+#Band selection (used for both the sidechain and the harmonic selection)
+def band_pass(audio, sample_rate, lo, hi):
+    gain_array = np.ones(len(audio))
+    gain_ctrl(0, lo, -np.inf, sample_rate, gain_array) #low cut (0-lo)
+    gain_ctrl(hi, sample_rate//2 -1, -np.inf, sample_rate, gain_array) #high cut (hi+)
+    return enhancer(audio, gain_array)
+
+def exciter(audio, sample_rate, in_lo, in_hi, keep_lo, keep_hi, drive, mix):
+    #isolate the band
+    sidechain_exciter = band_pass(audio, sample_rate, in_lo, in_hi)
+    sidechain_exciter = sidechain_exciter / np.max(np.abs(sidechain_exciter)) #peak of 1, so drive is always effective
+
+    #introduce non-linearity
+    nonlin = np.tanh(drive * sidechain_exciter)
+
+    #isolate the band around 6kHZ (5-7kHz? [TUNE]) - this rejetcs 5th harmonics since they lie outside the region
+    target_band = band_pass(nonlin, sample_rate, keep_lo, keep_hi)
+
+    #MIXER
+    return audio + (mix * target_band)
+
 #Import audio and normalise
 sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 audio_5cm = audio_5cm / (2**31)
 
-#Band selection
+# --- ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
+output = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=1, mix=0.25) #TUNE
+#Results:
 
-#ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
-gain_array_5cm = np.ones(len(audio_5cm))
-#isolate the band
-gain_ctrl(0, 1750, -np.inf, sample_rate_5cm, gain_array_5cm) #low cut (0-1750Hz)
-gain_ctrl(2250, sample_rate_5cm//2 -1, -np.inf, sample_rate_5cm, gain_array_5cm) #high cut (2250Hz+)
+# --- ATTEMPT2:
 
-sidechain_exciter = enhancer(audio_5cm, gain_array_5cm)
 
-#introduce non-linearity
-drive = 1
-nonlin = np.tanh(drive * sidechain_exciter)
-
-#isolate the band around 6kHZ (5-7kHz? [TUNE]) - this rejetcs 5th harmonics since they lie outside the region
-#second gain array that keeps 6kHz region
-gain_array_5cm_6kHz = np.ones(len(audio_5cm))
-gain_ctrl(0, 5000, -np.inf, sample_rate_5cm, gain_array_5cm_6kHz) # low band (0-5kHz)
-gain_ctrl(7000, sample_rate_5cm//2 -1, -np.inf, sample_rate_5cm, gain_array_5cm_6kHz) # high band (7kHz+)
-
-target_band = enhancer(nonlin, gain_array_5cm_6kHz)
-
-#MIXER
-mix_ratio = 0.25 #TUNE
-output = audio_5cm + (mix_ratio * target_band)
 
 #Figure out where the sidechain peaks so that the input reaches near +-1 (generalise the system so drive is always effective)
 #PLOT BEFORE AND AFTER EXCITER FOR REPORT
