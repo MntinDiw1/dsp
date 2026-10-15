@@ -15,12 +15,10 @@
 *Remove or add answer once closed.*
 
 - Should all tasks be independant from eachother?
-- must the whole assignment be run from 1 command?
 - compute FFT once or multiple times?
 - Task 1 audio analysis: (fundamentals or DIFFERENT vowels?)
 - how to remove POP?
 - is it okay that we call the function for each specific band?
-- HOW DOES np.real reduce rounding rounding error????
 - what format/size to export for task2
 - create function for the enhancer loop.
 - TASK 3 Feedback
@@ -92,7 +90,7 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 - __dB of Brightness added between __Hz and __Hz
 - Noise reduction of __dB (why??)
 - Pop filter @__Hz (below the fundamental)
-Pop was identified to sit at 1.3s and lasts around 50ms (measured in Ableton). Most of it sits below 150Hz, however it exists throughout the spectrum and thus cannot be completely isolated/removed. (LOOK INTO WHY POP OCCURS)
+Pop was identified to sit at 1.28-1.3s and lasts around 50ms (measured in Ableton). Most of it sits below 150Hz, however it exists throughout the spectrum and thus cannot be completely isolated/removed. (LOOK INTO WHY POP OCCURS)
 
 #### 1m:
 
