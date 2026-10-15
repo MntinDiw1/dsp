@@ -41,4 +41,4 @@ def enhancer(audio, gain_array):
     audio_ifft = ifft(audio_enhanced) #is this wrong? half the spectrum? (RE vs IM)
     audio_ifft_real = np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored)
 
-    return audio_ifft_real
+    return audio_ifft
