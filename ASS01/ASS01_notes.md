@@ -78,6 +78,10 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 - dB to linear amplitude = 10^(dB/20)
 - Normalised according to full scale (24bits in 32bit int, left shifted by 8 bits (31bit division since its half the range)). - '#a_norm = audio / np.max(np.abs(audio))  # normalise to +-1' was incorrect
 - np.real discards the imaginary axis (ADD TO REPORT !)
+- Ringing (Gibbs phenomenon): interpolation required
+- export int32 type instead of float32 (why?)
+- Cannot avoid reverb and thus there will always be an audible difference
+
 
 ### Report Deliverables
 
@@ -88,11 +92,12 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 #### 5cm:
 
 - Volume increase of __dB (WHY?)
+- Low cut
 - Bass boost of __dB between __Hz and __Hz (small because bass is already clear)
 - __dB of Brightness added between __Hz and __Hz
 - Noise reduction of __dB (why??)
 - Pop filter @__Hz (below the fundamental)
-Pop was identified to sit at 1.28-1.3s and lasts around 50ms (measured in Ableton). Most of it sits below 150Hz, however it exists throughout the spectrum and thus cannot be completely isolated/removed. (LOOK INTO WHY POP OCCURS)
+Pop was identified to sit at 1.28-1.3s and lasts around 50ms (measured in Ableton). Most of it sits below 150Hz, however it exists throughout the spectrum and thus cannot be completely isolated/removed, WE TRIED.
 
 #### 1m:
 
@@ -102,6 +107,8 @@ Note: increasing 1m distance volume will increase noise floor alongside ti which
 - __dB of Brightness added between __Hz and __Hz
 - Noise reduction of __dB (WHYYYY)
 - Low-cut to remove ambient rumble
+
+MATCH BOTH VOLUMES!!!
 
 ---
 
