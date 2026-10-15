@@ -34,6 +34,8 @@ print("Identity test 5cm:", np.allclose(enhancer(audio_5cm, test_5cm), audio_5cm
 print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
 # --- END OF TEST ---
 
+# --- VOLUME MATCH ---
+
 #array of n ones (floits). Each value is a multiplier for the corresponding bin
 gain_array_5cm = np.ones(len(audio_5cm))
 gain_array_1m = np.ones(len(audio_1m))
@@ -57,11 +59,12 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).asty
 
 # --- 1m ---
 #gain curve
-#gain_ctrl(0, sample_rate_1m//2 - 1, 38, sample_rate_1m, gain_array_1m) #VOLUME
-gain_ctrl(100, 300, 6, sample_rate_1m, gain_array_1m)  #BASS BOOST
-gain_ctrl(5000, 7000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
-gain_ctrl(16000, sample_rate_1m//2 - 1, -60, sample_rate_1m, gain_array_1m) #NOISE REMOVAL
-gain_ctrl(0, 60, -20, sample_rate_1m, gain_array_1m) #LOW-CUT (for room rumble)
+gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME
+gain_ctrl(0, 80, -12, sample_rate_5cm, gain_array_5cm) #LOW CUT: trim room rumble (less 'boxy')
+gain_ctrl(110, 300, 4, sample_rate_1m, gain_array_1m)  #BASS BOOST: fundamental higher @1m + restoring depth 
+gain_ctrl(300, 600, -1, sample_rate_1m, gain_array_1m) #MIDS: Making the sample less 'muddy'
+gain_ctrl(3000, 10000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
+gain_ctrl(11000, sample_rate_1m//2 - 1, -12, sample_rate_1m, gain_array_1m) #HIGH CUT consonants end lower
 
 #apply gain + save
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
