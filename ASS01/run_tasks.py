@@ -21,8 +21,8 @@ audio_1m = audio_1m / (2**31)
 # ------ TASK 1 ------
 
 # Plot audio files
-plot_audio("5cm", sample_rate_5cm, audio_5cm)
-plot_audio("1m", sample_rate_1m, audio_1m)
+#plot_audio("5cm", sample_rate_5cm, audio_5cm)
+#plot_audio("1m", sample_rate_1m, audio_1m)
 
 # ------ TASK 2 ------
 
@@ -33,6 +33,8 @@ test_1m = np.ones(len(audio_1m))
 print("Identity test 5cm:", np.allclose(enhancer(audio_5cm, test_5cm), audio_5cm))
 print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
 # --- END OF TEST ---
+
+# --- VOLUME MATCH ---
 
 #array of n ones (floits). Each value is a multiplier for the corresponding bin
 gain_array_5cm = np.ones(len(audio_5cm))
@@ -58,6 +60,12 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).asty
 
 # --- 1m ---
 #gain curve
+gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME: Match to  5cm recording (matching peaks)
+gain_ctrl(0, 85, -12, sample_rate_1m, gain_array_1m) #LOW CUT: trim room rumble (less 'boxy')
+gain_ctrl(105, 300, 5.5, sample_rate_1m, gain_array_1m)  #BASS BOOST: fundamental higher @1m + restoring depth 
+#gain_ctrl(300, 700, -0.5, sample_rate_1m, gain_array_1m) #MIDS: Making the sample less 'muddy'
+gain_ctrl(2800, 10000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
+gain_ctrl(13000, sample_rate_1m//2 - 1, -12, sample_rate_1m, gain_array_1m) #HIGH CUT consonants end lower
 #gain_ctrl(0, sample_rate_1m//2 - 1, 38, sample_rate_1m, gain_array_1m) #VOLUME
 gain_ctrl(100, 300, 6, sample_rate_1m, gain_array_1m, 10)  #BASS BOOST
 gain_ctrl(5000, 7000, 6, sample_rate_1m, gain_array_1m, 20) #BRIGHTNESS
@@ -71,6 +79,30 @@ wavfile.write("enhanced_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(
 
 #PLOT GAIN CURVE - I want to see the volume
 
+# --- AUDIO OVERLAY ---
+def plot_overlay(signals):
+    # signals: list of (label, sample_rate, audio)
+    plt.figure(figsize=(8, 5))
+
+    for label, fs, audio in signals:
+        n = len(audio)
+        mag_fft = 20 * np.log10(np.abs((1/n) * np.fft.fft(audio)) + 1e-12)  # +1e-12 avoids log(0)
+        freqs = np.arange(n // 2) * fs / n
+
+        plt.plot(freqs, mag_fft[: n // 2], alpha=0.6, label=label)
+
+    plt.title("Enhanced audio: 5cm vs 1m (frequency domain)")
+    plt.xlabel("frequency (Hz)")
+    plt.xscale("log")
+    plt.ylabel("magnitude (dB)")
+    plt.legend()
+
+    plt.tight_layout()
+
+plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
+              ("1m", sample_rate_1m, enhanced_1m)])
+# --- END OF OVERLAY ---
+
 # ------ TASK 3 ------
 
 
@@ -78,4 +110,4 @@ wavfile.write("enhanced_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(
 
 
 # Show audio plots
-#plt.show()
+plt.show()
