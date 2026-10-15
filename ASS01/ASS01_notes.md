@@ -45,6 +45,7 @@
 - Suggested optimised pipeline for task 2.
 - Checking task 1 readings against my analysis for report (verification)
 - Explained the exciter and how non-linearity creates harmonics.
+- Suggestions for fixing hiss in task 2
 
 - remember to cd into ASS01
 
