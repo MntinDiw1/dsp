@@ -39,6 +39,6 @@ def enhancer(audio, gain_array):
 
     #IFFT gives back all (n) samples, then keep the real part
     audio_ifft = ifft(audio_enhanced)
-    audio_ifft_real = 2**32 * np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored)
+    audio_ifft_real = np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored)
 
     return audio_ifft_real

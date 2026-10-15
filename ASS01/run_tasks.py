@@ -46,14 +46,14 @@ gain_array_1m = np.ones(len(audio_1m))
 # --- 5cm ---
 #gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ...)
 #gain_ctrl(0, sample_rate_5cm //2 - 1, 12, sample_rate_5cm, gain_array_5cm) #VOLUME: doesn't multiply the Nyquist bin twice (?)
-#gain_ctrl(100, 250, 1, sample_rate_5cm, gain_array_5cm) #BASS BOOST
-gain_ctrl(5000, 8000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS
-gain_ctrl(12000, sample_rate_5cm //2 - 1, -30, sample_rate_5cm, gain_array_5cm) #NOISE REMOVAL
-gain_ctrl(0, 75, -24, sample_rate_5cm, gain_array_5cm) #POP FILTER/LOW-CUT
+gain_ctrl(0, 60, -12, sample_rate_5cm, gain_array_5cm) #LOW CUT: Remove rumble and some POP energy
+gain_ctrl(95, 400, 3.5, sample_rate_5cm, gain_array_5cm) #BASS BOOST: The first couple harmonics for depth
+gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS: The noisy consonant region + extra for clarity
+gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm) #HIGH CUT: Remove any hiss
 
 #apply gain + save
 enhanced_5cm = enhancer(audio_5cm, gain_array_5cm)
-wavfile.write("enhanced_5cm.wav", sample_rate_5cm, enhanced_5cm.astype(np.int32))
+wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).astype(np.int32))
 
 # --- 1m ---
 #gain curve
@@ -65,7 +65,7 @@ gain_ctrl(0, 60, -20, sample_rate_1m, gain_array_1m) #LOW-CUT (for room rumble)
 
 #apply gain + save
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
-wavfile.write("enhanced_1m.wav", sample_rate_1m, enhanced_1m.astype(np.int32)) #replace with int32 (scale it up)
+wavfile.write("enhanced_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(np.int32)) #int32 scaled up (mention in report)
 
 #PLOT GAIN CURVE - I want to see the volume
 

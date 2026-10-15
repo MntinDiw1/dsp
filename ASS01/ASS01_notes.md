@@ -33,6 +33,7 @@
 - [ ] annotate frequency plot (task 1) with analysis for report
 - [ ] LINUX COMPATIBLE SUBMISSION
 - [ ] Collect evidence of iteration for task 3 (with plots/param values)
+- [] Clean up comments once report is written
 
 ---
 
