@@ -13,6 +13,7 @@ from scipy.fft import fft, ifft
 
 # --- GAIN CONTROL (dB) ---
 #function that describes gain adjustments to specific frequency ranges.
+'''
 def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q_factor):
     n = len(gain_array)
 
@@ -36,7 +37,8 @@ def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q_factor):
     return None
 
 '''
-def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q_factor):
+'''
+def gain_ctrl(low, high, amp_dB, sample_rate, gain_array):
 
     n = len(gain_array) #full spectrum
 
@@ -45,32 +47,63 @@ def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q_factor):
 
     dB__2_lin = 10 ** (amp_dB / 20)  # convert dB to linear gain
 
-    up_slope = np.linspace(1, dB__2_lin, q_factor)
-    down_slope = np.linspace(dB__2_lin, 1, q_factor)
-
     # flat part of tapazod
     gain_array[LO_bin:HI_bin + 1] *= dB__2_lin #x = x * y
     gain_array[n - HI_bin:n - LO_bin + 1] *= dB__2_lin #mirror
 
-# / part of trapizoid
-    up_start = max(0, LO_bin - q_factor)
-    up_len = LO_bin - up_start
-    
-    mirror_up_start = n - LO_bin + 1
-    mirror_up_end = min(n, n - up_start + 1)
-    mirror_up_len = mirror_up_end - mirror_up_start
-    
-    gain_array[up_start : LO_bin] *= up_slope[q_factor - up_len : q_factor]
-    gain_array[mirror_up_start : mirror_up_end] *= up_slope[::-1][:mirror_up_len]
-
-    # \ part of trapizoid
-    down_end = min(n // 2, HI_bin + 1 + q_factor)
-    down_len = down_end - (HI_bin + 1)
-    
-    gain_array[HI_bin + 1 : down_end] *= down_slope[:down_len]
-    gain_array[n - down_end + 1 : n - HI_bin] *= down_slope[::-1][:down_len]
-
     return None'''
+
+def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q=0.25):
+    """
+    q = 0    -> (near) brick-wall, ramps one FFT bin wide
+    q = 0.25 -> each edge ramps over 25% of the bandwidth (default)
+    q = 1    -> ramps meet in the middle: a triangle
+    """
+    n = len(gain_array)
+    half = n // 2
+    bin_hz = sample_rate / n
+    freqs = np.arange(half + 1) * bin_hz
+
+    q = np.clip(q, 0.0, 1.0)                  # >1 would make the ramps cross
+    ramp_hz = max(q * (high - low), bin_hz)   # never narrower than one bin
+    r = ramp_hz / 2
+
+    xp = [low - r, low + r, high - r, high + r]
+    fp = [0.0,     amp_dB,  amp_dB,   0.0]
+    profile_dB = np.interp(freqs, xp, fp, left=0.0, right=0.0)
+
+    gain_array[:half + 1] *= 10.0 ** (profile_dB / 20.0)
+    gain_array[half + 1:] = gain_array[1:n - half][::-1]   # mirror to negative bins
+    return gain_array
+
+def PIsmooth(gain_array, P, I):
+    n = len(gain_array)
+    smooth_gain_array = np.zeros(n)
+    
+    # first value
+    smooth_gain_array[0] = gain_array[0]
+    
+    integral = 0.0
+    
+    for a in range(1, n):
+        # target is the raw gain, current state is the last smoothed value
+        target = gain_array[a]
+        current = smooth_gain_array[a-1]
+        
+        # Calculate PI terms
+        error = target - current
+        integral += error
+
+        adjusted_P = P * a / 1000
+        # Calculate the adjustment using only Proportional and Integral terms
+        adjustment = (P * error) + (I * integral)
+        
+        # Apply the adjustment
+        smooth_gain_array[a] = current + adjustment
+
+    smooth_gain_array[0] = 1.0
+    
+    return smooth_gain_array
 
 def plot_gain_array(gain_array, sample_rate, name):
     n = len(gain_array)
