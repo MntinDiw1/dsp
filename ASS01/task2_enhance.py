@@ -28,6 +28,12 @@ def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q=0):
     ramp_hz = max(q * (high - low), bin_hz)   # never narrower than one bin
     r = ramp_hz / 2
 
+    # bands that start at DC or end at Nyquist: push that ramp outside the spectrum so the ends get the full gain
+    if low <= 0:
+        low = -ramp_hz
+    if high >= sample_rate // 2 - 1:
+        high = sample_rate / 2 + ramp_hz
+
     xp = [low - r, low + r, high - r, high + r]
     fp = [0.0,     amp_dB,  amp_dB,   0.0]
     profile_dB = np.interp(freqs, xp, fp, left=0.0, right=0.0)

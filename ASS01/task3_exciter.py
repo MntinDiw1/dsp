@@ -40,7 +40,7 @@ sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 audio_5cm = audio_5cm / (2**31)
 
 # --- ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
-output = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=1, mix=0.25) #TUNE
+#output = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=1, mix=0.25) #TUNE
 #Results:
 
 # --- ATTEMPT2:
