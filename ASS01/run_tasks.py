@@ -6,7 +6,7 @@ import numpy as np
 # Assignmnet files
 from task1_plot import plot_audio
 from task2_enhance import gain_ctrl, enhancer, plot_gain_array
-from task3_exciter import exciter
+from task3_exciter import exciter, plot_harmonics
 
 # --- Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative) ---
 
@@ -97,13 +97,18 @@ plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
 
 # ------ TASK 3 ------
 
-#Run on RAW and ENHANCED audio 
-#Plot the harmonics on their own (for report                )
+#Run on RAW and ENHANCED audio       
 
 #exciter(.., .., in_low, in_high, keep_lo, keep_hi, drive, mix)
 
 # --- ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
-exciter_5cm = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=10, mix=0.5)
+#apply exciter + save
+exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=10, mix=0.5)
+plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm)
+wavfile.write("exciter_5cm.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
+#Results:
+
+# --- ATTEMPT2:
 
 
 # Show audio plots

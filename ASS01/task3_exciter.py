@@ -1,10 +1,10 @@
-#Experimental playground to be implemented with run_tasks.py once working. For now this should be self-contained.
-
-import matplotlib.pyplot as plt
-from scipy.io import wavfile
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fft import fft
 
 from task2_enhance import gain_ctrl, enhancer
+
+# ---- TASK3: AURAL EXCITER ----
 
     #Dry path
 
@@ -33,21 +33,25 @@ def exciter(audio, sample_rate, in_lo, in_hi, keep_lo, keep_hi, drive, mix):
     target_band = band_pass(nonlin, sample_rate, keep_lo, keep_hi)
 
     #MIXER
-    return audio + (mix * target_band)
+    harmonics = mix * target_band
+    return audio + harmonics, nonlin, harmonics #output, all harmonics from tanh, harmonics actually added
 
-#Import audio and normalise
-sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
-audio_5cm = audio_5cm / (2**31)
+#Plot the harmonics on their own (for report)
+def plot_harmonics(audio, nonlin, harmonics, sample_rate):
+    n = len(audio)
+    freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting
 
-# --- ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
-#output = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=1, mix=0.25) #TUNE
-#Results:
+    plt.figure(figsize=(10, 5))
+    plt.title("Exciter harmonics")
+    for label, x in (("dry voice", audio), ("tanh output (all harmonics)", nonlin), ("added harmonics", harmonics)):
+        mag_fft = 20 * np.log10(np.abs((1/n) * fft(x)[:n // 2]) + 1e-12)  # +1e-12 avoids log(0)
+        plt.plot(freqs, mag_fft, alpha=0.6, label=label)
+    plt.xscale("log")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("magnitude (dB)")
+    plt.ylim(bottom=-180)
+    plt.legend()
+    plt.tight_layout()
 
-# --- ATTEMPT2:
-
-
-
-#Figure out where the sidechain peaks so that the input reaches near +-1 (generalise the system so drive is always effective)
-#PLOT BEFORE AND AFTER EXCITER FOR REPORT
 #ALSO PLOT COMPARISONS OF DIFFERENT DRIVE LEVELS
 #TUNE THE SYSTEM AND RECORD IT TO SHOWCASE ITERATIVE DEVELOPMENT (REPORT)

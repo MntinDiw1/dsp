@@ -40,6 +40,7 @@
 - Explained the exciter and how non-linearity creates harmonics.
 - Fixed gain curve increasing at both ends of spectrum
 - Plotting overlay of both enhanced audio recordingds
+- Plotting Harmonics for task 3
 
 - remember to cd into ASS01
 
@@ -120,12 +121,19 @@ Feeding a pure sine into tanh will squash the peaks when the drive is high enoug
 
 tanh only starts distorting once the input reaches +-1.
 
+Harmonics plotted to visualise changes
+
 **Attempt 1**
 
 - 3f = 6kHz -> f = 2kHz (5f = 10kHz (not too high))
-- Bandpass filter used instead of tunable Highpass filter (see guide), reduces mud.
+- Bandpass filter (1750-2250) used instead of tunable Highpass filter (see guide), reduces mud.
 - width: 500Hz (wider input = wider output -> MUD)
-- drive: starting value = (how to set it so that it doesnt depend on how loud the recording is?).
-- mix: 
+- isolated 5-7kHz (surrounding 6kHz as baseline)
+- drive: starting value = 10
+- mix: 0.5
+
+RESULT: robotic/high-frequency metallic sound (why do we think?)
 
 **Attempt 2**
+
+bring down the mix so the harmonics are quieter. increase the size of the sidechain band so increase that its not just a single tone
