@@ -6,7 +6,7 @@ import numpy as np
 # Assignmnet files
 #CAN ALSO IMPORT THE WHOLE FILE
 from task1_plot import plot_audio
-from task2_enhance import gain_ctrl, enhancer, plot_gain_array, PIsmooth
+from task2_enhance import gain_ctrl, enhancer, plot_gain_array
 
 # --- Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative) ---
 
@@ -59,8 +59,6 @@ gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm) 
 
 #apply gain + save
 plot_gain_array(gain_array_5cm,sample_rate_5cm,"5cm")
-#gain_array_5cm = PIsmooth(gain_array_5cm, 0.01, 0)
-#plot_gain_array(gain_array_5cm,sample_rate_5cm,"5cm")
 enhanced_5cm = enhancer(audio_5cm, gain_array_5cm)
 wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).astype(np.int32))
 
@@ -86,8 +84,6 @@ gain_ctrl(13000, sample_rate_1m//2 - 1, -30, sample_rate_1m, gain_array_1m) #HIG
 
 #apply gain + save
 plot_gain_array(gain_array_1m,sample_rate_1m,"1m")
-#gain_array_1m = PIsmooth(gain_array_1m, 0.01, 0)
-#plot_gain_array(gain_array_1m,sample_rate_1m,"1m")
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
 wavfile.write("enhanced_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(np.int32)) #int32 scaled up (mention in report)
 
