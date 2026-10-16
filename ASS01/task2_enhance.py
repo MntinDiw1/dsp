@@ -13,27 +13,28 @@ from scipy.fft import fft, ifft
 
 # --- GAIN CONTROL (dB) ---
 #function that describes gain adjustments to specific frequency ranges.
-def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q_factor=0):  # q_factor = ramp width in bins (0 = hard edges)
+def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q=0):
+    """
+    q = 0    -> (near) brick-wall, ramps one FFT bin wide (default)
+    q = 0.25 -> each edge ramps over 25% of the bandwidth
+    q = 1    -> ramps meet in the middle: a triangle
+    """
     n = len(gain_array)
+    half = n // 2
+    bin_hz = sample_rate / n
+    freqs = np.arange(half + 1) * bin_hz
 
-    LO_bin = (low * n) // sample_rate    # Hz -> bin
-    HI_bin = (high * n) // sample_rate
+    q = np.clip(q, 0.0, 1.0)                  # >1 would make the ramps cross
+    ramp_hz = max(q * (high - low), bin_hz)   # never narrower than one bin
+    r = ramp_hz / 2
 
-    lin = 10 ** (amp_dB / 20)            # dB -> linear
+    xp = [low - r, low + r, high - r, high + r]
+    fp = [0.0,     amp_dB,  amp_dB,   0.0]
+    profile_dB = np.interp(freqs, xp, fp, left=0.0, right=0.0)
 
-    # distance of every bin from DC (so bin k and bin n-k get the same gain)
-    k = np.arange(n)
-    folded = np.minimum(k, n - k)
-
-    # trapezoid: 1 -> lin over q_factor bins, flat, then lin -> 1
-    # (np.interp holds the end values, so anything outside is 1,
-    #  and a ramp that would start below bin 0 is simply cut off)
-    trap = np.interp(folded,
-                     [LO_bin - q_factor, LO_bin, HI_bin, HI_bin + q_factor],
-                     [1.0,               lin,    lin,    1.0])
-
-    gain_array *= trap
-    return None
+    gain_array[:half + 1] *= 10.0 ** (profile_dB / 20.0)
+    gain_array[half + 1:] = gain_array[1:n - half][::-1]   # mirror to the negative frequencies
+    return gain_array
 
 def plot_gain_array(gain_array, sample_rate, name):
     n = len(gain_array)
