@@ -14,15 +14,6 @@
 
 *Remove or add answer once closed.*
 
-- Should all tasks be independant from eachother?
-- compute FFT once or multiple times?
-- Task 1 audio analysis: (fundamentals or DIFFERENT vowels?)
-- how to remove POP?
-- is it okay that we call the function for each specific band?
-- what format/size to export for task2
-- create function for the enhancer loop.
-- TASK 3 Feedback
-
 
 ## TDL
 
@@ -33,7 +24,8 @@
 - [ ] annotate frequency plot (task 1) with analysis for report
 - [ ] LINUX COMPATIBLE SUBMISSION
 - [ ] Collect evidence of iteration for task 3 (with plots/param values)
-- [] Clean up comments once report is written
+- [ ] Clean up comments once report is written
+- [ ] Delete any test functions (what to do with gain curve plot ??)
 
 ---
 
@@ -46,7 +38,8 @@
 - Suggested optimised pipeline for task 2.
 - Checking task 1 readings against my analysis for report (verification)
 - Explained the exciter and how non-linearity creates harmonics.
-- Suggestions for fixing hiss in task 2
+- Fixed gain curve increasing at both ends of spectrum
+- Plotting overlay of both enhanced audio recordingds
 
 - remember to cd into ASS01
 
@@ -81,7 +74,7 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 - Ran identity tests to check input matches output when no other changes are applied (clean pipeline)
 - Ringing (Gibbs phenomenon): interpolation required
 - export int32 type instead of float32 (why?)
-- Cannot avoid reverb and thus there will always be an audible difference
+- Cannot avoid reverb at 1m and thus there will always be an audible difference
 
 
 ### Report Deliverables
@@ -107,9 +100,15 @@ Pop was identified to sit at 1.28-1.3s and lasts around 50ms (measured in Ableto
 - __dB of Brightness added between __Hz and __Hz
 - Noise reduction of __dB (WHYYYY)
 - Low-cut to remove ambient rumble
-- Noise audible once vocal ends, due to volume increase pushing SNR up!
+- Noise audible once vocal ends, due to volume increase creating low SNR (+21dB VOLUME MATCH LIFTS THE NOISE L=FLOOR)
 
 MATCH BOTH VOLUMES!!!
+
+q-factor choices: q=0.1 for broad bands,q = 0 for notch, q = 0.1+ for 180-240Hz band (not fully finalised yet)
+
+Hard edges caused audible ringing (Gibbs phenomenon), which is why interpolation was required (specifics, Saad can cover).
+
+
 
 ---
 

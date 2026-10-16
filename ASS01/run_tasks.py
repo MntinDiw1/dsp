@@ -4,9 +4,9 @@ import numpy as np
 # IFNDEF type statements not required in python, it wont try to import a file twice.
 
 # Assignmnet files
-#CAN ALSO IMPORT THE WHOLE FILE
 from task1_plot import plot_audio
 from task2_enhance import gain_ctrl, enhancer, plot_gain_array
+from task3_exciter import exciter
 
 # --- Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative) ---
 
@@ -21,8 +21,8 @@ audio_1m = audio_1m / (2**31)
 # ------ TASK 1 ------
 
 # Plot audio files
-plot_audio("5cm", sample_rate_5cm, audio_5cm)
-plot_audio("1m", sample_rate_1m, audio_1m)
+#plot_audio("5cm", sample_rate_5cm, audio_5cm)
+#plot_audio("1m", sample_rate_1m, audio_1m)
 
 # ------ TASK 2 ------
 
@@ -44,11 +44,11 @@ gain_array_1m = np.ones(len(audio_1m))
 #PUT IN ANOTHER FUNCTION: build gain -> enhance -> save -> plot
 
 # --- 5cm ---
-#gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ...)
-gain_ctrl(0, 80, -16, sample_rate_5cm, gain_array_5cm) #LOW CUT: Remove rumble and some POP energy
-gain_ctrl(95, 400, 3.5, sample_rate_5cm, gain_array_5cm) #BASS BOOST: The first couple harmonics for depth
-gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS: The noisy consonant region + extra for clarity
-gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm) #HIGH CUT: Remove any hiss
+#gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ..., q=0)
+gain_ctrl(0, 80, -16, sample_rate_5cm, gain_array_5cm, q=0.1) #LOW CUT: Remove rumble and some POP energy
+gain_ctrl(95, 400, 4, sample_rate_5cm, gain_array_5cm, q=0.1) #BASS BOOST: The first couple harmonics for depth
+gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm, q=0.1) #BRIGHTNESS: The noisy consonant region + extra for clarity
+gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm, q=0.1) #HIGH CUT: Remove any hiss
 
 #apply gain + save
 plot_gain_array(gain_array_5cm,sample_rate_5cm,"5cm")
@@ -58,12 +58,12 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).asty
 # --- 1m ---
 #gain curve
 gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME: Match to  5cm recording (matching peaks)
-gain_ctrl(0, 80, -12, sample_rate_1m, gain_array_1m) #LOW CUT: trim room rumble (less 'boxy')
-gain_ctrl(95, 180, 6, sample_rate_1m, gain_array_1m)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
-gain_ctrl(180, 240, -6, sample_rate_1m, gain_array_1m)  #Reduce the 2nd harmonic
-gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m)  #Reduce the 500Hz spike/whine (10th harmonic of MAINS HUM??)
-gain_ctrl(3000, 10000, 6, sample_rate_1m, gain_array_1m) #BRIGHTNESS
-gain_ctrl(13000, sample_rate_1m//2 - 1, -30, sample_rate_1m, gain_array_1m) #HIGH CUT consonants end lower
+gain_ctrl(0, 85, -12, sample_rate_1m, gain_array_1m, q=0.3) #LOW CUT: trim room rumble (less 'boxy')
+gain_ctrl(95, 180, 6, sample_rate_1m, gain_array_1m, q=0.3)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
+gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m, q=0.25)  #Reduce the 500Hz spike/whine (10th harmonic of MAINS HUM??)
+gain_ctrl(2200, 2800, -4, sample_rate_1m, gain_array_1m, q=0.25)  #ROOM RESONANCE: 1m bump ~2.5kHz vs 5cm
+gain_ctrl(3000, 10000, 7, sample_rate_1m, gain_array_1m, q=0.1) #BRIGHTNESS
+gain_ctrl(13000, sample_rate_1m//2 - 1, -30, sample_rate_1m, gain_array_1m, q=0.1) #HIGH CUT consonants end lower
 
 #apply gain + save
 plot_gain_array(gain_array_1m,sample_rate_1m,"1m")
@@ -97,8 +97,13 @@ plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
 
 # ------ TASK 3 ------
 
+#Run on RAW and ENHANCED audio 
+#Plot the harmonics on their own (for report                )
 
+#exciter(.., .., in_low, in_high, keep_lo, keep_hi, drive, mix)
 
+# --- ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
+exciter_5cm = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=10, mix=0.5)
 
 
 # Show audio plots
