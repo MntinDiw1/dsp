@@ -8,6 +8,23 @@
         (complete) IFFT code
 
 
+# ---- TASK1: AUDIO PLOTTING & ANALYSIS ----
+# a) plot audio in time domain 
+# b) plot audio in frequency domain
+# c) (Not Main Code) Visually identify vowel fundamental frequencies and mark these on a frequency spectrum.
+# d) (Not Main Code) Mark the consonant frequency ranges on a frequency spectrum.
+# e) (Not Main Code) Mark the noise frequency ranges on a frequency spectrum.
+
+
+# ---- TASK2: AUDIO ENHANCER ----
+#a) make voice sound clearer + more 'interesting' as heard on radio shows
+#b) remove noise
+#c) explain what kind of noise needs to be removed and which frequency range it has.
+#d) explain how you would like to improve the speech by looking into the loss of base freqs. with distance, and pop sounds when mic is close.
+
+
+#input audio should be MONO, FLOAT, and NORMALISED.
+
 
 AI Info:
     Microsoft Github Copilot

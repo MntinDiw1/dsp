@@ -2,22 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt #plot the envelope/EQ visualisation?
 from scipy.fft import fft, ifft
 
-# ---- TASK2: AUDIO ENHANCER ----
-#a) make voice sound clearer + more 'interesting' as heard on radio shows
-#b) remove noise
-#c) explain what kind of noise needs to be removed and which frequency range it has.
-#d) explain how you would like to improve the speech by looking into the loss of base freqs. with distance, and pop sounds when mic is close.
 
-
-#input audio should be MONO, FLOAT, and NORMALISED.
-
-# --- GAIN CONTROL (dB) ---
+# GAIN CONTROL 
 #function that describes gain adjustments to specific frequency ranges.
 def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q=0):
     """
-    q = 0    -> (near) brick-wall, ramps one FFT bin wide (default)
-    q = 0.25 -> each edge ramps over 25% of the bandwidth
-    q = 1    -> ramps meet in the middle: a triangle
+    q = 0    -> ramps one FFT bin wide (default) (rectangular)
+    q = 0.25 -> each edge ramps over 25% of the bandwidth (trapazoidal)
+    q = 1    -> ramps meet in the middle (triangular)
     """
     n = len(gain_array)
     half = n // 2
@@ -42,6 +34,7 @@ def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q=0):
     gain_array[half + 1:] = gain_array[1:n - half][::-1]   # mirror to the negative frequencies
     return gain_array
 
+# PLOT GAIN 
 def plot_gain_array(gain_array, sample_rate, name):
     n = len(gain_array)
     freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting
