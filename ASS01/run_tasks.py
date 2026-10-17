@@ -100,16 +100,21 @@ plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
 #Run on RAW and ENHANCED audio       
 
 #exciter(.., .., in_low, in_high, keep_lo, keep_hi, drive, mix)
-
-# --- ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
 #apply exciter + save
-exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=10, mix=0.5)
-plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm)
-wavfile.write("exciter_5cm.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
-#Results:
-
+# --- ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
+#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=10, mix=0.5)
 # --- ATTEMPT2:
+#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=3, mix=0.1)
+# --- ATTEMPT3:
+#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 4000, 12000, drive=3, mix=0.25)
+# --- ATTEMPT4: 
+#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 12000, drive= 6, mix=0.15)
+# --- ATTEMPT5:
+#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 12000, drive= 6, mix=0.15)
+# --- ATTEMPT5+:
+exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, drive=4, mix=0.25)
 
-
+plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm)
+wavfile.write("exciter_5cm_5.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
 # Show audio plots
 plt.show()
