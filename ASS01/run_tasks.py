@@ -1,7 +1,10 @@
+import os
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
 import numpy as np
 # IFNDEF type statements not required in python, it wont try to import a file twice.
+
+os.chdir(os.path.dirname(os.path.abspath(__file__))) # run from any folder: wav/ inputs and .wav outputs are relative to this file
 
 # Assignmnet files
 from task1_plot import plot_audio
