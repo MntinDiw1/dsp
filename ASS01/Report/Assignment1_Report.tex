@@ -2,25 +2,28 @@
 
 % ---------- Page layout ----------
 \usepackage[margin=2.5cm]{geometry}
-\usepackage{parskip}            % paragraph spacing instead of indents
+\usepackage{parskip}
 \usepackage{microtype}
 
 % ---------- Fonts / maths ----------
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amsmath}
-\usepackage{siunitx}            % \SI{6}{\kilo\hertz}
+\usepackage{siunitx}
 \sisetup{detect-all}
 
-% ---------- Figures (vector only: PDF / PGF / SVG->PDF) ----------
+% ---------- Figures (vector only) ----------
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage{subcaption}
-\graphicspath{{figures/}}       % save figures from matplotlib as .pdf into ./figures/
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc}
+\graphicspath{{figures/}}
 
 % ---------- Tables, links ----------
 \usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage[hidelinks]{hyperref}
 
 % ---------- Code listings for the appendix ----------
@@ -57,64 +60,76 @@
 % =====================================================
 \section{Recordings}
 % =====================================================
-% Keep short: just the facts the marker needs.
-Voice of one team member, one sentence: ``\textit{Saad and Will are electro wizards.}'' (language: English).
-Both recordings are uncompressed WAV, \SI{48}{\kilo\hertz}, 24-bit PCM, mono, not clipped, at distances of \SI{5}{\centi\metre} and \SI{1}{\metre}.
+The voice is Will's, speaking one English sentence: ``\textit{Saad and Will are electrowizards.}''
+Both recordings are uncompressed WAV, \SI{48}{\kilo\hertz}, 24-bit PCM (stored in 32-bit integers), mono, \SI{4}{\second} long (192\,000 samples), not clipped, at distances of \SI{5}{\centi\metre} and \SI{1}{\metre}.
+The Nyquist frequency is \SI{24}{\kilo\hertz}, so the full spectrum up to \SI{20}{\kilo\hertz} is available.
+The peak amplitudes are 0.0753 (\SI{-22.5}{\decibel FS}) at \SI{5}{\centi\metre} and 0.0060 (\SI{-44.5}{\decibel FS}) at \SI{1}{\metre}, so neither recording is clipped; the \SI{1}{\metre} recording is \SI{22}{\decibel} quieter at its peak.
 
 % =====================================================
 \section{Task 1: Time and Frequency Analysis (20\%)}
 % =====================================================
 
 \subsection{Time and frequency domain plots}
-% Method in 2--3 sentences: normalised amplitude vs time; magnitude spectrum in dBFS, % log frequency axis, (1/N) scaling of the FFT.
+The samples are read with \texttt{wavfile.read} and normalised by dividing by $2^{31}$, the full scale of the 32-bit container holding the 24-bit data, giving amplitudes in $[-1,1)$.
+The time axis is built with \texttt{linspace} from \SI{0}{\second} to $N/f_s$.
+The spectrum is $X = \frac{1}{N}\,\mathrm{FFT}(x)$, with the $1/N$ scaling making the magnitude independent of recording length, and is shown as $20\log_{10}|X|$ in dBFS.
+Only the first $N/2$ bins are plotted, from DC up to the Nyquist frequency, with bin spacing $f_s/N$, because the spectrum of a real signal is mirrored.
+The frequency axis is logarithmic.
 
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=\textwidth]{task1_5cm.pdf}
-  \fbox{\parbox{0.9\textwidth}{\centering Placeholder: time + frequency plot, \SI{5}{\centi\metre}}}
+  \includegraphics[width=\textwidth]{task1_5cm.pdf}
   \caption{Voice recorded at \SI{5}{\centi\metre}: (left) time domain, (right) frequency domain.}
   \label{fig:t1_5cm}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=\textwidth]{task1_1m.pdf}
-  \fbox{\parbox{0.9\textwidth}{\centering Placeholder: time + frequency plot, \SI{1}{\metre}}}
+  \includegraphics[width=\textwidth]{task1_1m.pdf}
   \caption{Voice recorded at \SI{1}{\metre}: (left) time domain, (right) frequency domain.}
   \label{fig:t1_1m}
 \end{figure}
 
 \subsection{Vowel fundamentals}
-% List the chosen peaks per vowel, per recording, and justify (harmonic spacing,
-% expected male/female F0 range, harmonic series visible, etc.). No automatic detection.
+In both recordings the vowel energy appears as a series of peaks, the first at \SIrange{93}{117}{\hertz}, with the following peaks spaced at the same interval.
+At \SI{5}{\centi\metre}, for example, the peaks in the /a/ of ``Saad'' lie at \SI{104}{}, \SI{208}{}, \SI{312}{} and \SI{416}{\hertz}; in the /e/ at \SI{95}{}, \SI{190}{}, \SI{285}{} and \SI{380}{\hertz}.
+This equal spacing is the harmonic series of a voiced vowel, so the lowest peak of each series was taken as the fundamental $f_0$.
+A fundamental of about \SI{100}{\hertz} is consistent with an adult male speaker.
+The pitch drifts through the sentence, from \SI{104}{\hertz} to \SI{93}{\hertz} at \SI{5}{\centi\metre}, and starts higher in the \SI{1}{\metre} take (\SI{117}{\hertz}, falling to about \SI{100}{\hertz}), because the two recordings are separate takes.
+The peaks were chosen by inspecting the spectrum; no automatic detection was used.
+
 \begin{table}[H]
   \centering
   \caption{Visually identified vowel fundamentals.}
   \label{tab:vowels}
-  \begin{tabular}{lccc}
+  \begin{tabularx}{\textwidth}{lccX}
     \toprule
     Vowel & $f_0$ at \SI{5}{\centi\metre} (Hz) & $f_0$ at \SI{1}{\metre} (Hz) & Justification \\
     \midrule
-    /a/ & -- & -- & -- \\
-    /e/ & -- & -- & -- \\
-    /o/ & -- & -- & -- \\
+    /a/ (Saad) & $\approx 104$ & $\approx 118$ & Harmonics at $f_0, 2f_0, 3f_0, \dots$ \\
+    /e/ (electro) & $\approx 95$ & $\approx 100$ & Harmonics at $f_0, 2f_0, 3f_0, \dots$ \\
+    /o/ (electro) & $\approx 93$ & $\approx 95$ & Harmonics at $f_0, 2f_0, 3f_0, \dots$ \\
     \bottomrule
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 \subsection{Consonant range}
-% Range marked up to the highest frequency containing consonant energy + reasoning
-% (noise-like broadband energy, e.g.\ 's', 't', 'f' above ...~kHz).
+Above about \SI{2}{\kilo\hertz} the harmonic series fades and a broad, noise-like hump appears with its peak at \SIrange{5}{6}{\kilo\hertz}.
+The absence of harmonic structure and the broadband shape are characteristic of consonants such as /s/ and /z/ in the sentence.
+At \SI{5}{\centi\metre} the hump reaches about \SI{-82}{\decibel FS} at \SI{6}{\kilo\hertz} and the level stays above the noise floor up to about \SI{12}{\kilo\hertz}, after which it falls steeply to the floor at about \SI{16}{\kilo\hertz}.
+The consonant range is therefore marked from \SI{2}{\kilo\hertz} to \SI{12}{\kilo\hertz}.
+At \SI{1}{\metre} the hump is lower in level (about \SI{-107}{\decibel FS} at \SI{5}{\kilo\hertz}) and drops into the noise floor sooner, reaching it at about \SI{14}{\kilo\hertz}, so the range is marked \SIrange{2}{10}{\kilo\hertz}.
 
 \subsection{Noise region}
-% Region that most likely contains only noise + reasoning (flat floor above ... kHz,
-% no harmonic structure, level comparable to the silent portions).
+Above \SI{16}{\kilo\hertz} (\SI{14}{\kilo\hertz} at \SI{1}{\metre}) both spectra are flat at about \SI{-143}{\decibel FS} (power level smoothed over \SI{50}{\hertz}) with no harmonic structure.
+The level is the same at both distances, so it does not come from the voice and is attributed to electronic noise of the recording chain.
+The silent part at the end of each recording is consistent with this: it has an RMS level of \SI{-96.6}{\decibel FS} at \SI{1}{\metre}, flat across the spectrum at about \SI{-137}{\decibel FS} per bin, and \SI{-90.7}{\decibel FS} at \SI{5}{\centi\metre}, with the extra energy at low frequencies (about \SI{-122}{\decibel FS} per bin between \SIrange{60}{300}{\hertz} against \SI{-135}{\decibel FS} above \SI{5}{\kilo\hertz}).
+The region \SIrange{16}{24}{\kilo\hertz} is marked as noise only for both recordings.
 
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=\textwidth]{task1_annotated.pdf}
-  \fbox{\parbox{0.9\textwidth}{\centering Placeholder: annotated spectra (vowel peaks, consonant band, noise region)}}
-  \caption{Annotated spectra: vowel fundamentals, consonant range and noise-only region.}
+  \includegraphics[width=0.9\textwidth]{task1_annotated.pdf}
+  \caption{Annotated spectra: vowel fundamentals, consonant range and noise-only region, for \SI{5}{\centi\metre} (top) and \SI{1}{\metre} (bottom).}
   \label{fig:t1_annot}
 \end{figure}
 
@@ -123,46 +138,77 @@ Both recordings are uncompressed WAV, \SI{48}{\kilo\hertz}, 24-bit PCM, mono, no
 % =====================================================
 
 \subsection{Method}
-% FFT -> multiply by gain array (dB profile with ramped edges, mirrored for negative
-% frequencies so the IFFT is real) -> IFFT -> real part. Mention the scaling to int32 on saving.
+The recording is transformed with the FFT, every bin is multiplied by a gain array and the result is transformed back with the IFFT.
+The gain array has the same length $N$ as the signal.
+A band is defined by \texttt{gain\_ctrl(low, high, gain\_dB, ...)}: a trapezoidal profile in dB is built over the positive frequencies with \texttt{np.interp}, converted to linear gain with $10^{\mathrm{dB}/20}$, multiplied into the array, and mirrored onto the negative-frequency bins so that the IFFT output is real.
+The parameter $q\in[0,1]$ sets the fraction of the band width over which each edge ramps ($q=0$ ramps over one bin, a rectangle).
+Hard edges produced audible ringing (Gibbs phenomenon), so the band edges are interpolated, with $q=0.1$ for broad bands and $q=0.25$--$0.3$ for the narrower bands.
+Bands that start at DC or end at Nyquist have their ramp placed outside the spectrum so the ends receive the full gain, which fixed a gain curve that rose at both ends of the spectrum.
+Several bands can be stacked on one array by calling \texttt{gain\_ctrl} repeatedly.
+After the IFFT only the real part is kept (\texttt{np.real}); the imaginary part is numerically close to zero because of the mirrored gain array.
+An identity test, with a gain array of ones, confirmed that the output equals the input (\texttt{np.allclose}), so the pipeline itself introduces no change.
+The result is scaled by $2^{31}-1$ and saved as 32-bit integer WAV, the same format as the input.
 
 \subsection{Noise to be removed}
-% For each recording: what kind (room rumble / mains hum / hiss / spike near 500 Hz...)
-% and its frequency range.
+\textbf{\SI{5}{\centi\metre}:}
+low-frequency rumble below about \SI{80}{\hertz}, which lies below the fundamental of the voice, and hiss above about \SI{12}{\kilo\hertz}, where no voice energy remains.
+Above \SI{16}{\kilo\hertz} only the flat electronic floor of about \SI{-143}{\decibel FS} is present.
+The spectrum between \SIrange{20}{100}{\hertz} is at \SIrange{-70}{-80}{\decibel FS}, as high as the voice harmonics themselves, whereas the \SI{1}{\metre} recording has only about \SI{-107}{\decibel FS} at \SI{50}{\hertz}.
+
+\textbf{\SI{1}{\metre}:}
+room rumble below about \SI{85}{\hertz}, a narrow spike near \SI{500}{\hertz} (\SIrange{480}{505}{\hertz}), possibly the 10th harmonic of mains hum, a room-resonance bump around \SIrange{2.2}{2.8}{\kilo\hertz} that is higher than in the \SI{5}{\centi\metre} recording, and hiss above \SI{13}{\kilo\hertz}, where the consonants have already ended.
+The recording at \SI{1}{\metre} also contains room reverberation, which cannot be removed with a frequency-domain gain, so an audible difference to the \SI{5}{\centi\metre} recording remains.
 
 \subsection{Bass loss with distance and pop sounds}
-% 5 cm: proximity effect / plosive energy at low frequencies -> low cut.
-% 1 m: bass loss with distance + room effects -> boost around the fundamentals.
+\textbf{\SI{5}{\centi\metre}:}
+close to the microphone the low frequencies are already clear, so the bass boost is small, and the main risk is pop sounds.
+A pop was identified between \SI{1.28}{\second} and \SI{1.30}{\second} (measured in a DAW), lasting about \SI{50}{\milli\second}.
+In the \SIrange{1.28}{1.30}{\second} window the RMS level is \SI{-29.8}{\decibel FS}, \SI{15}{\decibel} above the \SI{-44.9}{\decibel FS} of the preceding \SI{80}{\milli\second}; the same window in the \SI{1}{\metre} recording shows no such rise (\SI{-60.5}{\decibel FS} against \SI{-61.7}{\decibel FS}).
+Most of its energy lies below \SI{150}{\hertz}, but it extends throughout the spectrum and so cannot be removed completely with a gain curve.
+A low cut from DC to \SI{80}{\hertz}, below the fundamental of about \SI{95}{\hertz}, removes rumble and the largest part of the pop energy, and a modest boost of \SI{+4}{\decibel} between \SI{95}{\hertz} and \SI{400}{\hertz}, covering the first harmonics, adds depth.
+Brightness is added in the noisy consonant region (\SIrange{3}{10}{\kilo\hertz}) for clarity, and hiss is cut above \SI{12.2}{\kilo\hertz}.
+
+\textbf{\SI{1}{\metre}:}
+the \SI{1}{\metre} recording is about \SI{21}{\decibel} quieter than the \SI{5}{\centi\metre} recording at \SI{100}{\hertz} and \SI{17}{\decibel} quieter at \SI{1}{\kilo\hertz}, and \SI{35}{\decibel} quieter at \SI{50}{\hertz} (smoothed spectra).
+Bass is lost with distance and the fundamental measured higher than at \SI{5}{\centi\metre} (Table~\ref{tab:vowels}), so a larger boost of \SI{+6}{\decibel} is applied between \SI{95}{\hertz} and \SI{180}{\hertz} to restore depth, with a low cut below \SI{85}{\hertz} to remove ambient rumble.
+The overall level of the \SI{1}{\metre} recording is raised by \SI{21}{\decibel} so that its peaks match the \SI{5}{\centi\metre} recording (raw peaks \SI{-44.5}{\decibel FS} and \SI{-22.5}{\decibel FS}); the enhanced peaks are 0.122 and 0.147 of full scale.
+This also lifts the noise floor, which is audible once the voice ends (RMS \SI{-73}{\decibel FS} in the enhanced \SI{1}{\metre} recording, from \SI{-96.6}{\decibel FS} before enhancement, against \SI{-94}{\decibel FS} for the enhanced \SI{5}{\centi\metre} recording), and is the reason for the strong high cut and the notch at \SI{500}{\hertz}.
+The band-wise gains in Table~\ref{tab:gains} are applied on top of the \SI{21}{\decibel} level match.
 
 \begin{table}[H]
   \centering
-  \caption{Gain adjustments applied (final settings).}
+  \caption{Gain adjustments applied (final settings). For \SI{1}{\metre} a general gain of \SI{+21}{\decibel} over the whole spectrum is applied first and the bands below are added to it.}
   \label{tab:gains}
   \begin{tabular}{lcccl}
     \toprule
-    Recording & Band (Hz) & Gain (dB) & Purpose & Reason \\
+    Recording & Band (Hz) & Gain (dB) & $q$ & Purpose \\
     \midrule
-    5\,cm & 0--60    & -12 & Low cut     & Pops / rumble \\
-    5\,cm & 95--400  & +3.5 & Bass boost & Depth \\
-    5\,cm & 3000--10000 & +6 & Brightness & Clarity \\
-    5\,cm & 12200--Nyq & -12 & High cut   & Hiss \\
-    1\,m  & --       & --  & --          & -- \\
+    5\,cm & 0--80        & $-16$ & 0.1  & Low cut: rumble and pop energy \\
+    5\,cm & 95--400      & $+4$  & 0.1  & Bass boost: first harmonics \\
+    5\,cm & 3000--10000  & $+6$  & 0.1  & Brightness: consonant region \\
+    5\,cm & 12200--Nyq   & $-12$ & 0.1  & High cut: hiss \\
+    \midrule
+    1\,m  & 0--Nyq       & $+21$ & 0    & Volume match to \SI{5}{\centi\metre} peaks \\
+    1\,m  & 0--85        & $-12$ & 0.3  & Low cut: room rumble \\
+    1\,m  & 95--180      & $+6$  & 0.3  & Bass boost: restore depth \\
+    1\,m  & 480--505     & $-12$ & 0.25 & Notch: \SI{500}{\hertz} spike \\
+    1\,m  & 2200--2800   & $-4$  & 0.25 & Room resonance \\
+    1\,m  & 3000--10000  & $+7$  & 0.1  & Brightness \\
+    1\,m  & 13000--Nyq   & $-30$ & 0.1  & High cut: hiss \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=0.9\textwidth]{gain_curves.pdf}
-  \fbox{\parbox{0.9\textwidth}{\centering Placeholder: gain curves (5\,cm and 1\,m)}}
-  \caption{Gain control curves applied to each recording.}
+  \includegraphics[width=\textwidth]{gain_curves.pdf}
+  \caption{Gain control curves applied to each recording (net gain per frequency, including the \SI{21}{\decibel} level match at \SI{1}{\metre}).}
   \label{fig:gain}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=0.9\textwidth]{overlay_enhanced.pdf}
-  \fbox{\parbox{0.9\textwidth}{\centering Placeholder: overlay of enhanced 5\,cm vs 1\,m spectra}}
+  \includegraphics[width=0.9\textwidth]{overlay_enhanced.pdf}
   \caption{Enhanced spectra, \SI{5}{\centi\metre} vs \SI{1}{\metre}.}
   \label{fig:overlay}
 \end{figure}
@@ -172,47 +218,120 @@ Both recordings are uncompressed WAV, \SI{48}{\kilo\hertz}, 24-bit PCM, mono, no
 % =====================================================
 
 \subsection{Design overview}
-% Map your design to the Aphex block diagram: dry path, exciter sidechain
-% (band-pass around 2 kHz -> tanh -> pick 3rd harmonic near 6 kHz), optional big-bottom
-% sidechain (LPF 50--190 Hz), mixer. Why only a band is fed to the non-linearity and
-% why only certain harmonics are kept.
+The exciter is built on the \SI{5}{\centi\metre} recording and follows the Aphex block diagram (Figure~\ref{fig:block}).
+The dry signal passes straight through to the mixer.
+In the exciter sidechain a band of the signal is isolated by zeroing all FFT bins outside it (\texttt{band\_pass}, built from two \texttt{gain\_ctrl} calls with $-\infty$\,dB, in place of a tunable high-pass filter), normalised to a peak of 1 so that the drive is always effective, and passed through $\tanh(\mathrm{drive}\cdot x)$.
+A second band-pass then keeps only the wanted harmonics, which are scaled by the mix ratio and added to the dry signal.
+
+$\tanh$ only starts to distort once its input reaches $\pm1$.
+For a sine input of sufficient drive the peaks are squashed into a square-like shape, which adds sine waves at multiples of the input frequency.
+Because $\tanh$ is odd, the top and bottom are squashed equally and only odd harmonics are produced.
+A sidechain centred on \SI{2}{\kilo\hertz} therefore places the third harmonic at \SI{6}{\kilo\hertz}, where the ear is most sensitive, and the fifth at \SI{10}{\kilo\hertz}, which is not too high.
+Only a band is fed to the non-linearity because the bandwidth of the output grows with the bandwidth of the input and a wide input produces muddy, unpleasant intermodulation.
+Only some harmonics are kept so that the generated content stays in the region where it is wanted (above \SI{5.5}{\kilo\hertz}) and the low harmonics are not added to the voice.
+The big-bottom sidechain of the Aphex diagram (low-pass \SIrange{50}{190}{\hertz}) is not implemented.
+
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=0.9\textwidth]{exciter_block.pdf}
-  \fbox{\parbox{0.9\textwidth}{\centering Placeholder: block diagram of your exciter}}
+  \resizebox{\textwidth}{!}{%
+  \begin{tikzpicture}[
+      box/.style={draw, rectangle, minimum height=1cm, minimum width=2.4cm, align=center, font=\small},
+      mix/.style={draw, circle, minimum size=0.8cm, font=\small},
+      arr/.style={-{Stealth[length=2mm]}, thick},
+      node distance=0.9cm]
+    \node (in) {input};
+    \node[box, right=1.0cm of in, yshift=0cm] (bp1) {band-pass\\sidechain};
+    \node[box, right=of bp1] (nl) {$\tanh$\\(drive)};
+    \node[box, right=of nl] (bp2) {band-pass\\harmonics};
+    \node[box, right=of bp2] (gain) {mix\\ratio};
+    \node[mix, right=0.9cm of gain] (sum) {$+$};
+    \node[right=0.6cm of sum] (out) {output};
+    \draw[arr] (in) -- (bp1);
+    \draw[arr] (bp1) -- (nl);
+    \draw[arr] (nl) -- (bp2);
+    \draw[arr] (bp2) -- (gain);
+    \draw[arr] (gain) -- (sum);
+    \draw[arr] (sum) -- (out);
+    \coordinate (split) at ($(in.east)!0.5!(bp1.west)$);
+    \draw[arr] (split) -- ++(0,1.6) -| node[above, pos=0.25, font=\small] {dry path} (sum.north);
+  \end{tikzpicture}}
   \caption{Block diagram of the implemented exciter.}
   \label{fig:block}
 \end{figure}
 
 \subsection{Pre-processing}
-% Pop removal on the 5 cm recording by FFT manipulation (band, gain).
+The exciter is run on the raw \SI{5}{\centi\metre} recording.
+The pop at \SIrange{1.28}{1.30}{\second} lies mostly below \SI{150}{\hertz} (\SI{15}{\decibel} above the surrounding signal in the raw recording), outside the sidechain band, so it is not fed into the non-linearity and no separate pop removal is applied in this task.
 
 \subsection{Iterative development}
-% One subsubsection per iteration: design -> observation -> decision.
+Each iteration was judged by listening and by plotting the dry voice, the full $\tanh$ output and the added harmonics on one spectrum (Figures~\ref{fig:iter} and~\ref{fig:ba}).
+Parameters are given as sidechain band, harmonic selection band, drive and mix.
+The dry recording has a peak of 0.0753 and an RMS of 0.0082.
+For each iteration the level of the added harmonics relative to the dry voice in \SIrange{5.5}{7}{\kilo\hertz}, and the peak and RMS of the output, are given in Table~\ref{tab:iter}.
 
 \subsubsection{Iteration 1: initial design}
-% Parameters: band centre/width, drive, harmonic selection band, mix ratio.
-% Result (look at the annotated graph) and what you decided to change.
+Sidechain \SIrange{1750}{2250}{\hertz} (\SI{500}{\hertz} wide, centred on $f=\SI{2}{\kilo\hertz}$), harmonics kept \SIrange{5}{7}{\kilo\hertz}, drive 10, mix 0.5.
+A band-pass was used instead of a high-pass because the narrower input reduces mud.
+The plot shows that $\tanh$ works as expected: only odd harmonics appear, at \SI{6}{\kilo\hertz} (3rd), \SI{10}{\kilo\hertz} (5th) and \SI{14}{\kilo\hertz} (7th).
+The result sounds robotic with a high-frequency metallic character.
+The added harmonics are \SI{15.4}{\decibel} louder than the voice itself in \SIrange{5.5}{7}{\kilo\hertz}, and the output peak is 0.242, 3.2 times the dry peak, with the RMS tripled to 0.0252, so the drive and mix were reduced.
 
-\subsubsection{Iteration 2: ...}
-% What changed and why; observed effect.
+\subsubsection{Iteration 2: lower drive and mix}
+Same bands, drive 3 and mix 0.1, so that less signal is pushed into $\tanh$ and the added harmonics are quieter.
+The added harmonic peaks sit at about \SI{-90}{\decibel FS} around \SI{6}{\kilo\hertz}.
+The harmonics are now \SI{12.5}{\decibel} below the voice and the output peak is unchanged (0.0753).
+The boost in the desired region is clearly audible and the k and click sounds are more present, but the effect is limited to a single narrow region, so the next step widens the range of frequencies.
 
-\subsubsection{Iteration 3: ...}
-% Drive comparison, mix ratio tuning, etc.
+\subsubsection{Iteration 3: wider bands}
+Sidechain \SIrange{2000}{4000}{\hertz}, harmonics kept \SIrange{4}{12}{\kilo\hertz}, drive 3, mix 0.25.
+The harmonics now cover a wider range, but the result shows more ringing than iteration 1; the output peak rises to 0.129 (1.7 times the dry peak) although the RMS stays at 0.0084.
+
+\subsubsection{Iteration 4: later harmonic band, higher drive}
+The harmonic selection band was moved to start at \SI{5.5}{\kilo\hertz} (keeping the third harmonic) and end at \SI{12}{\kilo\hertz}, with mix reduced to 0.15 to keep the output peak close to the level of the dry signal, and the drive was increased in steps up to 6.
+With drive 6 and mix 0.15 the harmonics are \SI{8.2}{\decibel} below the voice and the output peak is 0.0985.
+The harmonics are clearly audible, but the consonants become too prominent and the voice develops a lisp.
+
+\subsubsection{Iteration 5: final design}
+The drive was reduced to 4, the harmonic selection band was narrowed to end at \SI{10}{\kilo\hertz}, and the mix was varied up and down until a sweet spot was found at 0.25.
+The k and s sounds are more pronounced and the voice sounds closer, while still sounding similar to the original.
+The harmonics are \SI{10.2}{\decibel} below the voice in \SIrange{5.5}{7}{\kilo\hertz}, and the output has a peak of 0.116 and an RMS of 0.0084.
+
+\begin{table}[H]
+  \centering
+  \caption{Exciter output for each iteration (dry: peak 0.0753, RMS 0.0082).}
+  \label{tab:iter}
+  \footnotesize
+  \begin{tabular}{lccccrcc}
+    \toprule
+    It. & Sidechain (Hz) & Keep (Hz) & Drive & Mix & Harmonics vs dry (dB) & Peak & RMS \\
+    \midrule
+    1 & 1750--2250 & 5000--7000  & 10 & 0.5  & $+15.4$ & 0.242 & 0.0252 \\
+    2 & 1750--2250 & 5000--7000  & 3  & 0.1  & $-12.5$ & 0.075 & 0.0083 \\
+    3 & 2000--4000 & 4000--12000 & 3  & 0.25 & $-15.4$ & 0.129 & 0.0084 \\
+    4 & 2000--4000 & 5500--12000 & 6  & 0.15 & $-8.2$  & 0.099 & 0.0086 \\
+    5 (final) & 2000--4000 & 5500--10000 & 4 & 0.25 & $-10.2$ & 0.116 & 0.0084 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=\textwidth]{exciter_before_after.pdf}
-  \fbox{\parbox{0.9\textwidth}{\centering Placeholder: annotated spectrum \SIrange{2}{12}{\kilo\hertz}, before vs after}}
-  \caption{Annotated spectrum (\SIrange{2}{12}{\kilo\hertz}) before and after the exciter, showing the generated harmonics near \SI{6}{\kilo\hertz}.}
+  \includegraphics[width=\textwidth]{exciter_iterations.pdf}
+  \caption{Dry voice and the harmonics added in each iteration, \SIrange{2}{14}{\kilo\hertz} (power level smoothed over \SI{50}{\hertz}). The dotted line marks \SI{6}{\kilo\hertz}, the third harmonic of the \SI{2}{\kilo\hertz} sidechain; the added harmonics of iteration 1 exceed the voice by \SI{15}{\decibel} there.}
+  \label{fig:iter}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{exciter_before_after.pdf}
+  \caption{Annotated spectrum (\SIrange{2}{12}{\kilo\hertz}) before and after the final exciter, showing the sidechain band (\SIrange{2}{4}{\kilo\hertz}) and the harmonics kept (\SIrange{5.5}{10}{\kilo\hertz}).}
   \label{fig:ba}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  % \includegraphics[width=\textwidth]{exciter_drive_compare.pdf}
-  \fbox{\parbox{0.9\textwidth}{\centering Placeholder: annotated comparison of drive levels / design changes}}
-  \caption{Effect of drive level (or design change) on the harmonic content.}
+  \includegraphics[width=\textwidth]{exciter_drive_compare.pdf}
+  \caption{Effect of drive on the added harmonics with the final bands and mix 0.25: the harmonics are \SI{23.8}{\decibel}, \SI{10.2}{\decibel} and \SI{3.8}{\decibel} below the voice at drive 2, 4 and 6 (\SIrange{5.5}{7}{\kilo\hertz}).}
   \label{fig:drive}
 \end{figure}
 
@@ -225,41 +344,68 @@ Both recordings are uncompressed WAV, \SI{48}{\kilo\hertz}, 24-bit PCM, mono, no
     \toprule
     Parameter & Value \\
     \midrule
-    Sidechain band (Hz)            & -- \\
-    Non-linearity / drive          & $\tanh$, drive = -- \\
-    Harmonic selection band (Hz)   & -- \\
-    Mix ratio                      & -- \\
-    Big-bottom band (Hz) (if used) & -- \\
+    Input recording                & \SI{5}{\centi\metre}, raw \\
+    Sidechain band (Hz)            & 2000--4000 \\
+    Sidechain normalisation        & peak = 1 \\
+    Non-linearity / drive          & $\tanh$, drive = 4 \\
+    Harmonic selection band (Hz)   & 5500--10000 \\
+    Mix ratio                      & 0.25 \\
+    Big-bottom band (Hz) (if used) & not used \\
+    Output peak / RMS              & 0.116 / 0.0084 (dry: 0.0753 / 0.0082) \\
     \bottomrule
   \end{tabular}
 \end{table}
-% Explain why this is the best: spectral evidence, perceived loudness, no unpleasant
-% harmonics, amplitude not changed much (e.g.\ compare peak/RMS before and after).
+The selection band starts at \SI{5.5}{\kilo\hertz} so that the third harmonic of the sidechain band is kept, and ends at \SI{10}{\kilo\hertz}, which removes the highest content that caused the lisp at drive 6.
+A drive of 4 and a mix of 0.25 were the settings at which the consonants are more pronounced and the voice sounds closer without sounding different or harsh.
+The sweep in Figure~\ref{fig:drive} shows why: at drive 2 the harmonics are \SI{23.8}{\decibel} below the voice and the output peak (0.083) barely changes, at drive 6 they are only \SI{3.8}{\decibel} below the voice, the peak rises to 0.132 and the RMS to 0.0090, and this is the setting that produced the lisp.
+The final design keeps the RMS within \SI{0.2}{\decibel} of the dry voice (0.0084 against 0.0082) and the peak \SI{3.7}{\decibel} higher, whereas iteration 1 raised the RMS by \SI{9.7}{\decibel} and the peak by \SI{10.1}{\decibel}.
+The added harmonics are all odd and lie in \SIrange{5.5}{10}{\kilo\hertz}, so the voice is made more prominent at the most sensitive frequencies without a noticeable increase in level.
 
-% =====================================================
-\section*{Acknowledgement of GenAI Use}
-% =====================================================
-% Required. State tool name, version, publisher; how it was used; what you did yourself.
-\textbf{Tool:} Claude (version: ..., publisher: Anthropic). \\
-\textbf{Use:} ... \\
-\textbf{Own contribution:} ...
 
+
+%------------------------------------------------------------------------------------------------------------------------------------------------------
+\pagebreak
 % =====================================================
 \appendix
+
+\section{Acknowledgement of GenAI Use}
+% =====================================================
+\textbf{Tools:}
+Claude Opus 5.5 (Anthropic);
+Claude Sonnet 5.5 (Anthropic);
+Gemini 3.1 Pro (Google), plus various other Gemini versions for AI overviews (Google);
+GitHub Copilot (Microsoft).\\
+\textbf{Use:}
+Claude Opus 5.5 was used to debug code syntax and logic and to suggest ways of making the code more efficient; to suggest the dBFS scale for the frequency-domain magnitude; to suggest an optimised pipeline for Task~2; to check the Task~1 readings against our own analysis; to explain the exciter and how a non-linearity creates harmonics; to fix a gain curve that rose at both ends of the spectrum; and to plot the overlay of both enhanced recordings and the harmonics for Task~3.
+Gemini 3.1 Pro was used for debugging and helping plot graphs, error checking in the report.
+Gemini AI overviews for general lookups, and GitHub Copilot for inline autocomplete.\\
+\textbf{Own contribution:}
+The recordings; the visual analysis of the spectra in Task~1; the choice of every gain setting in Task~2 and of every parameter in the iterative Task~3 design, judged by listening and by the spectrum plots; the code structure; and writing, checking and editing this report.
+
+\section{Usage instructions}
+% =====================================================
+From a terminal, while in the project folder, run:
+\begin{verbatim}
+python3 run_tasks.py
+\end{verbatim}
+The scripts need \texttt{numpy}, \texttt{scipy} and \texttt{matplotlib}.
+The plots of Tasks 1--3 are opened with \texttt{plt.show()}.
+The files \texttt{enhanced\_5cm.wav}, \texttt{enhanced\_1m.wav} and \texttt{exciter\_5cm\_5.wav} are written to the working directory.
+\texttt{run\_tasks.py} imports \texttt{task1\_plot.py}, \texttt{task2\_enhance.py} and \texttt{task3\_exciter.py}, which must be in the same folder.
+
 \section{Python Code}
 % =====================================================
-% Files live next to this .tex file. Update names to match Moodle conventions.
 
 \subsection{run\_tasks.py}
-%\lstinputlisting{run_tasks.py}
+\lstinputlisting{../run_tasks.py}
 
 \subsection{task1\_plot.py}
-%\lstinputlisting{task1_plot.py}
+\lstinputlisting{../task1_plot.py}
 
 \subsection{task2\_enhance.py}
-%\lstinputlisting{task2_enhance.py}
+\lstinputlisting{../task2_enhance.py}
 
 \subsection{task3\_exciter.py}
-%\lstinputlisting{task3_exciter.py}
+\lstinputlisting{../task3_exciter.py}
 
 \end{document}
