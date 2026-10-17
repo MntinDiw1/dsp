@@ -26,6 +26,7 @@
 - [ ] Collect evidence of iteration for task 3 (with plots/param values)
 - [ ] Clean up comments once report is written
 - [ ] Delete any test functions (what to do with gain curve plot ??)
+- 
 
 ---
 
@@ -133,7 +134,29 @@ Harmonics plotted to visualise changes
 - mix: 0.5
 
 RESULT: robotic/high-frequency metallic sound (why do we think?)
+tanh works as only odd harmonics visible (6 kHz (3rd), 10 kHz (5th), 14 kHz (7th))
 
 **Attempt 2**
 
-bring down the mix so the harmonics are quieter. increase the size of the sidechain band so increase that its not just a single tone
+bring down the mix so the harmonics are quieter. increase the size of the sidechain band so increase that its not just a single tone.
+might need to increase q value of bandpass to avoid Gibbs phenomenon.
+
+For now, changes:
+Drive: 3 (feed less into tanh to lower distortion)
+Mix:0.1 (harmonics quieter)
+
+Result: Green added harmonic peaks around -90dB at 6kHz. I hear clear boost in harmonics in desired region, k's and clicky sounds are more present. However I want this effect to cover a wider range of frequencies.
+
+**Attempt 3**
+
+Wanted to widen the range at which the harmonics were present, so I pushed the sidechain band up, and opened up the region where the harmonics would be present (4k-12kHz). This caused a lot of ringing, more so than attempt 1. (see function call for parameter values).
+
+**Attempt 4**
+
+To create a more subtle change, i started the keep band later (5.5kHz - keeps 3rd harmonic), and stop at 12kHz. Moving mix down to 0.15 would keep the output peak around the same level as the dry signal and thus not be overly harsh. 
+
+**Attempt 5+**
+Drive was increased iteratively from here up to drive=6. At this point I could hear the harmonics more clearly, however, it created a 'lisp' effect wherethe consonants were too prominent. This was fixed by reducing drive back down to 4, making the 'keep window" smaller (up to 10kHz), and playing with mix until a balance is struck.
+
+The mix was increased and decreased until a 'sweetspot'  was found at mix=0.25. The k's and s's are more pronounced and the voice seems 'closer'. however it still sounds relatively the same.
+
