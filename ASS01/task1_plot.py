@@ -37,7 +37,4 @@ def plot_audio(name, sample_rate, audio):
 
     plt.tight_layout()  # stop axes overlapping
 
-    plt.show()
-
-
     return None
