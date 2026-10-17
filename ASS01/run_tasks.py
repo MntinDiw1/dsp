@@ -48,14 +48,14 @@ gain_array_1m = np.ones(len(audio_1m))
 # --- 5cm ---
 #gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ...)
 #gain_ctrl(0, sample_rate_5cm //2 - 1, 12, sample_rate_5cm, gain_array_5cm) #VOLUME: doesn't multiply the Nyquist bin twice (?)
-gain_ctrl(0, 60, -12, sample_rate_5cm, gain_array_5cm) #LOW CUT: Remove rumble and some POP energy
+gain_ctrl(0, 60, -12, sample_rate_5cm, gain_array_5cm, 0.0) #LOW CUT: Remove rumble and some POP energy
 gain_ctrl(95, 400, 3.5, sample_rate_5cm, gain_array_5cm) #BASS BOOST: The first couple harmonics for depth
 gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS: The noisy consonant region + extra for clarity
 gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm) #HIGH CUT: Remove any hiss
 gain_ctrl(0, 80, -16, sample_rate_5cm, gain_array_5cm) #LOW CUT: Remove rumble and some POP energy
 gain_ctrl(95, 400, 3.5, sample_rate_5cm, gain_array_5cm) #BASS BOOST: The first couple harmonics for depth
 gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm) #BRIGHTNESS: The noisy consonant region + extra for clarity
-gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm) #HIGH CUT: Remove any hiss
+gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm, 0.0) #HIGH CUT: Remove any hiss
 
 #apply gain + save
 plot_gain_array(gain_array_5cm,sample_rate_5cm,"5cm")
