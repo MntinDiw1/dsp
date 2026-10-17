@@ -4,8 +4,6 @@ from scipy.fft import fft
 
 from task2_enhance import gain_ctrl, enhancer
 
-# ---- TASK3: AURAL EXCITER ----
-
     #Dry path
 
     #Exciter sidechain (HPF: 800-6kHz)

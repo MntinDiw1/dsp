@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import fft
@@ -53,7 +54,7 @@ def plot_audio_with_highlights(file_path, highlight_freqs=None):
     # --- HIGHLIGHT FREQUENCIES ---
     if highlight_freqs:
         # Generate distinct colors for each highlighted frequency
-        colors = plt.cm.get_cmap('Set1', len(highlight_freqs))
+        colors = plt.get_cmap('Set1', len(highlight_freqs))
         
         for i, (freq, label) in enumerate(highlight_freqs.items()):
             # Plot vertical lines on the frequency spectrum
@@ -82,4 +83,4 @@ if __name__ == "__main__":
         10000: "High frequency noise"
     }
     
-plot_audio_with_highlights("../wav/5cm.wav", highlight_freqs=frequencies_to_mark)
+plot_audio_with_highlights(os.path.join(os.path.dirname(__file__), "..", "wav", "5cm.wav"), highlight_freqs=frequencies_to_mark)
