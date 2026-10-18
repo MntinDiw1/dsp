@@ -24,8 +24,8 @@ audio_1m = audio_1m / (2**31)
 # ------ TASK 1 ------
 
 # Plot audio files
-plot_audio("5cm", sample_rate_5cm, audio_5cm, 90,110,2000,12000,14000)
-plot_audio("1m", sample_rate_1m, audio_1m, 90,110,2000,12000,14000)
+plot_audio("5cm", sample_rate_5cm, audio_5cm, 90,105,2000,14500,15500)
+plot_audio("1m", sample_rate_1m, audio_1m, 95,115,2000,12500,14000)
 
 # ------ TASK 2 ------
 
