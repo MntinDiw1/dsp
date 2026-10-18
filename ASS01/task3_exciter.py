@@ -59,7 +59,7 @@ def plot_exciter_spectrum(audio, harmonics, sample_rate, in_lo, in_hi, keep_lo, 
 
     plt.figure(figsize=(12, 5))
     plt.title("Exciter spectrum (2kHz to 12kHz)")
-    for label, x, style in (("before (dry)", audio, "k-"), ("after (dry + harmonics)", audio + harmonics, "g-"), ("added harmonics only", harmonics, "b--")):
+    for label, x, style in (("before (dry)", audio, "g-"), ("added harmonics only", harmonics, "b--")):
         mag_fft = 20 * np.log10(np.abs((1/n) * fft(x)[:n // 2]) + 1e-12)  # +1e-12 avoids log(0)
         plt.plot(freqs[zoom], mag_fft[zoom], style, label=label)
     plt.xscale("log")
