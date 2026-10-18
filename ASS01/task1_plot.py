@@ -69,7 +69,7 @@ def plot_audio(name, sample_rate, audio, vowels_Start, vowels_end, consonants_st
     plt.text(np.sqrt(vowels_Start * vowels_end), y_bottom + pad, "Vowels", color="red", rotation=90, horizontalalignment='center', verticalalignment='bottom')
 
     # Annotate Harmonics
-    plt.text(np.sqrt(harmonic1_start * harmonic1_end), y_bottom + pad, "Harmonics 1, 2, 3", color="orange", rotation=90, horizontalalignment='center', verticalalignment='bottom')
+    plt.text(np.sqrt(harmonic1_start * harmonic1_end), y_bottom + pad, "Harmonics 2, 3, 4", color="orange", rotation=90, horizontalalignment='center', verticalalignment='bottom')
 
     plt.axvspan(harmonic1_start, harmonic1_end, color="orange", alpha=0.25)
 
@@ -83,7 +83,7 @@ def plot_audio(name, sample_rate, audio, vowels_Start, vowels_end, consonants_st
 
     # Annotate Noise (top of the graph)
     plt.axvspan(noise_start, noise_end, color="gray", alpha=0.25)
-    plt.text(np.sqrt(noise_start * noise_end), y_top - pad, "Noise", color="gray", rotation=90, horizontalalignment='center', verticalalignment='top')
+    plt.text(np.sqrt(noise_start * noise_end), y_top - pad, "Noise Only", color="gray", rotation=90, horizontalalignment='center', verticalalignment='top')
     
     plt.tight_layout()
     plt.show()
