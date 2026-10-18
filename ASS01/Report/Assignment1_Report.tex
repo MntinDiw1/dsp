@@ -199,19 +199,15 @@ There was no pop at this distance; however, since the volume was increased so mu
 \section{Task 3: Aural Exciter}
 % =====================================================
 
-\subsection{Design overview}
-The exciter is built on the \SI{5}{\centi\metre} recording and follows the Aphex block diagram (Figure~\ref{fig:block}).
-The dry signal passes straight through to the mixer.
-In the exciter sidechain a band of the signal is isolated by zeroing all FFT bins outside it (\texttt{band\_pass}, built from two \texttt{gain\_ctrl} calls with $-\infty$\,dB, in place of a tunable high-pass filter), normalised to a peak of 1 so that the drive is always effective, and passed through $\tanh(\mathrm{drive}\cdot x)$.
-A second band-pass then keeps only the wanted harmonics, which are scaled by the mix ratio and added to the dry signal.
-
-$\tanh$ only starts to distort once its input reaches $\pm1$.
-For a sine input of sufficient drive the peaks are squashed into a square-like shape, which adds sine waves at multiples of the input frequency.
-Because $\tanh$ is odd, the top and bottom are squashed equally and only odd harmonics are produced.
-A sidechain centred on \SI{2}{\kilo\hertz} therefore places the third harmonic at \SI{6}{\kilo\hertz}, where the ear is most sensitive, and the fifth at \SI{10}{\kilo\hertz}, which is not too high.
-Only a band is fed to the non-linearity because the bandwidth of the output grows with the bandwidth of the input and a wide input produces muddy, unpleasant intermodulation.
-Only some harmonics are kept so that the generated content stays in the region where it is wanted (above \SI{5.5}{\kilo\hertz}) and the low harmonics are not added to the voice.
-The big-bottom sidechain of the Aphex diagram (low-pass \SIrange{50}{190}{\hertz}) is not implemented.
+\paragraph{Design.}
+The exciter follows the Aphex sidechain (Figure~\ref{fig:block}), ignoring the Big Bottom sidechain, and runs on the raw \SI{5}{\centi\metre} recording.
+A band-pass filter is created by zeroing all FFT bins outside a specified region (two \texttt{gain\_ctrl} cuts).
+A band-pass was used instead of the tunable high-pass, so that less of the voice enters the non-linearity and fewer unwanted harmonics are created.
+The band is normalised to a peak of 1, so that the drive does not depend on the recording level, and passed through $\tanh(\mathrm{drive}\cdot x)$.
+This is almost linear for small inputs and compresses progressively as they grow.
+Because $\tanh$ is an odd function, it creates only odd-order harmonics.
+A second band-pass keeps the wanted products further up the spectrum, which are scaled by the mix value and added to the dry signal.
+The pop was not removed before processing; however, since it lies mostly below the sidechain band, the pop is barely amplified.
 
 \begin{figure}[H]
   \centering
@@ -241,109 +237,70 @@ The big-bottom sidechain of the Aphex diagram (low-pass \SIrange{50}{190}{\hertz
   \label{fig:block}
 \end{figure}
 
-\subsection{Pre-processing}
-The exciter is run on the raw \SI{5}{\centi\metre} recording.
-The pop at \SIrange{1.28}{1.30}{\second} lies mostly below \SI{150}{\hertz} (\SI{15}{\decibel} above the surrounding signal in the raw recording), outside the sidechain band, so it is not fed into the non-linearity and no separate pop removal is applied in this task.
+\begin{figure}[H]
+  \centering
+  \includesvg[width=\textwidth]{task3_full_plot}
+  \caption{Final design: dry voice, full $\tanh$ output and the added harmonics. The $\tanh$ output contains only odd harmonics of the sidechain band.}
+  \label{fig:t3_full}
+\end{figure}
 
-\subsection{Iterative development}
-Each iteration was judged by listening and by plotting the dry voice, the full $\tanh$ output and the added harmonics on one spectrum (Figures~\ref{fig:iter} and~\ref{fig:ba}).
-Parameters are given as sidechain band, harmonic selection band, drive and mix.
-The dry recording has a peak of 0.0753 and an RMS of 0.0082.
-For each iteration the level of the added harmonics relative to the dry voice in \SIrange{5.5}{7}{\kilo\hertz}, and the peak and RMS of the output, are given in Table~\ref{tab:iter}.
-
-\subsubsection{Iteration 1: initial design}
-Sidechain \SIrange{1750}{2250}{\hertz} (\SI{500}{\hertz} wide, centred on $f=\SI{2}{\kilo\hertz}$), harmonics kept \SIrange{5}{7}{\kilo\hertz}, drive 10, mix 0.5.
-A band-pass was used instead of a high-pass because the narrower input reduces mud.
-The plot shows that $\tanh$ works as expected: only odd harmonics appear, at \SI{6}{\kilo\hertz} (3rd), \SI{10}{\kilo\hertz} (5th) and \SI{14}{\kilo\hertz} (7th).
-The result sounds robotic with a high-frequency metallic character.
-The added harmonics are \SI{15.4}{\decibel} louder than the voice itself in \SIrange{5.5}{7}{\kilo\hertz}, and the output peak is 0.242, 3.2 times the dry peak, with the RMS tripled to 0.0252, so the drive and mix were reduced.
-
-\subsubsection{Iteration 2: lower drive and mix}
-Same bands, drive 3 and mix 0.1, so that less signal is pushed into $\tanh$ and the added harmonics are quieter.
-The added harmonic peaks sit at about \SI{-90}{\decibel FS} around \SI{6}{\kilo\hertz}.
-The harmonics are now \SI{12.5}{\decibel} below the voice and the output peak is unchanged (0.0753).
-The boost in the desired region is clearly audible and the k and click sounds are more present, but the effect is limited to a single narrow region, so the next step widens the range of frequencies.
-
-\subsubsection{Iteration 3: wider bands}
-Sidechain \SIrange{2000}{4000}{\hertz}, harmonics kept \SIrange{4}{12}{\kilo\hertz}, drive 3, mix 0.25.
-The harmonics now cover a wider range, but the result shows more ringing than iteration 1; the output peak rises to 0.129 (1.7 times the dry peak) although the RMS stays at 0.0084.
-
-\subsubsection{Iteration 4: later harmonic band, higher drive}
-The harmonic selection band was moved to start at \SI{5.5}{\kilo\hertz} (keeping the third harmonic) and end at \SI{12}{\kilo\hertz}, with mix reduced to 0.15 to keep the output peak close to the level of the dry signal, and the drive was increased in steps up to 6.
-With drive 6 and mix 0.15 the harmonics are \SI{8.2}{\decibel} below the voice and the output peak is 0.0985.
-The harmonics are clearly audible, but the consonants become too prominent and the voice develops a lisp.
-
-\subsubsection{Iteration 5: final design}
-The drive was reduced to 4, the harmonic selection band was narrowed to end at \SI{10}{\kilo\hertz}, and the mix was varied up and down until a sweet spot was found at 0.25.
-The k and s sounds are more pronounced and the voice sounds closer, while still sounding similar to the original.
-The harmonics are \SI{10.2}{\decibel} below the voice in \SIrange{5.5}{7}{\kilo\hertz}, and the output has a peak of 0.116 and an RMS of 0.0084.
+\paragraph{Iterations.}
+The versions are summarised in Table~\ref{tab:iter}.
 
 \begin{table}[H]
   \centering
-  \caption{Exciter output for each iteration (dry: peak 0.0753, RMS 0.0082).}
+  \caption{Exciter versions (dry recording: peak 0.0753, RMS 0.00822).}
   \label{tab:iter}
-  \footnotesize
-  \begin{tabular}{lccccrcc}
+  \begin{tabular}{lcccccc}
     \toprule
-    It. & Sidechain (Hz) & Keep (Hz) & Drive & Mix & Harmonics vs dry (dB) & Peak & RMS \\
+    Version & Sidechain (Hz) & Keep band (Hz) & Drive & Mix & Output peak & RMS \\
     \midrule
-    1 & 1750--2250 & 5000--7000  & 10 & 0.5  & $+15.4$ & 0.242 & 0.0252 \\
-    2 & 1750--2250 & 5000--7000  & 3  & 0.1  & $-12.5$ & 0.075 & 0.0083 \\
-    3 & 2000--4000 & 4000--12000 & 3  & 0.25 & $-15.4$ & 0.129 & 0.0084 \\
-    4 & 2000--4000 & 5500--12000 & 6  & 0.15 & $-8.2$  & 0.099 & 0.0086 \\
-    5 (final) & 2000--4000 & 5500--10000 & 4 & 0.25 & $-10.2$ & 0.116 & 0.0084 \\
+    V1         & 1750--2250 & 5000--7000  & 10 & 0.5  & 0.242 & 0.02523 \\
+    V2         & 1750--2250 & 5000--7000  & 3  & 0.1  & 0.075 & 0.00830 \\
+    V3         & 2000--4000 & 4000--12000 & 3  & 0.25 & 0.130 & 0.00835 \\
+    V4         & 2000--4000 & 5500--12000 & 6  & 0.15 & 0.099 & 0.00857 \\
+    V5 (final) & 2000--4000 & 5500--10000 & 4  & 0.25 & 0.116 & 0.00845 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
+\begin{description}
+  \item[V1:] sidechain \SIrange{1750}{2250}{\hertz}, centred on \SI{2}{\kilo\hertz} so that its 3rd harmonic lands at \SI{6}{\kilo\hertz}, where the ear is most sensitive; keep band \SIrange{5}{7}{\kilo\hertz}; drive 10, mix 0.5.
+  The plot confirms that only odd harmonics appear (\SI{6}{}, \SI{10}{} and \SI{14}{\kilo\hertz}), but the voice sounds robotic and metallic, and the output peak is very large, so the drive and mix were reduced.
+  \item[V2:] drive 3, mix 0.1.
+  The peak is unchanged and the ``k'' and click sounds are clearer, but the effect is confined to one narrow region, so the bands were widened.
+  \item[V3:] sidechain \SIrange{2}{4}{\kilo\hertz} (3rd harmonics now span \SIrange{6}{12}{\kilo\hertz}), keep band \SIrange{4}{12}{\kilo\hertz}, mix 0.25.
+  The effect is broader but rings, and the peak rises to 1.7 times the dry peak.
+  \item[V4:] the keep band starts at \SI{5.5}{\kilo\hertz}, just below the lowest 3rd harmonic, and ends at \SI{12}{\kilo\hertz}; mix 0.15; drive raised in steps to 6.
+  The effect is clearly audible, but the consonants become too prominent (a lisp effect).
+  \item[V5 (final):] drive back to 4, keep band ending at \SI{10}{\kilo\hertz} to remove the content behind the lisp, and the mix tuned by ear to 0.25.
+\end{description}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{exciter_iterations.pdf}
-  \caption{Dry voice and the harmonics added in each iteration, \SIrange{2}{14}{\kilo\hertz} (power level smoothed over \SI{50}{\hertz}). The dotted line marks \SI{6}{\kilo\hertz}, the third harmonic of the \SI{2}{\kilo\hertz} sidechain; the added harmonics of iteration 1 exceed the voice by \SI{15}{\decibel} there.}
+  \caption{Dry voice and the products added by each version, \SIrange{2}{14}{\kilo\hertz} (power level smoothed over \SI{50}{\hertz}). The dotted line marks \SI{6}{\kilo\hertz}, the third harmonic of the \SI{2}{\kilo\hertz} sidechain; the products added by V1 exceed the voice by \SI{15}{\decibel} there.}
   \label{fig:iter}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{exciter_before_after.pdf}
-  \caption{Annotated spectrum (\SIrange{2}{12}{\kilo\hertz}) before and after the final exciter, showing the sidechain band (\SIrange{2}{4}{\kilo\hertz}) and the harmonics kept (\SIrange{5.5}{10}{\kilo\hertz}).}
+  \includesvg[width=\textwidth]{task3_plot}
+  \caption{Final design, \SIrange{2}{12}{\kilo\hertz}: spectrum before (dry) and after the exciter, and the added harmonics only, with the sidechain band (\SIrange{2}{4}{\kilo\hertz}) and the harmonics kept (\SIrange{5.5}{10}{\kilo\hertz}) marked.}
   \label{fig:ba}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{exciter_drive_compare.pdf}
-  \caption{Effect of drive on the added harmonics with the final bands and mix 0.25: the harmonics are \SI{23.8}{\decibel}, \SI{10.2}{\decibel} and \SI{3.8}{\decibel} below the voice at drive 2, 4 and 6 (\SIrange{5.5}{7}{\kilo\hertz}).}
-  \label{fig:drive}
-\end{figure}
-
-\subsection{Final design and justification}
-\begin{table}[H]
-  \centering
-  \caption{Final exciter parameters.}
-  \label{tab:final}
-  \begin{tabular}{ll}
-    \toprule
-    Parameter & Value \\
-    \midrule
-    Input recording                & \SI{5}{\centi\metre}, raw \\
-    Sidechain band (Hz)            & 2000--4000 \\
-    Sidechain normalisation        & peak = 1 \\
-    Non-linearity / drive          & $\tanh$, drive = 4 \\
-    Harmonic selection band (Hz)   & 5500--10000 \\
-    Mix ratio                      & 0.25 \\
-    Big-bottom band (Hz) (if used) & not used \\
-    Output peak / RMS              & 0.116 / 0.0084 (dry: 0.0753 / 0.0082) \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-The selection band starts at \SI{5.5}{\kilo\hertz} so that the third harmonic of the sidechain band is kept, and ends at \SI{10}{\kilo\hertz}, which removes the highest content that caused the lisp at drive 6.
-A drive of 4 and a mix of 0.25 were the settings at which the consonants are more pronounced and the voice sounds closer without sounding different or harsh.
-The sweep in Figure~\ref{fig:drive} shows why: at drive 2 the harmonics are \SI{23.8}{\decibel} below the voice and the output peak (0.083) barely changes, at drive 6 they are only \SI{3.8}{\decibel} below the voice, the peak rises to 0.132 and the RMS to 0.0090, and this is the setting that produced the lisp.
-The final design keeps the RMS within \SI{0.2}{\decibel} of the dry voice (0.0084 against 0.0082) and the peak \SI{3.7}{\decibel} higher, whereas iteration 1 raised the RMS by \SI{9.7}{\decibel} and the peak by \SI{10.1}{\decibel}.
-The added harmonics are all odd and lie in \SIrange{5.5}{10}{\kilo\hertz}, so the voice is made more prominent at the most sensitive frequencies without a noticeable increase in level.
-
-
+\paragraph{Final design.}
+Sidechain \SIrange{2}{4}{\kilo\hertz}, drive 4, keep band \SIrange{5.5}{10}{\kilo\hertz}, mix 0.25.
+The keep band holds the 3rd harmonics of \SIrange{2}{3.3}{\kilo\hertz} and excludes both the sidechain band itself and the content above \SI{10}{\kilo\hertz}.
+The output volume is roughly the same RMS and the peak rises by \SI{3.7}{\decibel}.
+With $\mathrm{RMS} = \sqrt{\tfrac{1}{N}\sum_n x[n]^2}$ over the whole recording, the level changes are
+\begin{equation*}
+  \Delta L_\mathrm{RMS} = 20\log_{10}\frac{\mathrm{RMS}_\mathrm{out}}{\mathrm{RMS}_\mathrm{dry}} = 20\log_{10}\frac{0.00845}{0.00822} = \SI{+0.24}{\decibel},
+  \qquad
+  \Delta L_\mathrm{peak} = 20\log_{10}\frac{0.1157}{0.0753} = \SI{+3.73}{\decibel}.
+\end{equation*}
+The k and s sounds are more pronounced and the voice sounds closer, while its level barely changes, which is the intended effect of an exciter.
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------
 \pagebreak
