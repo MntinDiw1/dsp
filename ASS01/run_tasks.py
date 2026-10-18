@@ -9,7 +9,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__))) # run from any folder: wav/
 # Assignmnet files
 from task1_plot import plot_audio
 from task2_enhance import gain_ctrl, enhancer, plot_gain_array
-from task3_exciter import exciter, plot_harmonics
+from task3_exciter import exciter, plot_harmonics, plot_exciter_spectrum
 
 # --- Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative) ---
 
@@ -24,8 +24,8 @@ audio_1m = audio_1m / (2**31)
 # ------ TASK 1 ------
 
 # Plot audio files
-plot_audio("5cm", sample_rate_5cm, audio_5cm)
-plot_audio("1m", sample_rate_1m, audio_1m)
+plot_audio("5cm", sample_rate_5cm, audio_5cm, 90,110,2000,12000,14000)
+plot_audio("1m", sample_rate_1m, audio_1m, 90,110,2000,12000,14000)
 
 # ------ TASK 2 ------
 
@@ -118,6 +118,7 @@ plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
 exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, drive=4, mix=0.25)
 
 plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm)
+plot_exciter_spectrum(audio_5cm, harmonics_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000)
 wavfile.write("exciter_5cm_5.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
 # Show audio plots
 plt.show()
