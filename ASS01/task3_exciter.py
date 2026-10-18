@@ -51,5 +51,37 @@ def plot_harmonics(audio, nonlin, harmonics, sample_rate):
     plt.legend()
     plt.tight_layout()
 
+#Plot the spectrum zoomed to 2-12kHz before and after the exciter (for report)
+def plot_exciter_spectrum(audio, harmonics, sample_rate, in_lo, in_hi, keep_lo, keep_hi):
+    n = len(audio)
+    freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting
+    zoom = (freqs >= 2000) & (freqs <= 12000)
+
+    plt.figure(figsize=(12, 5))
+    plt.title("Exciter spectrum (2kHz to 12kHz)")
+    for label, x, style in (("before (dry)", audio, "k-"), ("after (dry + harmonics)", audio + harmonics, "g-"), ("added harmonics only", harmonics, "b--")):
+        mag_fft = 20 * np.log10(np.abs((1/n) * fft(x)[:n // 2]) + 1e-12)  # +1e-12 avoids log(0)
+        plt.plot(freqs[zoom], mag_fft[zoom], style, label=label)
+    plt.xscale("log")
+    plt.xticks([2000, 3000, 4000, 6000, 8000, 12000], ["2k", "3k", "4k", "6k", "8k", "12k"])
+    plt.xlim(2000, 12000)
+    plt.ylim(bottom=-150)
+    plt.xlabel("frequency (Hz)")
+    plt.ylabel("magnitude (dB)")
+
+    y_bottom, y_top = plt.ylim()
+    pad = 0.02 * (y_top - y_bottom)  # small gap from the edge
+
+    # Annotate Sidechain
+    plt.axvspan(in_lo, in_hi, color="orange", alpha=0.25)
+    plt.text(np.sqrt(in_lo * in_hi), y_top - pad, f"sidechain\n{in_lo/1000:g}-{in_hi/1000:g} kHz", color="orange", horizontalalignment='center', verticalalignment='top')
+
+    # Annotate Harmonics kept
+    plt.axvspan(keep_lo, keep_hi, color="blue", alpha=0.25)
+    plt.text(np.sqrt(keep_lo * keep_hi), y_top - pad, f"harmonics kept\n{keep_lo/1000:g}-{keep_hi/1000:g} kHz", color="blue", horizontalalignment='center', verticalalignment='top')
+
+    plt.legend(loc="lower left")
+    plt.tight_layout()
+
 #ALSO PLOT COMPARISONS OF DIFFERENT DRIVE LEVELS
 #TUNE THE SYSTEM AND RECORD IT TO SHOWCASE ITERATIVE DEVELOPMENT (REPORT)
