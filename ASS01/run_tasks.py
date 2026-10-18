@@ -29,18 +29,7 @@ plot_audio("1m", sample_rate_1m, audio_1m)
 
 # ------ TASK 2 ------
 
-##TRIMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-# --- ENHANCER TEST ---
-#does input match output with no changes applied ?
-test_5cm = np.ones(len(audio_5cm)) #untouched gain arrays
-test_1m = np.ones(len(audio_1m))
-print("Identity test 5cm:", np.allclose(enhancer(audio_5cm, test_5cm), audio_5cm))
-print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
-# --- END OF TEST ---
-
-# --- VOLUME MATCH ---
-
-#array of n ones (floits). Each value is a multiplier for the corresponding bin
+#array of n ones (floats). Each value is a multiplier for the corresponding bin
 gain_array_5cm = np.ones(len(audio_5cm))
 gain_array_1m = np.ones(len(audio_1m))
 
@@ -60,10 +49,10 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).asty
 
 # --- 1m ---
 #gain curve
-gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME: Match to  5cm recording (matching peaks)
+gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME: Match to 5cm recording (raw RMS is 21dB quieter)
 gain_ctrl(0, 85, -12, sample_rate_1m, gain_array_1m, q=0.3) #LOW CUT: trim room rumble (less 'boxy')
 gain_ctrl(95, 180, 6, sample_rate_1m, gain_array_1m, q=0.3)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
-gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m, q=0.25)  #Reduce the 500Hz spike/whine (10th harmonic of MAINS HUM??)
+gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m, q=0.25)  #Reduce the ~483Hz whine in the noise floor (not mains: no 50Hz hum)
 gain_ctrl(2200, 2800, -4, sample_rate_1m, gain_array_1m, q=0.25)  #ROOM RESONANCE: 1m bump ~2.5kHz vs 5cm
 gain_ctrl(3000, 10000, 7, sample_rate_1m, gain_array_1m, q=0.1) #BRIGHTNESS
 gain_ctrl(13000, sample_rate_1m//2 - 1, -30, sample_rate_1m, gain_array_1m, q=0.1) #HIGH CUT consonants end lower
@@ -73,7 +62,6 @@ plot_gain_array(gain_array_1m,sample_rate_1m,"1m")
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
 wavfile.write("enhanced_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(np.int32)) #int32 scaled up (mention in report)
 
-##TRIMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 # --- AUDIO OVERLAY ---
 def plot_overlay(signals):
     # signals: list of (label, sample_rate, audio)
@@ -98,9 +86,7 @@ plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
               ("1m", sample_rate_1m, enhanced_1m)])
 # --- END OF OVERLAY ---
 
-# ------ TASK 3 ------
-
-#Run on RAW and ENHANCED audio       
+# ------ TASK 3 ------      
 
 #exciter(.., .., in_low, in_high, keep_lo, keep_hi, drive, mix)
 #apply exciter + save
@@ -119,5 +105,6 @@ exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 200
 
 plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm)
 wavfile.write("exciter_5cm_5.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
+
 # Show audio plots
 plt.show()
