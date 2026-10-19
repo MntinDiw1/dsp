@@ -13,7 +13,7 @@ def plot_audio(name, sample_rate, audio):
     # Frequency domain
     audio_fft = (1/n) * fft(audio)
 
-    # decibels relative to full scale (dBFS) - the loudest level possible in a digital system.
+    # decibels relative to full scale (dBFS)
     mag_fft = 20 * np.log10(np.abs(audio_fft))
     freqs = (np.arange(n // 2) * sample_rate / n)  # frequency bins for plotting (//2 returns integer not float)
 
@@ -36,5 +36,3 @@ def plot_audio(name, sample_rate, audio):
     plt.ylabel("magnitude (dB)")
 
     plt.tight_layout()  # stop axes overlapping
-
-    return None

@@ -2,20 +2,19 @@ import os
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
 import numpy as np
-# IFNDEF type statements not required in python, it wont try to import a file twice.
 
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # run from any folder: wav/ inputs and .wav outputs are relative to this file
 
 # Assignmnet files
 from task1_plot import plot_audio
-from task2_enhance import gain_ctrl, enhancer, plot_gain_array
+from task2_enhance import gain_ctrl, enhancer, plot_gain_array, plot_overlay
 from task3_exciter import exciter, plot_harmonics
 
-# --- Recommended: 48kHz | Signed 24-bit PCM | Mono (imperative) ---
+# ----- Load audio ----- files
 
-# Load audio files and normalise (32 bit int)
+# Recommended: 48kHz + Signed 24-bit PCM + Mono (imperative)
 sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
-audio_5cm = audio_5cm / (2**31)  # NORMALISE (32bits to store 24bit audio, bitwise shift?)
+audio_5cm = audio_5cm / (2**31)  # NORMALISE (32bits to store 24bit audio)
 
 sample_rate_1m, audio_1m = wavfile.read("wav/1m.wav")
 audio_1m = audio_1m / (2**31)
@@ -68,37 +67,18 @@ plot_gain_array(gain_array_1m,sample_rate_1m,"1m")
 enhanced_1m = enhancer(audio_1m, gain_array_1m)
 wavfile.write("enhanced_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(np.int32)) #int32 scaled up (mention in report)
 
-# --- AUDIO OVERLAY ---
-def plot_overlay(signals):
-    # signals: list of (label, sample_rate, audio)
-    plt.figure(figsize=(8, 5))
-
-    for label, fs, audio in signals:
-        n = len(audio)
-        mag_fft = 20 * np.log10(np.abs((1/n) * np.fft.fft(audio)) + 1e-12)  # +1e-12 avoids log(0)
-        freqs = np.arange(n // 2) * fs / n
-
-        plt.plot(freqs, mag_fft[: n // 2], alpha=0.6, label=label)
-
-    plt.title("Enhanced audio: 5cm vs 1m (frequency domain)")
-    plt.xlabel("frequency (Hz)")
-    plt.xscale("log")
-    plt.ylabel("magnitude (dB)")
-    plt.legend()
-
-    plt.tight_layout()
-
-plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
-              ("1m", sample_rate_1m, enhanced_1m)])
-# --- END OF OVERLAY ---
+# Generate overlay comparison plot
+#plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm), ("1m", sample_rate_1m, enhanced_1m)])
 
 # ------ TASK 3 ------      
 
-#exciter(.., .., in_low, in_high, keep_lo, keep_hi, drive, mix)
-# --- ATTEMPT5+:
+# call exiter
 exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, drive=4, mix=0.25)
-#apply exciter + save
-plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, "V5")
+
+# plot annotated
+#plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, "V5")
+
+# apply exciter + save
 wavfile.write("exciter_5cm.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
 
 # Show audio plots
