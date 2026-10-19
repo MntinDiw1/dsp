@@ -91,7 +91,7 @@ In both recordings the vowels appear as series of evenly spaced peaks.
 The lowest peak of each series was taken as the fundamental, because the peaks above it sit at integer multiples of it (e.g.\ \SI{95}{}, \SI{190}{}, \SI{285}{} and \SI{380}{\hertz} at \SI{5}{\centi\metre}), which identifies a harmonic series rather than noise.
 The fundamentals lie between about \SI{94}{} and \SI{103}{\hertz} at \SI{5}{\centi\metre} and \SI{101}{} and \SI{112}{\hertz} at \SI{1}{\metre}, as expected for an adult male voice.
 They vary between recordings because these are separate takes.
-Peaks below about \SI{8Z0}{\hertz} have no harmonic series and were not chosen; these are low-frequency rumble from pop energy and room noise.
+Peaks below about \SI{80}{\hertz} have no harmonic series and were not chosen; these are low-frequency rumble from pop energy and room noise.
 The main identification is done by looking at the bundled peaks identified figures 3 \& 4, but individual peaks are indicative of specific vowel sounds (any vowel may have more than one sound in the english language)
 
 \paragraph{Consonants.}
@@ -157,7 +157,6 @@ The low end is already strong at this proximity, so the bass boost is small: \SI
 The consonant region (\SIrange{3}{10}{\kilo\hertz}) is boosted by \SI{+6}{\decibel} for clarity and `brightness'.
 A high cut of \SI{-12}{\decibel} above \SI{12.2}{\kilo\hertz} reduces hiss.
 It is kept moderate because consonant energy extends to \SI{14.5}{\kilo\hertz} at this distance.
-\todo{Make into a table?}
 
 \begin{table}[H]
   \centering
@@ -174,7 +173,6 @@ It is kept moderate because consonant energy extends to \SI{14.5}{\kilo\hertz} a
   \end{tabular}
 \end{table} 
 
-\todo{CHECK REASONS}
 
 \paragraph{1\,m.}
 The whole spectrum is raised by \SI{+21}{\decibel} to match the volume of both recordings.
@@ -186,7 +184,6 @@ A \SI{-4}{\decibel} cut at \SIrange{2.2}{2.8}{\kilo\hertz} reduces the room reso
 The consonant region is boosted by \SI{+7}{\decibel}, slightly more than at \SI{5}{\centi\metre}, because the distant recording is duller.
 A \SI{-30}{\decibel} high cut above \SI{13}{\kilo\hertz}, just above where the consonants end, removes the hiss raised by the level match.
 There was no pop at this distance; however, since the volume was increased so much, the SNR was reduced to the point that the signal sounds noisy.
-\todo{Tabulate?}
 
 \begin{table}[H]
   \centering
@@ -205,8 +202,6 @@ There was no pop at this distance; however, since the volume was increased so mu
     \bottomrule
   \end{tabular}
 \end{table}
-
-\todo{CHECK REASONS}
 
 % =====================================================
 \section{Task 3: Aural Exciter}
@@ -266,13 +261,13 @@ The versions are summarised in Table~\ref{tab:iter}.
   \label{tab:iter}
   \begin{tabular}{lcccccc}
     \toprule
-    Version & Sidechain (Hz) & Keep band (Hz) & Drive & Mix & Output peak & RMS \\
+    Version & Sidechain (Hz) & Keep band (Hz) & Drive & Mix \\
     \midrule
-    V1         & 1750--2250 & 5000--7000  & 10 & 0.5  & 0.242 & 0.02523 \\
-    V2         & 1750--2250 & 5000--7000  & 3  & 0.1  & 0.075 & 0.00830 \\
-    V3         & 2000--4000 & 4000--12000 & 3  & 0.25 & 0.130 & 0.00835 \\
-    V4         & 2000--4000 & 5500--12000 & 6  & 0.15 & 0.099 & 0.00857 \\
-    V5 (final) & 2000--4000 & 5500--10000 & 4  & 0.25 & 0.116 & 0.00845 \\
+    V1         & 1750--2250 & 5000--7000  & 10 & 0.5 \\
+    V2         & 1750--2250 & 5000--7000  & 3  & 0.1  \\
+    V3         & 2000--4000 & 4000--12000 & 3  & 0.25 \\
+    V4         & 2000--4000 & 5500--12000 & 6  & 0.15 \\
+    V5 (final) & 2000--4000 & 5500--10000 & 4  & 0.25 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -289,13 +284,6 @@ The versions are summarised in Table~\ref{tab:iter}.
   \item[V5 (final):] drive back to 4, keep band ending at \SI{10}{\kilo\hertz} to remove the content behind the lisp, and the mix tuned by ear to 0.25.
 \end{description}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{exciter_iterations.pdf}
-  \caption{\todo{didnt we want to remove this?}Dry voice and the products added by each version, \SIrange{2}{14}{\kilo\hertz} (power level smoothed over \SI{50}{\hertz}). The dotted line marks \SI{6}{\kilo\hertz}, the third harmonic of the \SI{2}{\kilo\hertz} sidechain; the products added by V1 exceed the voice by \SI{15}{\decibel} there.}
-  \label{fig:iter}
-\end{figure}
-
 
 \begin{figure}[H]
   \centering
@@ -307,12 +295,8 @@ The versions are summarised in Table~\ref{tab:iter}.
 \paragraph{Final design.}
 Sidechain \SIrange{2}{4}{\kilo\hertz}, drive 4, keep band \SIrange{5.5}{10}{\kilo\hertz}, mix 0.25.
 The keep band holds the 3rd harmonics of \SIrange{2}{3.3}{\kilo\hertz} and excludes both the sidechain band itself and the content above \SI{10}{\kilo\hertz}.
-The output volume is roughly the same RMS and the peak rises by \SI{3.7}{\decibel}.
-With $\mathrm{RMS} = \sqrt{\tfrac{1}{N}\sum_n x[n]^2}$ over the whole recording, the level changes are
-\begin{align*}
-  \Delta L_\mathrm{RMS}  &= 20\log_{10}\frac{\mathrm{RMS}_\mathrm{out}}{\mathrm{RMS}_\mathrm{dry}} = 20\log_{10}\frac{0.00845}{0.00822} = \SI{+0.24}{\decibel}, \\
-  \Delta L_\mathrm{peak} &= 20\log_{10}\frac{0.1157}{0.0753} = \SI{+3.73}{\decibel}.
-\end{align*}
+The output volume in the FFT is roughly the same and the peak rises by approximatley \SI{4}{\decibel}.
+
 The k and s sounds are more pronounced and the voice sounds closer, while its level barely changes, which is the intended effect of an exciter.
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------
