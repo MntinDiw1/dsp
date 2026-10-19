@@ -89,10 +89,9 @@ Only the positive half is shown, because the spectrum of a real signal is mirror
 \paragraph{Fundamentals.}
 In both recordings the vowels appear as series of evenly spaced peaks.
 The lowest peak of each series was taken as the fundamental, because the peaks above it sit at integer multiples of it (e.g.\ \SI{95}{}, \SI{190}{}, \SI{285}{} and \SI{380}{\hertz} at \SI{5}{\centi\metre}), which identifies a harmonic series rather than noise.
-The fundamentals lie between about \SI{94}{} and \SI{103}{\hertz} at \SI{5}{\centi\metre} and \SI{101}{} and \SI{112}{\hertz} at \SI{1}{\metre}, as expected for an adult male voice.
+The fundamentals lie between about \SI{94}{} and \SI{103}{\hertz} at \SI{5}{\centi\metre} and \SI{101}{} and \SI{112}{\hertz} at \SI{1}{\metre}, as expected for an adult male voice. Series with slightly different fundamentals within these ranges belong to different vowels.
 They vary between recordings because these are separate takes.
 Peaks below about \SI{80}{\hertz} have no harmonic series and were not chosen; these are low-frequency rumble from pop energy and room noise.
-The main identification is done by looking at the bundled peaks identified figures 3 \& 4, but individual peaks are indicative of specific vowel sounds (any vowel may have more than one sound in the english language)
 
 \paragraph{Consonants.}
 Above about \SI{2}{\kilo\hertz} the harmonic series fades and a broad hump without harmonic structure appears, peaking at \SIrange{5}{6}{\kilo\hertz}: the energy of consonants such as /s/ and /z/.
@@ -179,7 +178,7 @@ The whole spectrum is raised by \SI{+21}{\decibel} to match the volume of both r
 A low cut of \SI{-12}{\decibel} below \SI{85}{\hertz} removes room rumble.
 Bass is lost with distance, so the gain is larger to compensate: \SI{+6}{\decibel} between \SIrange{95}{180}{\hertz}, around the fundamental.
 The low cut and bass boost edges meet at \SIrange{85}{95}{\hertz} and initially rang with $q=0.1$, so both use $q=0.3$, which removed the ringing at about \SI{95}{\hertz}.
-A \SI{-12}{\decibel} notch at \SIrange{480}{505}{\hertz} removes a \SI{483}{\hertz} tone visible in the noise floor after the voice ends.
+A \SI{-12}{\decibel} notch at \SIrange{480}{505}{\hertz} removes a \SI{500}{\hertz} tone visible in the noise floor after the voice ends.
 A \SI{-4}{\decibel} cut at \SIrange{2.2}{2.8}{\kilo\hertz} reduces the room resonance around \SI{2.5}{\kilo\hertz}.
 The consonant region is boosted by \SI{+7}{\decibel}, slightly more than at \SI{5}{\centi\metre}, because the distant recording is duller.
 A \SI{-30}{\decibel} high cut above \SI{13}{\kilo\hertz}, just above where the consonants end, removes the hiss raised by the level match.
@@ -248,7 +247,7 @@ The pop was not removed before processing; however, since it lies mostly below t
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{task3_full_plot_V5.pdf}
-  \caption{Final design: dry voice, full $\tanh$ output and the added harmonics. The $\tanh$ output contains only odd harmonics of the sidechain band.}
+  \caption{Final design: dry voice, full $\tanh$ output and the added harmonics. The $\tanh$ output contains only odd harmonics of the sidechain band; it is shown before band selection and mix, so it is not to scale with the voice.}
   \label{fig:t3_full}
 \end{figure}
 
@@ -326,7 +325,7 @@ python3 run_tasks.py
 \end{verbatim}
 The scripts need \texttt{numpy}, \texttt{scipy} and \texttt{matplotlib}.
 The plots of Tasks 1--3 are opened with \texttt{plt.show()}.
-The files \texttt{enhanced\_5cm.wav}, \texttt{enhanced\_1m.wav} and \texttt{exciter\_5cm\_5.wav} are written to the working directory.
+The files \texttt{enhanced\_5cm.wav}, \texttt{enhanced\_1m.wav} and \texttt{exciter\_5cm.wav} are written to the working directory.
 \texttt{run\_tasks.py} imports \texttt{task1\_plot.py}, \texttt{task2\_enhance.py} and \texttt{task3\_exciter.py}, which must be in the same folder.
 
 \section{Python Code}
