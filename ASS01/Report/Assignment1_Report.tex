@@ -71,6 +71,7 @@ The full spectrum up to \SI{20}{\kilo\hertz} (the human audible spectrum) is ava
 The samples are normalised by $2^{31}$, the full scale of the 32-bit signed integers used to store the 24-bit audio.
 The spectrum is $X = \frac{1}{N}\,\mathrm{FFT}(x)$, plotted as $20\log_{10}|X|$ in decibels relative to full scale (dBFS): the loudest level possible in a digital system is \SI{0}{\decibel FS}.
 Only the positive half is shown, because the spectrum of a real signal is mirrored.
+Figures~\ref{fig:t1_5cm} and~\ref{fig:t1_1m} show both recordings in the time and frequency domains.
 
 \begin{figure}[H]
   \centering
@@ -87,7 +88,7 @@ Only the positive half is shown, because the spectrum of a real signal is mirror
 \end{figure}
 
 \paragraph{Fundamentals.}
-In both recordings the vowels appear as series of evenly spaced peaks.
+In both recordings the vowels appear as series of evenly spaced peaks (Figures~\ref{fig:t1_annot_5cm} and~\ref{fig:t1_annot_1m}).
 The lowest peak of each series was taken as the fundamental, because the peaks above it sit at integer multiples of it (e.g.\ \SI{95}{}, \SI{190}{}, \SI{285}{} and \SI{380}{\hertz} at \SI{5}{\centi\metre}), which identifies a harmonic series rather than noise.
 The fundamentals lie between about \SI{94}{} and \SI{103}{\hertz} at \SI{5}{\centi\metre} and \SI{101}{} and \SI{112}{\hertz} at \SI{1}{\metre}, as expected for an adult male voice. Series with slightly different fundamentals within these ranges belong to different vowels.
 They vary between recordings because these are separate takes.
@@ -121,10 +122,12 @@ The level is the same in both recordings even though the voice is about \SI{20}{
 
 \paragraph{Method.}
 Each recording is transformed with the FFT, then every frequency bin is multiplied by a gain array (an array of ones), and the result is transformed back with the IFFT.
-\texttt{gain\_ctrl(low, high, dB, q)} adds one band to the array: a trapezoid over the selected frequencies, converted to linear gain with $10^{\mathrm{dB}/20}$ and mirrored onto the negative frequencies so that the IFFT output is real (\texttt{np.real} only removes rounding residue).
+\texttt{gain\_ctrl(low, high, dB, q)} adds one band to the array: the gain is converted to linear with $10^{\mathrm{dB}/20}$, shaped into a trapezoid over the selected frequencies, and mirrored onto the negative frequencies so that the IFFT output is real (\texttt{np.real} only removes rounding residue).
 Hard band edges caused audible ringing (Gibbs phenomenon), so each edge ramps over a fraction $q$ of the band width, with the nominal edge at the middle of the ramp.
+The ramps are linear in both frequency and amplitude, so on the gain plots (Figure~\ref{fig:gain}), with a logarithmic frequency axis and the gain in dB, they are no longer straight lines but curve: a linear change in amplitude is not linear in dB.
 An identity test (all-ones gain array) confirmed that the pipeline alone does not change the signal at all.
 The outputs are scaled by $2^{31}-1$ and saved as 32-bit integer WAV.
+The spectra of both enhanced recordings are compared in Figure~\ref{fig:overlay}.
 
 
 
@@ -150,6 +153,7 @@ The outputs are scaled by $2^{31}-1$ and saved as 32-bit integer WAV.
 \end{figure}
 
 \paragraph{5\,cm.}
+The settings are listed in Table~\ref{tab:eq_5cm}.
 A low cut of \SI{-16}{\decibel} below \SI{80}{\hertz} removes rumble and part of the pop energy (the pop at \SIrange{1.28}{1.30}{\second} lies mostly below \SI{150}{\hertz}).
 It stops at \SI{80}{\hertz} to keep the $\approx$\SI{95}{\hertz} fundamental, so the pop is slightly reduced but not removed.
 The low end is already strong at this proximity, so the bass boost is small: \SI{+4}{\decibel} between \SIrange{95}{400}{\hertz}; this range covers the first few harmonics for depth.
@@ -160,6 +164,7 @@ It is kept moderate because consonant energy extends to \SI{14.5}{\kilo\hertz} a
 \begin{table}[H]
   \centering
   \caption{EQ Settings for 5\,cm Recording}
+  \label{tab:eq_5cm}
   \begin{tabular}{cccl}
     \toprule
     Band (Hz) & Gain (dB) & $q$ & Purpose \\
@@ -174,6 +179,7 @@ It is kept moderate because consonant energy extends to \SI{14.5}{\kilo\hertz} a
 
 
 \paragraph{1\,m.}
+The settings are listed in Table~\ref{tab:eq_1m}.
 The whole spectrum is raised by \SI{+21}{\decibel} to match the volume of both recordings.
 A low cut of \SI{-12}{\decibel} below \SI{85}{\hertz} removes room rumble.
 Bass is lost with distance, so the gain is larger to compensate: \SI{+6}{\decibel} between \SIrange{95}{180}{\hertz}, around the fundamental.
@@ -187,6 +193,7 @@ There was no pop at this distance; however, since the volume was increased so mu
 \begin{table}[H]
   \centering
   \caption{EQ Settings for 1\,m Recording}
+  \label{tab:eq_1m}
   \begin{tabular}{cccl}
     \toprule
     Band (Hz) & Gain (dB) & $q$ & Purpose \\
@@ -253,7 +260,7 @@ The pop was not removed before processing; however, since it lies mostly below t
 \end{figure}
 
 \paragraph{Iterations.}
-The versions are summarised in Table~\ref{tab:iter}, and the spectra of V1, V4 and V5 are shown in Figures~\ref{fig:t3_v1}, \ref{fig:t3_v4} and~\ref{fig:t3_full}.
+The versions are summarised in Table~\ref{tab:iter}; the spectra of V1 and V4 are shown in Figures~\ref{fig:t3_v1} and~\ref{fig:t3_v4}, and that of the final design (V5) in Figure~\ref{fig:t3_full}.
 
 \begin{table}[H]
   \centering
