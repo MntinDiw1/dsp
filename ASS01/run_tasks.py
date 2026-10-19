@@ -76,7 +76,7 @@ wavfile.write("enhanced_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(
 exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, drive=4, mix=0.25)
 
 # plot annotated
-#plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, "V5")
+plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, "V5")
 
 # apply exciter + save
 wavfile.write("exciter_5cm.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))

@@ -36,7 +36,7 @@ def plot_harmonics(audio, nonlin, harmonics, sample_rate, in_lo, in_hi, keep_lo,
     freqs = np.arange(n // 2) * sample_rate / n  # frequency bins for plotting
 
     plt.figure(figsize=(10, 5))
-    plt.title("Exciter harmonics" + name)
+    plt.title("Exciter harmonics: " + name)
 
     for label, x in (("dry voice", audio),
                      ("tanh output (all harmonics)", nonlin),
