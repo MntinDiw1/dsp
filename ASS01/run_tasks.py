@@ -13,7 +13,7 @@ from task3_exciter import exciter, plot_harmonics
 # ----- Load audio ----- files
 
 # Recommended: 48kHz + Signed 24-bit PCM + Mono (imperative)
-sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
+sample_rate_5cm, audio_5cm = wavfile.read("5cm.wav")
 audio_5cm = audio_5cm / (2**31)  # NORMALISE (32bits to store 24bit audio)
 
 sample_rate_1m, audio_1m = wavfile.read("1m.wav")
