@@ -26,11 +26,12 @@ def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q=0):
     if high >= sample_rate // 2 - 1:
         high = sample_rate / 2 + ramp_hz
 
-    xp = [low - r, low + r, high - r, high + r]
-    fp = [0.0,     amp_dB,  amp_dB,   0.0]
-    profile_dB = np.interp(freqs, xp, fp, left=0.0, right=0.0)
+    amp_lin = 10.0 ** (amp_dB/ 20.0)
+    amp_points = [low - r, low + r, high - r, high + r]
+    freq_points = [   1.0, amp_lin,  amp_lin,      1.0]
+    profile_lin = np.interp(freqs, amp_points, freq_points, left=1.0, right=1.0)
 
-    gain_array[:half + 1] *= 10.0 ** (profile_dB / 20.0)
+    gain_array[: half + 1] *= profile_lin
     gain_array[half + 1:] = gain_array[1:n - half][::-1]   # mirror to the negative frequencies
     return gain_array
 
