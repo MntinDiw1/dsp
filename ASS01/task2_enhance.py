@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt #plot the envelope/EQ visualisation?
+import matplotlib.pyplot as plt 
 from scipy.fft import fft, ifft
 
 
@@ -8,7 +8,7 @@ from scipy.fft import fft, ifft
 def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q=0):
     """
     q = 0    -> ramps one FFT bin wide (default) (rectangular)
-    q = 0.25 -> each edge ramps over 25% of the bandwidth (trapazoidal)
+    q = 0.25 -> each edge ramps over 25% of the bandwidth (trapezoidal)
     q = 1    -> ramps meet in the middle (triangular)
     """
     n = len(gain_array)
@@ -33,6 +33,7 @@ def gain_ctrl(low, high, amp_dB, sample_rate, gain_array, q=0):
 
     gain_array[: half + 1] *= profile_lin
     gain_array[half + 1:] = gain_array[1:n - half][::-1]   # mirror to the negative frequencies
+    
     return gain_array
 
 # PLOT GAIN 
@@ -49,8 +50,6 @@ def plot_gain_array(gain_array, sample_rate, name):
     plt.grid(which='both', linestyle='--', linewidth=0.5)
     plt.tight_layout()  # plt.show() is called once at the end of run_tasks.py
 
-    return None
-
 # --- ENHANCER --- 
 #takes gain array and applies it to audio
 def enhancer(audio, gain_array):
@@ -66,3 +65,23 @@ def enhancer(audio, gain_array):
     audio_ifft_real = np.real(audio_ifft) #extract the real part (IM part should be ~0 since gain array is mirrored)
 
     return audio_ifft_real
+
+# Audio overlay plot
+def plot_overlay(signals):
+    # signals: list of (label, sample_rate, audio)
+    plt.figure(figsize=(8, 5))
+
+    for label, fs, audio in signals:
+        n = len(audio)
+        mag_fft = 20 * np.log10(np.abs((1/n) * np.fft.fft(audio)) + 1e-12)  # +1e-12 avoids log(0)
+        freqs = np.arange(n // 2) * fs / n
+
+        plt.plot(freqs, mag_fft[: n // 2], alpha=0.6, label=label)
+
+    plt.title("Enhanced audio: 5cm vs 1m (frequency domain)")
+    plt.xlabel("frequency (Hz)")
+    plt.xscale("log")
+    plt.ylabel("magnitude (dB)")
+    plt.legend()
+
+    plt.tight_layout()
