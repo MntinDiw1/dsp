@@ -23,6 +23,7 @@
 
 % ---------- Tables, links ----------
 \usepackage{booktabs}
+\newcommand{\rng}[2]{#1\,\textendash\,#2}
 \usepackage{tabularx}
 \usepackage[hidelinks]{hyperref}
 
@@ -92,11 +93,12 @@ The fundamentals lie between about \SI{94}{} and \SI{103}{\hertz} at \SI{5}{\cen
 They vary between recordings because these are separate takes.
 Peaks below about \SI{80}{\hertz} have no harmonic series and were not chosen; these are low-frequency rumble from pop energy and room noise.
 \todo{MENTION THE PEAKS OF OTHER VOWELS?}
+The main identification is done by looking at the bundled peaks identified figures 3 \& 4, but individual peaks are indicative of specific vowel sounds (any vowel may have more than one sound in the english language)
 
 \paragraph{Consonants.}
 Above about \SI{2}{\kilo\hertz} the harmonic series fades and a broad hump without harmonic structure appears, peaking at \SIrange{5}{6}{\kilo\hertz}: the energy of consonants such as /s/ and /z/.
 It is present on the frequency spectrum up to about \SI{14.5}{\kilo\hertz} at \SI{5}{\centi\metre} but only \SI{12.5}{\kilo\hertz} at \SI{1}{\metre}, where the weaker consonant energy is lost in the noise floor sooner.
-\todo{THERE IS A GAP BETWEEN THE NOISE AND THE CONSONANTS!!!}
+\todo{THERE IS A GAP BETWEEN THE NOISE AND THE CONSONANTS!!!: do you want the graph re-annotated to change this?}
 
 \paragraph{Noise.}
 Above \SI{16}{\kilo\hertz} at \SI{5}{\centi\metre} and \SI{14}{\kilo\hertz} at \SI{1}{\metre}, the spectrum is flat.
@@ -127,29 +129,7 @@ Hard band edges caused audible ringing (Gibbs phenomenon), so each edge ramps ov
 An identity test (gain array at default values) confirmed that the pipeline alone does not change the signal at all.
 The outputs are scaled by $2^{31}-1$ and saved as 32-bit integer WAV.
 
-\begin{table}[H]
-  \centering
-  \caption{Final gain settings. For \SI{1}{\metre} the \SI{+21}{\decibel} level match over the whole spectrum is applied first and the bands below are added to it.}
-  \label{tab:gains}
-  \begin{tabular}{lcccl}
-    \toprule
-    Recording & Band (Hz) & Gain (dB) & $q$ & Purpose \\
-    \midrule
-    5\,cm & 0--80        & $-16$ & 0.1  & Low cut: rumble and pop energy \\
-    5\,cm & 95--400      & $+4$  & 0.1  & Bass boost: first harmonics \\
-    5\,cm & 3000--10000  & $+6$  & 0.1  & Brightness: consonant region \\
-    5\,cm & 12200--Nyq   & $-12$ & 0.1  & High cut: hiss \\
-    \midrule
-    1\,m  & 0--Nyq       & $+21$ & 0    & Volume match to \SI{5}{\centi\metre} \\
-    1\,m  & 0--85        & $-12$ & 0.3  & Low cut: room rumble \\
-    1\,m  & 95--180      & $+6$  & 0.3  & Bass boost: around the fundamental \\
-    1\,m  & 480--505     & $-12$ & 0.25 & Notch: \SI{483}{\hertz} tone \\
-    1\,m  & 2200--2800   & $-4$  & 0.25 & Room resonance \\
-    1\,m  & 3000--10000  & $+7$  & 0.1  & Brightness: consonant region \\
-    1\,m  & 13000--Nyq   & $-30$ & 0.1  & High cut: hiss \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+
 
 \begin{figure}[H]
   \centering
@@ -181,6 +161,23 @@ A high cut of \SI{-12}{\decibel} above \SI{12.2}{\kilo\hertz} reduces hiss.
 It is kept moderate because consonant energy extends to \SI{14.5}{\kilo\hertz} at this distance.
 \todo{Make into a table?}
 
+\begin{table}[H]
+  \centering
+  \caption{EQ Settings for 5\,cm Recording}
+  \begin{tabular}{cccl}
+    \toprule
+    Band (Hz) & Gain (dB) & $q$ & Purpose \\
+    \midrule
+    0--80       & $-16$ & 0.1  & Low cut: rumble and pop energy \\
+    95--400     & $+4$  & 0.1  & Bass boost: first harmonics \\
+    3000--10000 & $+6$  & 0.1  & Brightness: consonant region \\
+    12200--Nyq  & $-12$ & 0.1  & High cut: hiss \\
+    \bottomrule
+  \end{tabular}
+\end{table} 
+
+\todo{CHECK REASONS}
+
 \paragraph{1\,m.}
 The whole spectrum is raised by \SI{+21}{\decibel} to match the volume of both recordings.
 A low cut of \SI{-12}{\decibel} below \SI{85}{\hertz} removes room rumble.
@@ -192,6 +189,26 @@ The consonant region is boosted by \SI{+7}{\decibel}, slightly more than at \SI{
 A \SI{-30}{\decibel} high cut above \SI{13}{\kilo\hertz}, just above where the consonants end, removes the hiss raised by the level match.
 There was no pop at this distance; however, since the volume was increased so much, the SNR was reduced to the point that the signal sounds noisy.
 \todo{Tabulate?}
+
+\begin{table}[H]
+  \centering
+  \caption{EQ Settings for 1\,m Recording}
+  \begin{tabular}{cccl}
+    \toprule
+    Band (Hz) & Gain (dB) & $q$ & Purpose \\
+    \midrule
+    0--Nyq       & $+21$ & 0    & Volume match to \SI{5}{\centi\metre} peaks \\
+    0--85        & $-12$ & 0.3  & Low cut: room rumble \\
+    95--180      & $+6$  & 0.3  & Bass boost: restore depth \\
+    480--505     & $-12$ & 0.25 & Notch: \SI{500}{\hertz} spike \\
+    2200--2800   & $-4$  & 0.25 & Room resonance \\
+    3000--10000  & $+7$  & 0.1  & Brightness \\
+    13000--Nyq   & $-30$ & 0.1  & High cut: hiss \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\todo{CHECK REASONS}
 
 % =====================================================
 \section{Task 3: Aural Exciter}
