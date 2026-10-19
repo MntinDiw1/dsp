@@ -78,15 +78,6 @@ Above 16kHz both spectra flatten to about -150dB. Since this level doesnt change
 - export as int32: same 32-bit integer PCM container as the input (24-bit audio in 32-bit ints). Scaled back up by 2^31-1 so +-1.0 maps to full scale; outputs peak at 0.12 (5cm) and 0.15 (1m), so nothing clips.
 - Cannot avoid reverb at 1m and thus there will always be an audible difference
 
-Test code: 
-# --- ENHANCER TEST ---
-#does input match output with no changes applied ?
-test_5cm = np.ones(len(audio_5cm)) #untouched gain arrays
-test_1m = np.ones(len(audio_1m))
-print("Identity test 5cm:", np.allclose(enhancer(audio_5cm, test_5cm), audio_5cm))
-print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
-# --- END OF TEST ---
-
 
 ### Report Deliverables
 

@@ -91,14 +91,12 @@ In both recordings the vowels appear as series of evenly spaced peaks.
 The lowest peak of each series was taken as the fundamental, because the peaks above it sit at integer multiples of it (e.g.\ \SI{95}{}, \SI{190}{}, \SI{285}{} and \SI{380}{\hertz} at \SI{5}{\centi\metre}), which identifies a harmonic series rather than noise.
 The fundamentals lie between about \SI{94}{} and \SI{103}{\hertz} at \SI{5}{\centi\metre} and \SI{101}{} and \SI{112}{\hertz} at \SI{1}{\metre}, as expected for an adult male voice.
 They vary between recordings because these are separate takes.
-Peaks below about \SI{80}{\hertz} have no harmonic series and were not chosen; these are low-frequency rumble from pop energy and room noise.
-\todo{MENTION THE PEAKS OF OTHER VOWELS?}
+Peaks below about \SI{8Z0}{\hertz} have no harmonic series and were not chosen; these are low-frequency rumble from pop energy and room noise.
 The main identification is done by looking at the bundled peaks identified figures 3 \& 4, but individual peaks are indicative of specific vowel sounds (any vowel may have more than one sound in the english language)
 
 \paragraph{Consonants.}
 Above about \SI{2}{\kilo\hertz} the harmonic series fades and a broad hump without harmonic structure appears, peaking at \SIrange{5}{6}{\kilo\hertz}: the energy of consonants such as /s/ and /z/.
 It is present on the frequency spectrum up to about \SI{14.5}{\kilo\hertz} at \SI{5}{\centi\metre} but only \SI{12.5}{\kilo\hertz} at \SI{1}{\metre}, where the weaker consonant energy is lost in the noise floor sooner.
-\todo{THERE IS A GAP BETWEEN THE NOISE AND THE CONSONANTS!!!: do you want the graph re-annotated to change this?}
 
 \paragraph{Noise.}
 Above \SI{16}{\kilo\hertz} at \SI{5}{\centi\metre} and \SI{14}{\kilo\hertz} at \SI{1}{\metre}, the spectrum is flat.
@@ -168,10 +166,10 @@ It is kept moderate because consonant energy extends to \SI{14.5}{\kilo\hertz} a
     \toprule
     Band (Hz) & Gain (dB) & $q$ & Purpose \\
     \midrule
-    0--80       & $-16$ & 0.1  & Low cut: rumble and pop energy \\
-    95--400     & $+4$  & 0.1  & Bass boost: first harmonics \\
-    3000--10000 & $+6$  & 0.1  & Brightness: consonant region \\
-    12200--Nyq  & $-12$ & 0.1  & High cut: hiss \\
+    0--80       & $-16$ & 0.1  & Low cut \\
+    95--400     & $+4$  & 0.1  & Bass boost \\
+    3000--10000 & $+6$  & 0.1  & Brightness \\
+    12200--Nyq  & $-12$ & 0.1  & High cut \\
     \bottomrule
   \end{tabular}
 \end{table} 
@@ -197,13 +195,13 @@ There was no pop at this distance; however, since the volume was increased so mu
     \toprule
     Band (Hz) & Gain (dB) & $q$ & Purpose \\
     \midrule
-    0--Nyq       & $+21$ & 0    & Volume match to \SI{5}{\centi\metre} peaks \\
-    0--85        & $-12$ & 0.3  & Low cut: room rumble \\
-    95--180      & $+6$  & 0.3  & Bass boost: restore depth \\
-    480--505     & $-12$ & 0.25 & Notch: \SI{500}{\hertz} spike \\
-    2200--2800   & $-4$  & 0.25 & Room resonance \\
+    0--Nyq       & $+21$ & 0    & Volume match \\
+    0--85        & $-12$ & 0.3  & Low cut \\
+    95--180      & $+6$  & 0.3  & Bass boost \\
+    480--505     & $-12$ & 0.25 & Notch cut\\
+    2200--2800   & $-4$  & 0.25 & Notch cut\\
     3000--10000  & $+7$  & 0.1  & Brightness \\
-    13000--Nyq   & $-30$ & 0.1  & High cut: hiss \\
+    13000--Nyq   & $-30$ & 0.1  & High cut \\
     \bottomrule
   \end{tabular}
 \end{table}
