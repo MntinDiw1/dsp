@@ -98,7 +98,7 @@ plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
 # --- ATTEMPT5+:
 exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, drive=4, mix=0.25)
 #apply exciter + save
-plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm)
+plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, "V5")
 wavfile.write("exciter_5cm.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
 
 # Show audio plots
