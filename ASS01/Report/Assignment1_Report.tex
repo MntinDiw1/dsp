@@ -98,7 +98,7 @@ Above about \SI{2}{\kilo\hertz} the harmonic series fades and a broad hump witho
 It is present on the frequency spectrum up to about \SI{14.5}{\kilo\hertz} at \SI{5}{\centi\metre} but only \SI{12.5}{\kilo\hertz} at \SI{1}{\metre}, where the weaker consonant energy is lost in the noise floor sooner.
 
 \paragraph{Noise.}
-Above \SI{16}{\kilo\hertz} at \SI{5}{\centi\metre} and \SI{14}{\kilo\hertz} at \SI{1}{\metre}, the spectrum is flat.
+Above \SI{16}{\kilo\hertz} at \SI{5}{\centi\metre} and \SI{14}{\kilo\hertz} at \SI{1}{\metre}, the spectrum is flat; between the end of the consonant range and this floor (\SIrange{14.5}{16}{\kilo\hertz} and \SIrange{12.5}{14}{\kilo\hertz}) the spectrum falls steeply as the consonant energy fades.
 The level is the same in both recordings even though the voice is about \SI{20}{\decibel} quieter at \SI{1}{\metre}, so it cannot come from the voice: it is most likely electronic noise.
 
 \begin{figure}[H]
@@ -123,7 +123,7 @@ The level is the same in both recordings even though the voice is about \SI{20}{
 Each recording is transformed with the FFT, then every frequency bin is multiplied by a gain array (an array of ones), and the result is transformed back with the IFFT.
 \texttt{gain\_ctrl(low, high, dB, q)} adds one band to the array: a trapezoid over the selected frequencies, converted to linear gain with $10^{\mathrm{dB}/20}$ and mirrored onto the negative frequencies so that the IFFT output is real (\texttt{np.real} only removes rounding residue).
 Hard band edges caused audible ringing (Gibbs phenomenon), so each edge ramps over a fraction $q$ of the band width, with the nominal edge at the middle of the ramp.
-An identity test (gain array at default values) confirmed that the pipeline alone does not change the signal at all.
+An identity test (all-ones gain array) confirmed that the pipeline alone does not change the signal at all.
 The outputs are scaled by $2^{31}-1$ and saved as 32-bit integer WAV.
 
 
@@ -195,7 +195,7 @@ There was no pop at this distance; however, since the volume was increased so mu
     0--85        & $-12$ & 0.3  & Low cut \\
     95--180      & $+6$  & 0.3  & Bass boost \\
     480--505     & $-12$ & 0.25 & Notch cut\\
-    2200--2800   & $-4$  & 0.25 & Notch cut\\
+    2200--2800   & $-4$  & 0.25 & Room resonance cut\\
     3000--10000  & $+7$  & 0.1  & Brightness \\
     13000--Nyq   & $-30$ & 0.1  & High cut \\
     \bottomrule
@@ -209,6 +209,7 @@ There was no pop at this distance; however, since the volume was increased so mu
 \paragraph{Design.}
 The exciter follows the Aphex sidechain (Figure~\ref{fig:block}), ignoring the Big Bottom sidechain, and runs on the raw \SI{5}{\centi\metre} recording.
 A band-pass filter is created by zeroing all FFT bins outside a specified region (two \texttt{gain\_ctrl} cuts).
+Unlike Task~2, these edges are not ramped ($q=0$): a sharp cut keeps neighbouring voice content out of the non-linearity and passes only the chosen products, where the ringing is barely audible (see V3).
 A band-pass was used instead of the tunable high-pass, so that less of the voice enters the non-linearity and fewer unwanted harmonics are created.
 The band is normalised to a peak of 1, so that the drive does not depend on the recording level, and passed through $\tanh(\mathrm{drive}\cdot x)$.
 This is almost linear for small inputs and compresses progressively as they grow.
@@ -256,7 +257,7 @@ The versions are summarised in Table~\ref{tab:iter}.
 
 \begin{table}[H]
   \centering
-  \caption{Exciter versions (dry recording: peak 0.0753, RMS 0.00822).}
+  \caption{Exciter versions (dry recording).}
   \label{tab:iter}
   \begin{tabular}{lcccccc}
     \toprule
@@ -280,7 +281,7 @@ The versions are summarised in Table~\ref{tab:iter}.
   The effect is broader but rings, and the peak rises to 1.7 times the dry peak.
   \item[V4:] the keep band starts at \SI{5.5}{\kilo\hertz}, just below the lowest 3rd harmonic, and ends at \SI{12}{\kilo\hertz}; mix 0.15; drive raised in steps to 6.
   The effect is clearly audible, but the consonants become too prominent (a lisp effect).
-  \item[V5 (final):] drive back to 4, keep band ending at \SI{10}{\kilo\hertz} to remove the content behind the lisp, and the mix tuned by ear to 0.25.
+  \item[V5 (final):] drive back to 4, keep band ending at \SI{10}{\kilo\hertz} to remove the content behind the lisp, and the mix tuned by ear to 0.25. With the narrower keep band, the ringing was no longer audible.
 \end{description}
 
 
