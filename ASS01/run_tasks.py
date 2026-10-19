@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.io import wavfile
 import numpy as np
 
-os.chdir(os.path.dirname(os.path.abspath(__file__))) # run from any folder: wav/ inputs and .wav outputs are relative to this file
+os.chdir(os.path.dirname(os.path.abspath(__file__))) # run from any folder: .wav inputs and outputs are next to this file
 
 # Assignmnet files
 from task1_plot import plot_audio
@@ -16,7 +16,7 @@ from task3_exciter import exciter, plot_harmonics
 sample_rate_5cm, audio_5cm = wavfile.read("wav/5cm.wav")
 audio_5cm = audio_5cm / (2**31)  # NORMALISE (32bits to store 24bit audio)
 
-sample_rate_1m, audio_1m = wavfile.read("wav/1m.wav")
+sample_rate_1m, audio_1m = wavfile.read("1m.wav")
 audio_1m = audio_1m / (2**31)
 
 
@@ -57,7 +57,7 @@ wavfile.write("enhanced_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).asty
 gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME: Match to 5cm recording (raw RMS is 21dB quieter)
 gain_ctrl(0, 85, -12, sample_rate_1m, gain_array_1m, q=0.3) #LOW CUT: trim room rumble (less 'boxy')
 gain_ctrl(95, 180, 6, sample_rate_1m, gain_array_1m, q=0.3)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
-gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m, q=0.25)  #Reduce the ~483Hz whine in the noise floor (not mains: no 50Hz hum)
+gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m, q=0.25)  #Reduce the ~500Hz whine in the noise floor
 gain_ctrl(2200, 2800, -4, sample_rate_1m, gain_array_1m, q=0.25)  #ROOM RESONANCE: 1m bump ~2.5kHz vs 5cm
 gain_ctrl(3000, 10000, 7, sample_rate_1m, gain_array_1m, q=0.1) #BRIGHTNESS
 gain_ctrl(13000, sample_rate_1m//2 - 1, -30, sample_rate_1m, gain_array_1m, q=0.1) #HIGH CUT consonants end lower
