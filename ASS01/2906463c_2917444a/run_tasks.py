@@ -1,0 +1,85 @@
+import os
+import matplotlib.pyplot as plt
+from scipy.io import wavfile
+import numpy as np
+
+os.chdir(os.path.dirname(os.path.abspath(__file__))) # run from any folder: .wav inputs and outputs are next to this file
+
+# Assignmnet files
+from audioplot import plot_audio
+from audioenhancer import gain_ctrl, enhancer, plot_gain_array, plot_overlay
+from auralexciter import exciter, plot_harmonics
+
+# ----- Load audio ----- files
+
+# Recommended: 48kHz + Signed 24-bit PCM + Mono (imperative)
+sample_rate_5cm, audio_5cm = wavfile.read("original_speech_5cm.wav")
+audio_5cm = audio_5cm / (2**31)  # NORMALISE (32bits to store 24bit audio)
+
+sample_rate_1m, audio_1m = wavfile.read("original_speech_1m.wav")
+audio_1m = audio_1m / (2**31)
+
+
+# ------ TASK 1 ------
+
+# Plot audio files
+plot_audio("5cm", sample_rate_5cm, audio_5cm)
+plot_audio("1m", sample_rate_1m, audio_1m)
+
+# ------ TASK 2 ------
+
+#array of n ones (floats). Each value is a multiplier for the corresponding bin
+gain_array_5cm = np.ones(len(audio_5cm))
+gain_array_1m = np.ones(len(audio_1m))
+
+# --- ENHANCER TEST ---
+#does input match output with no changes applied ?
+#test_5cm = np.ones(len(audio_5cm)) #untouched gain arrays
+#test_1m = np.ones(len(audio_1m))
+#print("Identity test 5cm:", np.allclose(enhancer(audio_5cm, test_5cm), audio_5cm))
+#print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
+# --- END OF TEST ---
+
+# --- 5cm ---
+#gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ..., q=0)
+gain_ctrl(0, 80, -16, sample_rate_5cm, gain_array_5cm, q=0.1) #LOW CUT: Remove rumble and some POP energy
+gain_ctrl(95, 400, 4, sample_rate_5cm, gain_array_5cm, q=0.1) #BASS BOOST: The first couple harmonics for depth
+gain_ctrl(3000, 10000, 6, sample_rate_5cm, gain_array_5cm, q=0.1) #BRIGHTNESS: The noisy consonant region + extra for clarity
+gain_ctrl(12200, sample_rate_5cm //2 - 1, -12, sample_rate_5cm, gain_array_5cm, q=0.1) #HIGH CUT: Remove any hiss
+
+#apply gain + save
+plot_gain_array(gain_array_5cm,sample_rate_5cm,"5cm")
+enhanced_5cm = enhancer(audio_5cm, gain_array_5cm)
+wavfile.write("enhanced_speech_5cm.wav", sample_rate_5cm, ((2**31-1)*enhanced_5cm).astype(np.int32))
+
+# --- 1m ---
+#gain curve
+gain_ctrl(0, sample_rate_1m//2 - 1, 21, sample_rate_1m, gain_array_1m) #VOLUME: Match to 5cm recording (raw RMS is 21dB quieter)
+gain_ctrl(0, 85, -12, sample_rate_1m, gain_array_1m, q=0.3) #LOW CUT: trim room rumble (less 'boxy')
+gain_ctrl(95, 180, 6, sample_rate_1m, gain_array_1m, q=0.3)  #BASS BOOST: fundamental higher @1m + restoring depth to voice 
+gain_ctrl(480, 505, -12, sample_rate_1m, gain_array_1m, q=0.25)  #Reduce the ~500Hz whine in the noise floor
+gain_ctrl(2200, 2800, -4, sample_rate_1m, gain_array_1m, q=0.25)  #ROOM RESONANCE: 1m bump ~2.5kHz vs 5cm
+gain_ctrl(3000, 10000, 7, sample_rate_1m, gain_array_1m, q=0.1) #BRIGHTNESS
+gain_ctrl(13000, sample_rate_1m//2 - 1, -30, sample_rate_1m, gain_array_1m, q=0.1) #HIGH CUT consonants end lower
+
+#apply gain + save
+plot_gain_array(gain_array_1m,sample_rate_1m,"1m")
+enhanced_1m = enhancer(audio_1m, gain_array_1m)
+wavfile.write("enhanced_speech_1m.wav", sample_rate_1m, ((2**31-1)*enhanced_1m).astype(np.int32)) #int32 scaled up (mention in report)
+
+# Generate overlay comparison plot
+#plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm), ("1m", sample_rate_1m, enhanced_1m)])
+
+# ------ TASK 3 ------      
+
+# call exiter
+exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, drive=4, mix=0.25)
+
+# plot annotated
+plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, "V5")
+
+# apply exciter + save
+wavfile.write("exciter_speech.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
+
+# Show audio plots
+plt.show()
