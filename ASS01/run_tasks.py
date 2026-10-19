@@ -33,7 +33,13 @@ plot_audio("1m", sample_rate_1m, audio_1m)
 gain_array_5cm = np.ones(len(audio_5cm))
 gain_array_1m = np.ones(len(audio_1m))
 
-#PUT IN ANOTHER FUNCTION: build gain -> enhance -> save -> plot
+# --- ENHANCER TEST ---
+#does input match output with no changes applied ?
+#test_5cm = np.ones(len(audio_5cm)) #untouched gain arrays
+#test_1m = np.ones(len(audio_1m))
+#print("Identity test 5cm:", np.allclose(enhancer(audio_5cm, test_5cm), audio_5cm))
+#print("Identity test 1m:", np.allclose(enhancer(audio_1m, test_1m), audio_1m))
+# --- END OF TEST ---
 
 # --- 5cm ---
 #gain curve - gain_ctrl(Low freq, High freq, Gain change, ..., ..., q=0)
@@ -89,20 +95,9 @@ plot_overlay([("5cm", sample_rate_5cm, enhanced_5cm),
 # ------ TASK 3 ------      
 
 #exciter(.., .., in_low, in_high, keep_lo, keep_hi, drive, mix)
-#apply exciter + save
-# --- ATTEMPT1: f = 2kHz (3F = 6kHz). WIDTH = 500Hz
-#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=10, mix=0.5)
-# --- ATTEMPT2:
-#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 1750, 2250, 5000, 7000, drive=3, mix=0.1)
-# --- ATTEMPT3:
-#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 4000, 12000, drive=3, mix=0.25)
-# --- ATTEMPT4: 
-#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 12000, drive= 6, mix=0.15)
-# --- ATTEMPT5:
-#exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 12000, drive= 6, mix=0.15)
 # --- ATTEMPT5+:
 exciter_5cm, nonlin_5cm, harmonics_5cm = exciter(audio_5cm, sample_rate_5cm, 2000, 4000, 5500, 10000, drive=4, mix=0.25)
-
+#apply exciter + save
 plot_harmonics(audio_5cm, nonlin_5cm, harmonics_5cm, sample_rate_5cm)
 wavfile.write("exciter_5cm.wav", sample_rate_5cm, ((2**31-1)*exciter_5cm).astype(np.int32))
 
