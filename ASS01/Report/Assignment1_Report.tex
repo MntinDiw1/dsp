@@ -252,15 +252,8 @@ The pop was not removed before processing; however, since it lies mostly below t
   \label{fig:block}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{task3_full_plot_V5.pdf}
-  \caption{Final design: dry voice, full $\tanh$ output and the added harmonics. The $\tanh$ output contains only odd harmonics of the sidechain band; it is shown before band selection and mix, so it is not to scale with the voice.}
-  \label{fig:t3_full}
-\end{figure}
-
 \paragraph{Iterations.}
-The versions are summarised in Table~\ref{tab:iter}; the spectra of V1 and V4 are shown in Figures~\ref{fig:t3_v1} and~\ref{fig:t3_v4}, and that of the final design (V5) in Figure~\ref{fig:t3_full}.
+The versions are summarised in Table~\ref{tab:iter}; the spectra of V1, V4 and the final design (V5) are shown in Figures~\ref{fig:t3_v1}, \ref{fig:t3_v4} and~\ref{fig:t3_full}.
 
 \begin{table}[H]
   \centering
@@ -282,13 +275,6 @@ The versions are summarised in Table~\ref{tab:iter}; the spectra of V1 and V4 ar
 \begin{description}
   \item[V1:] sidechain \SIrange{1750}{2250}{\hertz}, centred on \SI{2}{\kilo\hertz} so that its 3rd harmonic lands at \SI{6}{\kilo\hertz}, where the ear is most sensitive; keep band \SIrange{5}{7}{\kilo\hertz}; drive 10, mix 0.5.
   The plot confirms that only odd harmonics appear (\SI{6}{}, \SI{10}{} and \SI{14}{\kilo\hertz}), but the voice sounds robotic and metallic, and the output peak is very large, so the drive and mix were reduced.
-  \item[V2:] drive 3, mix 0.1.
-  The peak is unchanged and the ``k'' and click sounds are clearer, but the effect is confined to one narrow region, so the bands were widened.
-  \item[V3:] sidechain \SIrange{2}{4}{\kilo\hertz} (3rd harmonics now span \SIrange{6}{12}{\kilo\hertz}), keep band \SIrange{4}{12}{\kilo\hertz}, mix 0.25.
-  The effect is broader but rings, and the peak rises to 1.7 times the dry peak.
-  \item[V4:] the keep band starts at \SI{5.5}{\kilo\hertz}, just below the lowest 3rd harmonic, and ends at \SI{12}{\kilo\hertz}; mix 0.15; drive raised in steps to 6.
-  The effect is clearly audible, but the consonants become too prominent (a lisp effect).
-  \item[V5 (final):] drive back to 4, keep band ending at \SI{10}{\kilo\hertz} to remove the content behind the lisp, and the mix tuned by ear to 0.25. With the narrower keep band, the ringing was no longer audible.
 \end{description}
 
 \begin{figure}[H]
@@ -298,6 +284,15 @@ The versions are summarised in Table~\ref{tab:iter}; the spectra of V1 and V4 ar
   \label{fig:t3_v1}
 \end{figure}
 
+\begin{description}
+  \item[V2:] drive 3, mix 0.1.
+  The peak is unchanged and the ``k'' and click sounds are clearer, but the effect is confined to one narrow region, so the bands were widened.
+  \item[V3:] sidechain \SIrange{2}{4}{\kilo\hertz} (3rd harmonics now span \SIrange{6}{12}{\kilo\hertz}), keep band \SIrange{4}{12}{\kilo\hertz}, mix 0.25.
+  The effect is broader but rings, and the peak rises to 1.7 times the dry peak.
+  \item[V4:] the keep band starts at \SI{5.5}{\kilo\hertz}, just below the lowest 3rd harmonic, and ends at \SI{12}{\kilo\hertz}; mix 0.15; drive raised in steps to 6.
+  The effect is clearly audible, but the consonants become too prominent (a lisp effect).
+\end{description}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{task3_full_plot_V4.pdf}
@@ -305,10 +300,21 @@ The versions are summarised in Table~\ref{tab:iter}; the spectra of V1 and V4 ar
   \label{fig:t3_v4}
 \end{figure}
 
+\begin{description}
+  \item[V5 (final):] drive back to 4, keep band ending at \SI{10}{\kilo\hertz} to remove the content behind the lisp, and the mix tuned by ear to 0.25. With the narrower keep band, the ringing was no longer audible.
+\end{description}
+
 \paragraph{Final design.}
 Sidechain \SIrange{2}{4}{\kilo\hertz}, drive 4, keep band \SIrange{5.5}{10}{\kilo\hertz}, mix 0.25.
 The keep band holds the 3rd harmonics of \SIrange{2}{3.3}{\kilo\hertz} and excludes both the sidechain band itself and the content above \SI{10}{\kilo\hertz}.
-The output volume in the FFT is roughly the same and the peak rises by approximatley \SI{4}{\decibel}.
+The output volume in the FFT is roughly the same and the peak rises by approximately \SI{4}{\decibel}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{task3_full_plot_V5.pdf}
+  \caption{Final design (V5, sidechain \SIrange{2}{4}{\kilo\hertz}, keep band \SIrange{5.5}{10}{\kilo\hertz}, drive 4, mix 0.25): dry voice, full $\tanh$ output and the added harmonics. The $\tanh$ output contains only odd-order products (harmonics and intermodulation) of the sidechain band; it is shown before band selection and mix, so it is not to scale with the voice.}
+  \label{fig:t3_full}
+\end{figure}
 
 The k and s sounds are more pronounced and the voice sounds closer, while its level barely changes, which is the intended effect of an exciter.
 
