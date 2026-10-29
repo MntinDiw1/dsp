@@ -16,10 +16,9 @@ the matched filter for R-peak detection. Think about how a matched filter could 
 The tasks form a chain!
 
 
---- General ---
-
-Recorded using 96kHz sampling rate
-
+--- TDL ---
+- Watch ECG 50Hz removal youtube video
+- EMG noise, will help find cutoff (see moodle post)
 
 --- QUESTIONS ---
-- 
+- What sampling rate did we record at?
