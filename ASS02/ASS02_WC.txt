@@ -1,0 +1,25 @@
+--- Task 1 (20%) --- 
+plot and diagnose. Identify baseline wander, 50 Hz and its harmonics, and anything else in the spectrum. This decides what Task 2 removes.
+
+--- Task 2 (25%) --- 
+coefficient design. Build the frequency response you want, IFFT it to get the impulse response, truncate it and window it. The key question to settle early is how the number of coefficients follows from the frequency resolution you need.
+
+--- Task 3 (25%) --- 
+the FIRfilter class with dofilter(v), one scalar in and one scalar out. The efficiency trap is named in the brief: don’t shift the whole delay line every sample. A ring buffer avoids that.
+
+--- Task 4 (20%) --- 
+LMS, added to the same class. You’ll need a noise reference, and for 50 Hz the usual choice is a generated sine.
+
+--- Task 5 (20%) --- 
+the matched filter for R-peak detection. Think about how a matched filter could be built from your own FIR class, because correl/conv are banned.
+
+The tasks form a chain!
+
+
+--- General ---
+
+Recorded using 96kHz sampling rate
+
+
+--- QUESTIONS ---
+- 
