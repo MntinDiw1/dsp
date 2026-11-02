@@ -1,6 +1,15 @@
 --- Task 1 (20%) --- 
 plot and diagnose. Identify baseline wander, 50 Hz and its harmonics, and anything else in the spectrum. This decides what Task 2 removes.
 
+    Plotted in time domain with full & zoomed views. Also plotted in frequency domain to identify present frequencies.
+
+    ANALYSIS:
+    - 50Hz spike
+    - Huge spike at 0Hz
+    - Smaller spikes at 1.5, 3, 4.5Hz
+    - the whole trace drifts down from about 6.5 mV to 3.8 mV
+    - Frequency between peaks is (1/0.66s) = 1.5Hz (Explains the small peak and harmonics)
+
 --- Task 2 (25%) --- 
 coefficient design. Build the frequency response you want, IFFT it to get the impulse response, truncate it and window it. The key question to settle early is how the number of coefficients follows from the frequency resolution you need.
 
