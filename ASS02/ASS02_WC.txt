@@ -2,16 +2,31 @@
 plot and diagnose. Identify baseline wander, 50 Hz and its harmonics, and anything else in the spectrum. This decides what Task 2 removes.
 
     Plotted in time domain with full & zoomed views. Also plotted in frequency domain to identify present frequencies.
+    SAMPLE RATE = 250Hz
 
-    ANALYSIS:
-    - 50Hz spike
-    - Huge spike at 0Hz
-    - Smaller spikes at 1.5, 3, 4.5Hz
-    - the whole trace drifts down from about 6.5 mV to 3.8 mV
-    - Frequency between peaks is (1/0.66s) = 1.5Hz (Explains the small peak and harmonics)
+    ANALYSIS: Saad ECG 2
+    - 'P' peaks more visible on 2nd reading, so chose over first
+    - Large peak at the lowest frequencies (below ≈0.5 Hz): baseline wander.
+    - the whole trace drifts down from about 6.5 mV to 3.8 mV: again, baseline wander, not signal weakening; the R peaks keep the same height above the trace
+    - 50 Hz mains hum
+    - Smaller spikes at 1.5, 3, 4.5Hz: the heartbeat and its harmonics
+    - Frequency between peaks is (1/0.66s) = 1.5Hz (Confirms the small peak and harmonics being caused by heart itself)
+
+    ANALYSIS: Will ECG
+    - why was saad chosen instead
+
+    Some broadband muscle noise (EMG) may sit underneath, but it overlaps the ECG, so a filter can’t remove it without removing heartbeat too. That’s probably the point of Bernd’s Moodle post.
 
 --- Task 2 (25%) --- 
 coefficient design. Build the frequency response you want, IFFT it to get the impulse response, truncate it and window it. The key question to settle early is how the number of coefficients follows from the frequency resolution you need.
+
+    Removal Choices:
+    - remove 0-0.5Hz baseline wander
+    - remove 45Hz+ to make room for the transition band.
+
+    How to calculate number of coefficients and why?
+    - 
+    Tradeoff: Increasing resolution (number of bins) doubles the delay (not good for realtime.)
 
 --- Task 3 (25%) --- 
 the FIRfilter class with dofilter(v), one scalar in and one scalar out. The efficiency trap is named in the brief: don’t shift the whole delay line every sample. A ring buffer avoids that.
@@ -24,14 +39,31 @@ the matched filter for R-peak detection. Think about how a matched filter could 
 
 The tasks form a chain!
 
+AI Acknowledgement:
+
+Claude Opus 5.5
+- folded axis in Task 2
+- 
 
 --- GENERAL ---
 - Design using 1 reading, test using the other reading.
 - Remember to use column 8 counting from 0
+- Use Hamming window when plotting spectra to make it look nicer
 
 --- TDL ---
-- Watch ECG 50Hz removal youtube video
 - EMG noise, will help find cutoff (see moodle post)
+- Abide by bernd's file structure and remove ecg_main.py
+- Which Will ECG to use?
+- Make fir_filter way faster
 
 --- QUESTIONS ---
-- What sampling rate did we record at?
+- Extension (seperate illnesses + overwhelming workload. want to maintain quality output)
+- General look over code. Any feedback?
+- Do both ECG readings need to be plotted in Task 1?
+- figures folder included in submission? Or do you want to generate them?
+- Is EMG recording worth doing?
+- Is my logic for calculating coefficients and why SOUND? (should M be reduced?)
+- How to make fir_filter faster (Saad's code), what max delay should we aim for?
+- Trade resolution for speed?
+- can np.hamming be used?
+- tune ranges to make peaks less rounded
