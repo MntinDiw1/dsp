@@ -9,7 +9,6 @@ plot and diagnose. Identify baseline wander, 50 Hz and its harmonics, and anythi
     - Large peak at the lowest frequencies (below ≈0.5 Hz): baseline wander.
     - the whole trace drifts down from about 6.5 mV to 3.8 mV: again, baseline wander, not signal weakening; the R peaks keep the same height above the trace
     - 50 Hz mains hum
-    - Huge spike at 0Hz
     - Smaller spikes at 1.5, 3, 4.5Hz: the heartbeat and its harmonics
     - Frequency between peaks is (1/0.66s) = 1.5Hz (Confirms the small peak and harmonics being caused by heart itself)
 
@@ -55,12 +54,16 @@ Claude Opus 5.5
 - EMG noise, will help find cutoff (see moodle post)
 - Abide by bernd's file structure and remove ecg_main.py
 - Which Will ECG to use?
+- Make fir_filter way faster
 
 --- QUESTIONS ---
+- Extension (seperate illnesses + overwhelming workload. want to maintain quality output)
 - General look over code. Any feedback?
 - Do both ECG readings need to be plotted in Task 1?
 - figures folder included in submission? Or do you want to generate them?
-- When will we get ASS01 grade?
 - Is EMG recording worth doing?
-- Can for loop be used in task 2 to find narrowest range (to find bin size)
-- Is my logic for calculating coefficients and why SOUND?
+- Is my logic for calculating coefficients and why SOUND? (should M be reduced?)
+- How to make fir_filter faster (Saad's code), what max delay should we aim for?
+- Trade resolution for speed?
+- can np.hamming be used?
+- tune ranges to make peaks less rounded

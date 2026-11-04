@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # --- IMPORT ECG DATA ---
 ECG_COLUMN = 8  # ADC channel 2 (counting from 0)
 
-data = np.loadtxt("ECG_DATA/saad_ecg_2.tsv") #how to call this in other files?
+data = np.loadtxt("ECG_DATA/saad_ecg_2.tsv")
 t = data[:, 0] # column 0: time (s)
 ecg = data[:, ECG_COLUMN]
 sample_rate = 1 / (t[1] - t[0]) # sample_rate = 250 Hz
