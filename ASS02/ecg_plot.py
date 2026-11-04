@@ -1,8 +1,10 @@
 import numpy as np
-from scipy.fftpack import fft
+from scipy.fft import fft
 import matplotlib.pyplot as plt
 
 # ------ TASK 1 PLOTS ------ 
+
+#Add Hamming window to make it look nicer in freq. domain?
 
 # --- IMPORT ECG DATA ---
 ECG_COLUMN = 8  # ADC channel 2 (counting from 0)
@@ -55,6 +57,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.xlabel("frequency (Hz)")
     plt.ylabel("magnitude (V)")
 
+    #IS A SEPERATE ZOOMED PLOT NEEDED OR SHOULD IT BE TOGGLED?
     plt.subplot(2, 1, 2)
     plt.title("zoomed-in spectrum")
     plt.plot(freqs[1:], mag_fft[1:n // 2])
