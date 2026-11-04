@@ -28,6 +28,7 @@ The tasks form a chain!
 --- GENERAL ---
 - Design using 1 reading, test using the other reading.
 - Remember to use column 8 counting from 0
+- Use Hamming window when plotting spectra to make it look nicer
 
 --- TDL ---
 - Watch ECG 50Hz removal youtube video
