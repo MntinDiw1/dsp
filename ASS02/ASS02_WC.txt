@@ -25,6 +25,10 @@ coefficient design. Build the frequency response you want, IFFT it to get the im
     - remove 0-0.5Hz baseline wander
     - remove 45Hz+ to make room for the transition band.
 
+    How to calculate number of coefficients and why?
+    - 
+    Tradeoff: Increasing resolution (number of bins) doubles the delay (not good for realtime.)
+
 --- Task 3 (25%) --- 
 the FIRfilter class with dofilter(v), one scalar in and one scalar out. The efficiency trap is named in the brief: don’t shift the whole delay line every sample. A ring buffer avoids that.
 
@@ -36,6 +40,11 @@ the matched filter for R-peak detection. Think about how a matched filter could 
 
 The tasks form a chain!
 
+AI Acknowledgement:
+
+Claude Opus 5.5
+- folded axis in Task 2
+- 
 
 --- GENERAL ---
 - Design using 1 reading, test using the other reading.
@@ -50,6 +59,8 @@ The tasks form a chain!
 --- QUESTIONS ---
 - General look over code. Any feedback?
 - Do both ECG readings need to be plotted in Task 1?
-- figures folder included in submission? Or do you want to generate them yourself?
+- figures folder included in submission? Or do you want to generate them?
 - When will we get ASS01 grade?
 - Is EMG recording worth doing?
+- Can for loop be used in task 2 to find narrowest range (to find bin size)
+- Is my logic for calculating coefficients and why SOUND?
