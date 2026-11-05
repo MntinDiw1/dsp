@@ -50,5 +50,4 @@ def fir_design(sample_rate, ranges):
     '''
     Edge cases (DC and Nyquist) and covered by the folded axis (bin 0 and bin 125 [fs/2])
     '''
-
     return h_windowed
