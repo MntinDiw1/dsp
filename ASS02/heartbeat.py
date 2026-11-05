@@ -1,17 +1,19 @@
 #5 - simulating real time heartbeat detection using fir_filter
 
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 
-from fir_design import fir_design, mathced_filter
+from fir_design import fir_design
 from fir_filter import FIRfilter
 
 
 #Load and format ECG data - CAN THIS BE STREAMLINED / CALLED FROM TASK 1?
+BASE_DIR = Path(__file__).resolve().parent
 ECG_COLUMN = 8
-ECG_FILE = "saad_ecg_2.tsv" #ECG to analyse
+ECG_FILE = BASE_DIR / "saad_ecg_2.tsv" #ECG to analyse
 
-TEMPLATE_ECG_FILE = "will_c_ecg2" #other lab partner's ECG #which of my ECG files to use?
+TEMPLATE_ECG_FILE = BASE_DIR / "will_c_ecg2.tsv" #other lab partner's ECG #which of my ECG files to use?
 
 def load_ecg(file):
         data = np.loadtxt(file)
@@ -27,7 +29,8 @@ h = fir_design(sample_rate, [[0,0.5], [45, 125]]) #these values were already set
 
 #Extract PQRST from TEMPLATE - AI, UNDERSTAND THIS SQUILLIAM
 fir = FIRfilter(h)
-template_clean = np.zeroes(len(template_ecg))
-for i in range (len(template)):
+template_clean = np.zeros(len(template_ecg))
+for i in range(len(template_ecg)):
         template_clean[i] = fir.dofilter(template_ecg[i])
+
 
