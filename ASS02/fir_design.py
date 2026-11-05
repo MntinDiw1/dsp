@@ -16,10 +16,10 @@ def fir_design(sample_rate, ranges):
     ranges = np.array(ranges)
     min_width = np.min(ranges[:, 1] - ranges[:, 0])
 
-    bin_size = min_width / 2 #WHY DIVIDE BY 2?
+    bin_size = min_width / 2
     M = int(sample_rate / bin_size) #number of coefficients (explain!)
     #why does M have to be even?
-    M += M%2 #ensure M is even (modulo operator is the remainder after division) ---IS THIS NECESSARY?????
+    M += M%2 #ensure M is even (modulo operator is the remainder after division)
 
     '''
     The number of coefficients, M, is calculated based on the minimum width of the frequency range arguments.

@@ -32,7 +32,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.subplot(2, 1, 1)
     plt.title("time domain")
     plt.plot(time, ecg)
-    #plt.xlim(0, time)
+    plt.xlim(0, n / sample_rate)
     plt.xlabel("time (s)")
     plt.ylabel("amplitude (V)")
 
@@ -68,5 +68,5 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
 
     plt.tight_layout() # stop axes overlapping
 
-plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.5) # pick a window containing a single beat
+plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.7) # pick a window containing a single beat
 plt.show()
