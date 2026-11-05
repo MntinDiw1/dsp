@@ -5,13 +5,6 @@ import matplotlib.pyplot as plt
 from support_funcs import import_ecg_data, vector_plot_export
 
 # ------ TASK 1 PLOTS ------ 
-
-#Add Hamming window to make it look nicer in freq. domain?
-
-# --- IMPORT ECG DATA ---
-t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
-
-
 # Function to plot ECG signal in the time and frequency domain
 def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     n = len(ecg)
@@ -50,15 +43,15 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
 
     plt.subplot(2, 1, 1)
     plt.title("full spectrum")
-    plt.plot(freqs[1:], mag_fft[1:n // 2])
+    plt.plot(freqs[0:], mag_fft[0:n // 2])
     plt.xlim(0, sample_rate / 2)
     plt.xlabel("frequency (Hz)")
     plt.ylabel("magnitude (V)")
 
-    #IS A SEPERATE ZOOMED PLOT NEEDED OR SHOULD IT BE TOGGLED?
+    # zoomed in spectrum
     plt.subplot(2, 1, 2)
     plt.title("zoomed-in spectrum")
-    plt.plot(freqs[1:], mag_fft[1:n // 2])
+    plt.plot(freqs[0:], mag_fft[0:n // 2])
     plt.xlim(0, sample_rate / 2)
     plt.ylim(0, 3e-5) # reveals the small peaks (TUNE IT)
     plt.xlabel("frequency (Hz)")
@@ -67,8 +60,9 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.tight_layout() # stop axes overlapping
     vector_plot_export("t1_freq")
 
-if __name__ == "__main__":
-    plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.7) # pick a window containing a single beat
-    plt.show()
+# --- IMPORT ECG DATA ---
+t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
+plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.7) # pick a window containing a single beat
+plt.show()
 
 #TODO: fix plot text, title, legend etc.
