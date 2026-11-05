@@ -58,14 +58,6 @@ Claude Opus 5.5
 - Plot and annotate PQRST (example heartbeat as reference)
 
 --- QUESTIONS ---
-- Extension (seperate illnesses hindered productivity. want to maintain quality output)
 - General look over code. Any feedback?
-- Do both ECG readings need to be plotted in Task 1?
-- figures folder included in submission? Or do you want to generate them?
 - Is EMG recording worth doing?
-- Is my logic for calculating coefficients and why SOUND? (should M be reduced?)
-- How to make fir_filter faster (Saad's code), what max delay should we aim for?
-- Trade resolution for speed?
-- can np.hamming be used?
 - Do you want to see the whole PQRST
-- Should i reprocess the ECG data again in a later file or can I carry it over?
