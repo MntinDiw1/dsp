@@ -52,12 +52,13 @@ Claude Opus 5.5
 
 --- TDL ---
 - EMG noise, will help find cutoff (see moodle post)
-- Abide by bernd's file structure and remove ecg_main.py
-- Which Will ECG to use?
+- rename ECG files to
 - Make fir_filter way faster
+- tune ranges to make peaks less rounded
+- Plot and annotate PQRST (example heartbeat as reference)
 
 --- QUESTIONS ---
-- Extension (seperate illnesses + overwhelming workload. want to maintain quality output)
+- Extension (seperate illnesses hindered productivity. want to maintain quality output)
 - General look over code. Any feedback?
 - Do both ECG readings need to be plotted in Task 1?
 - figures folder included in submission? Or do you want to generate them?
@@ -66,4 +67,5 @@ Claude Opus 5.5
 - How to make fir_filter faster (Saad's code), what max delay should we aim for?
 - Trade resolution for speed?
 - can np.hamming be used?
-- tune ranges to make peaks less rounded
+- Do you want to see the whole PQRST
+- Should i reprocess the ECG data again in a later file or can I carry it over?
