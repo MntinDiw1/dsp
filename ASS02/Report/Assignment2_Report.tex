@@ -19,7 +19,7 @@
 \usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc}
-\graphicspath{{figures/}{../figures/}}
+\graphicspath{{figs/}{figures/}{../figures/}}
 
 % ---------- Tables, links ----------
 \usepackage{booktabs}
@@ -44,7 +44,7 @@
   columns=fullflexible,
   keepspaces=true,
   showstringspaces=false,
-  literate={≈}{{$\approx$}}1 {’}{{'}}1
+  literate={≈}{{$\approx$}}1 {’}{{'}}1 {—}{{---}}1 {–}{{--}}1
 }
 
 % ---------- Title info ----------
@@ -194,6 +194,9 @@
 \section{Python Code}
 % =====================================================
 \todo{Before submitting, verify that: (1) every Python file in the submission is included below, (2) no prohibited high-level functions (\texttt{fftfreq}, \texttt{lfilter}, \texttt{firwin}, \texttt{conv}, \texttt{correl}, FFT/IIR filtering, or array-in/array-out a-causal filtering) appear anywhere, (3) no absolute file paths exist, and (4) any LLM-generated test/debug bloat is removed or optimised so every line is concise, human-readable, and explainable in an interview.}
+
+\subsection{support\_funcs.py}
+\lstinputlisting{../support_funcs.py}
 
 \subsection{ecg\_plot.py}
 \lstinputlisting{../ecg_plot.py}
