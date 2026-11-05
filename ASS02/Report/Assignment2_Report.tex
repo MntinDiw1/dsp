@@ -1,0 +1,216 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Page layout ----------
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{parskip}
+\usepackage{microtype}
+
+% ---------- Fonts / maths ----------
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\sisetup{detect-all}
+
+% ---------- Figures (vector only) ----------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,calc}
+\graphicspath{{figures/}{../figures/}}
+
+% ---------- Tables, links ----------
+\usepackage{booktabs}
+\newcommand{\rng}[2]{#1\,\textendash\,#2}
+\usepackage{tabularx}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- Code listings for the appendix ----------
+\usepackage{xcolor}
+\newcommand{\todo}[1]{\textcolor{red}{[#1]}} % draft notes; set to {} to hide before submitting
+\usepackage{listings}
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue!70!black},
+  commentstyle=\color{green!40!black},
+  stringstyle=\color{orange!70!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  breaklines=true,
+  frame=single,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  literate={≈}{{$\approx$}}1 {’}{{'}}1
+}
+
+% ---------- Title info ----------
+\title{Digital Signal Processing -- Assignment 2\\
+       FIR Filters}
+\author{
+  William Chambers (GUID:\ 2906463C) \\
+  Saad Aziz (GUID:\ 2917444A) \\[0.5em]
+  University of Glasgow, School of Engineering
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% =====================================================
+\section{Recordings}
+% =====================================================
+\todo{State who recorded the ECGs in the lab, the electrode placement/lead setup, the sampling rate $f_s$ (calculated from column 0 timestamps) and corresponding Nyquist frequency $f_s/2$, which column of the TSV contains the ECG channel (column 8, 0-indexed), and why each partner's recording was selected (e.g.\ primary recording for Tasks 1--4 vs.\ partner's recording for the Task 5 matched-filter template).}
+
+% =====================================================
+\section{Task 1: Time and Frequency Analysis}
+% =====================================================
+\todo{Briefly state how the time axis and single-sided linear frequency spectrum ($X = \frac{1}{N}\,\mathrm{FFT}(x)$ up to $f_s/2$) were computed from the raw recording without using prohibited functions like \texttt{fftfreq}. Emphasise that the frequency domain is plotted on a \textbf{linear axis} as required by the brief.}
+
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=\textwidth]{filename.pdf}
+  \todo{Insert vector Figure (PDF/EPS/SVG): Raw ECG in the time domain showing (1) the full recording to reveal overall baseline drift/offset, and (2) a zoomed-in trace of a single heartbeat annotated (e.g.\ via Inkscape) with the P, Q, R, S, and T waves and proper axis labels/units.}
+  \caption{\todo{Caption specifying the recording, full time-domain trace, and zoomed single heartbeat with labelled PQRST waves.}}
+  \label{fig:t1_time}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=\textwidth]{filename.pdf}
+  \todo{Insert vector Figure (PDF/EPS/SVG): Raw ECG in the frequency domain on \textbf{linear axes} (both full magnitude view and zoomed-in magnitude view if needed to resolve smaller peaks), annotated (e.g.\ via Inkscape) to point out DC/baseline wander, heart-rate fundamental and harmonics, 50\,Hz mains interference, and higher-frequency noise floor.}
+  \caption{\todo{Caption describing the annotated linear-axis frequency spectrum of the raw ECG.}}
+  \label{fig:t1_freq}
+\end{figure}
+
+\paragraph{ECG signal and harmonics.}
+\todo{Measure the beat-to-beat (R--R) period from the time-domain plot, calculate the corresponding fundamental heart rate frequency $f_0 = 1/T_{\text{RR}}$, locate the fundamental peak and its integer harmonics ($2f_0, 3f_0, \dots$) in the zoomed frequency spectrum, and identify the frequency band where the diagnostic PQRST energy resides.}
+
+\paragraph{Noise and interferences.}
+\todo{Identify and explain every non-ECG component in both domains: (1) DC offset and low-frequency baseline wander (respiration/movement drift in time domain, large spike near 0\,Hz in spectrum), (2) 50\,Hz mains power-line hum (and state whether any 100\,Hz harmonic is present below the 125\,Hz Nyquist limit), and (3) broadband muscle (EMG) / electronic noise floor and where it overlaps or sits above the ECG spectrum.}
+
+\paragraph{Frequencies to remove.}
+\todo{Explicitly list the exact frequency ranges chosen for removal (in Hz) and justify \textbf{why} each cut-off was chosen using your harmonic analysis: why the low cut-off removes DC and baseline wander without attenuating the fundamental heart rate $f_0$, and why the upper bandstop/lowpass cut-off removes 50\,Hz mains hum (and high-frequency noise) without rounding or distorting the sharp QRS complex.}
+
+% =====================================================
+\section{Task 2: FIR Filter Coefficient Design}
+% =====================================================
+
+\paragraph{Number of coefficients.}
+\todo{Give the exact mathematical formula and reasoning for how the number of taps $M$ is automatically calculated inside your general-purpose design function from $f_s$ and the array of frequency ranges to remove (e.g.\ finding the narrowest stopband width $\Delta f_{\min}$, setting the required frequency resolution / bin width $\delta f$, computing $M = f_s / \delta f$, and enforcing even parity if required for symmetric half-swapping). Discuss the engineering trade-off between frequency resolution (sharper cut-offs with larger $M$) versus filter delay ($M/2$ samples) and realtime computational cost.}
+
+\paragraph{IFFT coefficient calculation.}
+\todo{Explain step-by-step how the general-purpose function computes the FIR coefficients: (1) constructing the ideal frequency response array $H[k]$ of length $M$ with passbands set to 1 and target stopband ranges set to 0, (2) maintaining conjugate/Hermitian symmetry across positive and negative frequencies and explicitly handling edge cases such as DC ($0\text{\,Hz}$, bin 0) and Nyquist ($f_s/2$), (3) applying the IFFT and taking the real part to obtain the impulse response $h[n]$, (4) shifting/swapping the two halves of $h[n]$ so the impulse response is causal and centred at $M/2$ rather than split across the ends, and (5) multiplying by a window function (e.g.\ Hamming) to suppress Gibbs phenomenon ringing caused by truncating the impulse response.}
+
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=\textwidth]{filename.pdf}
+  \todo{Insert vector Figure (PDF/EPS/SVG): Plot of the designed FIR filter showing (1) the final shifted and windowed impulse response / tap coefficients $h[n]$ against tap index $n$, and (2) the resulting frequency response magnitude $|H(f)|$ verifying the stopbands at DC/baseline wander and 50\,Hz.}
+  \caption{\todo{Caption stating the calculated number of taps $M$, the removed frequency ranges, the window used, and what the time/frequency plots show.}}
+  \label{fig:t2_coeffs}
+\end{figure}
+
+% =====================================================
+\section{Task 3: Realtime FIR Filtering}
+% =====================================================
+
+\paragraph{Implementation.}
+\todo{Explain the architecture of \texttt{class FIRfilter} with constructor \texttt{\_\_init\_\_(self, \_coefficients)} and method \texttt{dofilter(self, v)}. Emphasise that \texttt{dofilter} accepts a single scalar input sample $x[n]$ and returns a single scalar output sample $y[n] = \sum_{m=0}^{M-1} h[m]\,x[n-m]$ to simulate sample-by-sample realtime processing. Explicitly explain how the delay line is implemented efficiently (e.g.\ using a circular ring buffer and a moving index pointer/offset rather than shifting all $M$ array elements at every time step, which the brief warns loses marks).}
+
+\paragraph{Filtered ECG results.}
+\todo{Show the result of feeding the raw ECG sample-by-sample through \texttt{dofilter}. Explain the initial transient / buffer-fill period ($M$ samples) and the linear-phase group delay ($M/2$ samples). Verify and explicitly comment on: (1) complete removal of DC offset and baseline wander in the full time trace, (2) removal of the 50\,Hz hum in the time and frequency domains, and (3) visual confirmation on a zoomed single heartbeat that the P, Q, R, S, and T waves are intact, sharp, and undistorted.}
+
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=\textwidth]{filename.pdf}
+  \todo{Insert vector Figure (PDF/EPS/SVG): Task 3 realtime FIR filtered ECG showing (1) the full filtered time-domain trace (flat baseline around 0\,V), (2) a zoomed-in single heartbeat annotated with P, Q, R, S, T to prove the morphology is intact and undistorted, and (3) the linear frequency spectrum of the filtered ECG confirming the stopbands.}
+  \caption{\todo{Caption describing the sample-by-sample FIR filtered ECG in the time domain (full and zoomed single beat with PQRST) and frequency domain.}}
+  \label{fig:t3_filtered}
+\end{figure}
+
+% =====================================================
+\section{Task 4: Adaptive LMS Filter}
+% =====================================================
+
+\paragraph{Implementation.}
+\todo{Explain how \texttt{doFilterAdaptive(self, signal, noise, learningRate)} is added to \texttt{FIRfilter} and operates sample-by-sample on scalars: (1) what the primary input \texttt{signal} $d[n]$ is (and if DC/baseline wander is removed beforehand), (2) how the scalar 50\,Hz reference \texttt{noise} $x[n] = \sin(2\pi \cdot 50\,n / f_s)$ is generated and filtered by the adaptive weights to estimate the interference $y[n]$, (3) how the cleaned ECG error output $e[n] = d[n] - y[n]$ is computed, and (4) how each filter weight $w_k$ is updated at every step ($w_k \leftarrow w_k + \mu\,e[n]\,x[n-k]$). Justify your choice of filter length $M_{\text{LMS}}$ and learning rate $\mu$ (trade-off between adaptation speed and stability/excess error).}
+
+\paragraph{Comparison with FIR filter design.}
+\todo{Compare the adaptive LMS filter output directly against the Task 3 fixed FIR bandstop filter: compare (1) 50\,Hz noise suppression quality and PQRST waveform preservation on a zoomed heartbeat, (2) startup behaviour (LMS weight convergence time vs.\ fixed FIR buffer fill and group delay), (3) computational efficiency (number of taps required for LMS vs.\ the large $M$ needed for the fixed FIR filter), and (4) frequency selectivity (narrow notch tracking the reference vs.\ wider fixed bandstop).}
+
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=\textwidth]{filename.pdf}
+  \todo{Insert vector Figure (PDF/EPS/SVG): Direct visual comparison of the Task 4 adaptive LMS output and the Task 3 fixed FIR output, including (1) full or startup time trace showing LMS convergence, (2) zoomed single heartbeat overlay showing PQRST fidelity of both methods, and (3) frequency spectrum comparison if applicable.}
+  \caption{\todo{Caption comparing the adaptive LMS filter result ($\mu$, $M_{\text{LMS}}$) with the Task 3 fixed FIR filter design.}}
+  \label{fig:t4_compare}
+\end{figure}
+
+% =====================================================
+\section{Task 5: ECG Heartbeat Detection}
+% =====================================================
+
+\paragraph{Matched filter template.}
+\todo{Explain how a single clean PQRST heartbeat was isolated from the \textbf{other lab partner's} filtered ECG recording to act as a real ECG template. Explain the theory and implementation of the matched filter: why the template array is time-reversed ($h[n] = \text{template}[N-1-n]$) and passed into a \texttt{FIRfilter} instance so that sample-by-sample convolution via \texttt{dofilter} performs cross-correlation in realtime without using prohibited functions like \texttt{correl} or \texttt{conv}. Mention any post-processing applied to the matched filter output (e.g.\ squaring) to enhance the R-peak SNR.}
+
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=\textwidth]{filename.pdf}
+  \todo{Insert vector Figure (PDF/EPS/SVG): The single heartbeat template extracted from the other lab partner's ECG (and/or its time-reversed matched filter impulse response) with proper time and amplitude labels.}
+  \caption{\todo{Caption identifying which partner's recording the template came from, the time window extracted, and the resulting matched filter coefficients.}}
+  \label{fig:t5_template}
+\end{figure}
+
+\paragraph{R-peak detection and momentary heart rate.}
+\todo{Explain how R-peaks are detected from the matched filter output (e.g.\ threshold crossing / local peak detection) and how the momentary heart rate is calculated from the inverse intervals between consecutive R-peaks ($\mathrm{HR} = 60 / \Delta t_{\text{RR}}$ in bpm). Explicitly detail the heuristic(s) implemented to reject false detections and artefacts (e.g.\ minimum refractory period corresponding to a maximum physiological heart rate of $\le 200\text{\,bpm}$, minimum heart-rate bound, and/or ignoring the initial filter startup transient) and discuss the resulting heart rate trace over time.}
+
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=\textwidth]{filename.pdf}
+  \todo{Insert vector Figure (PDF/EPS/SVG): (1) Matched filter output (and/or ECG trace) showing the detected R-peaks, and (2) the momentary heart rate (in bpm or bps/Hz, clearly labelled) plotted against time after heuristic filtering.}
+  \caption{\todo{Caption describing the R-peak detections and the momentary heart rate vs.\ time plot with heuristic outlier removal.}}
+  \label{fig:t5_hr}
+\end{figure}
+
+%------------------------------------------------------------------------------------------------------------------------------------------------------
+\pagebreak
+% =====================================================
+\appendix
+
+\section{Acknowledgement of GenAI Use}
+% =====================================================
+\textbf{Tools:}
+\todo{List every GenAI tool used with its exact name, version, and publisher (e.g.\ Claude Opus 5.5 (Anthropic); Gemini (Google); GitHub Copilot (Microsoft)) as required by the brief and UoG guidance.}\\
+\textbf{Use:}
+\todo{State clearly (1) how each GenAI tool was used (e.g.\ LaTeX report framework, debugging, syntax lookups, code optimisation), and (2) explicitly what work you contributed yourself (e.g.\ lab ECG recordings, spectral analysis, filter design logic, ring-buffer and LMS implementations, matched filter and heuristic design, and writing the report).}
+
+\section{Usage instructions}
+% =====================================================
+\todo{Provide exact platform-independent command-line instructions to run the code from a terminal (not Spyder) after unzipping the submission, list required Python packages (\texttt{numpy}, \texttt{scipy}, \texttt{matplotlib}), and confirm that running the script(s) displays all plots without crashing and uses only relative paths.}
+
+\section{Python Code}
+% =====================================================
+\todo{Before submitting, verify that: (1) every Python file in the submission is included below, (2) no prohibited high-level functions (\texttt{fftfreq}, \texttt{lfilter}, \texttt{firwin}, \texttt{conv}, \texttt{correl}, FFT/IIR filtering, or array-in/array-out a-causal filtering) appear anywhere, (3) no absolute file paths exist, and (4) any LLM-generated test/debug bloat is removed or optimised so every line is concise, human-readable, and explainable in an interview.}
+
+\subsection{ecg\_plot.py}
+\lstinputlisting{../ecg_plot.py}
+
+\subsection{fir\_design.py}
+\lstinputlisting{../fir_design.py}
+
+\subsection{fir\_filter.py}
+\lstinputlisting{../fir_filter.py}
+
+\subsection{fir\_realtime\_sim.py}
+\lstinputlisting{../fir_realtime_sim.py}
+
+\subsection{lms\_filter.py}
+\lstinputlisting{../lms_filter.py}
+
+\subsection{heartbeat.py}
+\lstinputlisting{../heartbeat.py}
+
+\end{document}
