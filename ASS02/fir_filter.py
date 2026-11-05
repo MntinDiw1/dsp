@@ -27,15 +27,11 @@ class FIRfilter:
         """
         self.buffer[self.offset] = v
 
-        output = 0.0
-        read_idx = self.offset
-
-        for k in range(self.ntaps):
-            output += self.coefficients[k] * self.buffer[read_idx]
-            
-            read_idx -= 1
-            if read_idx < 0:
-                read_idx = self.ntaps - 1
+        k = self.offset + 1
+        output = (
+            np.dot(self.coefficients[:k], self.buffer[self.offset::-1])
+            + np.dot(self.coefficients[k:], self.buffer[:self.offset:-1])
+        )
 
         self.offset += 1
         if self.offset >= self.ntaps:
@@ -57,20 +53,15 @@ class FIRfilter:
         float
             The cleaned ECG sample e[n] = d[n] - y[n].
         """
-
         read_idx = self.offset
 
         y = self.dofilter(noise)
 
         e = signal - y
 
-        for k in range(self.ntaps):
-            self.coefficients[k] += learningRate * e * self.buffer[read_idx]
-            
-            read_idx -= 1
-            if read_idx < 0:
-                read_idx = self.ntaps - 1
+        k = read_idx + 1
+        step = learningRate * e
+        self.coefficients[:k] += step * self.buffer[read_idx::-1]
+        self.coefficients[k:] += step * self.buffer[:read_idx:-1]
 
         return float(e)
-
-
