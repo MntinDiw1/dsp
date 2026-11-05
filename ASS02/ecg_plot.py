@@ -2,17 +2,14 @@ import numpy as np
 from scipy.fft import fft
 import matplotlib.pyplot as plt
 
+from support_funcs import import_ecg_data, vector_plot_export
+
 # ------ TASK 1 PLOTS ------ 
 
 #Add Hamming window to make it look nicer in freq. domain?
 
 # --- IMPORT ECG DATA ---
-ECG_COLUMN = 8  # ADC channel 2 (counting from 0)
-
-data = np.loadtxt("ECG_DATA/saad_ecg_2.tsv")
-t = data[:, 0] # column 0: time (s)
-ecg = data[:, ECG_COLUMN]
-sample_rate = 1 / (t[1] - t[0]) # sample_rate = 250 Hz
+t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
 
 
 # Function to plot ECG signal in the time and frequency domain
@@ -45,6 +42,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.ylabel("amplitude (V)")
 
     plt.tight_layout() # stop axes overlapping
+    vector_plot_export("t1_time")
 
     # --- figure 2: frequency domain ---
     plt.figure(figsize=(12, 8))
@@ -67,6 +65,10 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.ylabel("magnitude (V)")
 
     plt.tight_layout() # stop axes overlapping
+    vector_plot_export("t1_freq")
 
-plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.7) # pick a window containing a single beat
-plt.show()
+if __name__ == "__main__":
+    plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.7) # pick a window containing a single beat
+    plt.show()
+
+#TODO: fix plot text, title, legend etc.
