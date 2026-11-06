@@ -52,5 +52,43 @@ def fir_design(sample_rate, ranges):
     '''
     return h_windowed
 
-if __name__ == "__main__"
-    # plot the array of taps save as svg
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    from scipy.fft import fft
+    from support_funcs import import_ecg_data, vector_plot_export
+
+    _, _, sample_rate = import_ecg_data("saad_ecg_2.tsv")
+    baseline_wander = [0, 0.5]
+    mains_hum = [45, 125]
+
+    h = fir_design(sample_rate, [baseline_wander, mains_hum])
+    M = len(h)
+
+    freqs_h = np.arange(M // 2 + 1) * sample_rate / M
+    H_mag = np.abs(fft(h))[:M // 2 + 1]
+
+    plt.figure(figsize=(12, 6))
+    plt.suptitle(f"FIR Filter Design (M = {M} taps, fs = {sample_rate:.0f} Hz)")
+
+    plt.subplot(2, 1, 1)
+    plt.title("Impulse Response h[n] (Shifted & Hamming Windowed)")
+    plt.plot(np.arange(M), h)
+    plt.xlim(0, M - 1)
+    plt.xlabel("Tap Index (n)")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+
+    plt.subplot(2, 1, 2)
+    plt.title("Frequency Response |H(f)|")
+    plt.plot(freqs_h, H_mag)
+    plt.axvspan(0, 0.5, color="red", alpha=0.2, label="DC / Baseline Stopband (0-0.5 Hz)")
+    plt.axvspan(45, 125, color="orange", alpha=0.2, label="Mains / HF Stopband (45-125 Hz)")
+    plt.xlim(0, sample_rate / 2)
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Gain")
+    plt.legend(loc="upper right")
+    plt.grid(True)
+
+    plt.tight_layout()
+    vector_plot_export("t2_coeffs")
+    plt.show()
