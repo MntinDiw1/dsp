@@ -1,20 +1,15 @@
 # 3b - Simulating RT FIR filtering importing fir_design and fir_filter.
 
-from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import fft
 
 from fir_design import fir_design
 from fir_filter import FIRfilter
+from support_funcs import import_ecg_data, vector_plot_export
 
 # --- 1. Load ECG Data ---
-ECG_COLUMN = 8  # ADC channel 2
-BASE_DIR = Path(__file__).resolve().parent
-data = np.loadtxt(BASE_DIR / "saad_ecg_2.tsv")
-t = data[:, 0]
-ecg = data[:, ECG_COLUMN]
-sample_rate = 1 / (t[1] - t[0])  # fs = 250 Hz
+t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
 
 # --- 2. Design FIR Filter ---
 # Frequency ranges to remove:
@@ -64,6 +59,7 @@ plt.ylabel("Gain")
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
+vector_plot_export("t2_coeffs")
 
 # --- 5. Plot Raw vs Filtered ECG (Time & Frequency Domain) ---
 n = len(ecg)
@@ -102,5 +98,6 @@ plt.ylabel("Magnitude (V)")
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
+vector_plot_export("t3_filtered")
 
 plt.show()

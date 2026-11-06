@@ -19,7 +19,7 @@ def fir_design(sample_rate, ranges):
     bin_size = min_width / 2
     M = int(sample_rate / bin_size) #number of coefficients (explain!)
     #why does M have to be even?
-    M += M%2 #ensure M is even (modulo operator is the remainder after division)
+    M += M%2 # ensure M is even
 
     '''
     The number of coefficients, M, is calculated based on the minimum width of the frequency range arguments.
@@ -51,3 +51,6 @@ def fir_design(sample_rate, ranges):
     Edge cases (DC and Nyquist) and covered by the folded axis (bin 0 and bin 125 [fs/2])
     '''
     return h_windowed
+
+if __name__ == "__main__"
+    # plot the array of taps save as svg

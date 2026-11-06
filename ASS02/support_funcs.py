@@ -1,5 +1,8 @@
 from pathlib import Path
 import numpy as np
+import matplotlib.pyplot as plt
+
+BASE_DIR = Path(__file__).resolve().parent
 
 
 def import_ecg_data(filename):
@@ -10,10 +13,9 @@ def import_ecg_data(filename):
 
     Returns:
     tuple[np.ndarray, np.ndarray, float]
-        (t, ecg, sample_rate) — time vector (s), ECG signal (V), and sampling rate (Hz).
+        (t, ecg, sample_rate) - time vector (s), ECG signal (V), and sampling rate (Hz).
     """
     ECG_COLUMN = 8  # ADC channel 2
-    BASE_DIR = Path(__file__).resolve().parent
     data = np.loadtxt(BASE_DIR / filename)
     t = data[:, 0]
     ecg = data[:, ECG_COLUMN]
@@ -21,3 +23,17 @@ def import_ecg_data(filename):
 
     return t, ecg, sample_rate
 
+
+def vector_plot_export(savename):
+    """
+    Exports the current matplotlib figure as vector graphics (.svg and .pdf) to Report/figs/.
+
+    Parameters:
+    savename: str or Path
+        Output file name (without extension).
+    """
+    figs_dir = BASE_DIR / "Report" / "figs"
+    figs_dir.mkdir(parents=True, exist_ok=True)
+    stem = Path(savename).stem
+    plt.savefig(figs_dir / f"{stem}.svg", format="svg", bbox_inches="tight")
+    plt.savefig(figs_dir / f"{stem}.pdf", format="pdf", bbox_inches="tight")

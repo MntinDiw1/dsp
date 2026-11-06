@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASS02 Code Checklist — ENG4053 DSP 4</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-hover: #263449;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --success: #22c55e;
+      --warn: #f59e0b;
+      --code-bg: #0b1120;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 2rem 1rem 4rem;
+    }
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 1.75rem;
+    }
+    h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0 0 1.25rem;
+    }
+    .progress-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: var(--code-bg);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      transition: width 0.25s ease;
+    }
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.85rem;
+    }
+    button {
+      background: var(--code-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    button:hover {
+      border-color: var(--accent);
+      background: #162032;
+    }
+    button.active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.15rem;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+    h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+    }
+    .badge.done {
+      background: rgba(34, 197, 94, 0.18);
+      color: var(--success);
+    }
+    .badge.warn {
+      background: rgba(245, 158, 11, 0.18);
+      color: var(--warn);
+    }
+    ul.checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    li.item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.55rem 0.5rem;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+    li.item:hover {
+      background: var(--card-hover);
+    }
+    li.item input[type="checkbox"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border: 2px solid var(--muted);
+      border-radius: 4px;
+      margin-top: 0.2rem;
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      background: var(--code-bg);
+      transition: all 0.15s;
+    }
+    li.item input[type="checkbox"]:checked {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    li.item input[type="checkbox"]:checked::before {
+      content: "✓";
+      color: #052e16;
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+    li.item label {
+      cursor: pointer;
+      flex: 1;
+      font-size: 0.93rem;
+    }
+    li.item.checked label {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+    code {
+      font-family: "JetBrains Mono", Consolas, monospace;
+      font-size: 0.84em;
+      background: var(--code-bg);
+      padding: 0.12rem 0.38rem;
+      border-radius: 4px;
+      color: #7dd3fc;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ENG4053 DSP 4 — Assignment 2 Code Checklist</h1>
+      <p class="subtitle">Interactive TODO list for FIR Filtering, Adaptive LMS &amp; ECG Heartbeat Detection (saves automatically in browser)</p>
+      <div class="progress-card">
+        <div class="progress-top">
+          <span id="progress-text">0 / 0 completed</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="controls">
+          <button id="filter-all" class="active" onclick="setFilter('all')">Show All</button>
+          <button id="filter-todo" onclick="setFilter('todo')">Remaining Only</button>
+          <button id="filter-done" onclick="setFilter('done')">Completed Only</button>
+          <button onclick="resetDefaults()" style="margin-left:auto;">Reset to Current Code State</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Section 1 -->
+    <section>
+      <div class="section-header">
+        <h2>1. Shared Utilities &amp; File Structure (<code>support_funcs.py</code>)</h2>
+        <span class="badge">In Progress</span>
+      </div>
+      <ul class="checklist">
+        <li class="item">
+          <input type="checkbox" id="s1-1" data-default="true" />
+          <label for="s1-1">Create <code>import_ecg_data(filename)</code> helper in <code>support_funcs.py</code> using relative <code>Path(__file__).resolve().parent</code>.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="s1-2" data-default="false" />
+          <label for="s1-2">Update <code>ecg_plot.py</code>, <code>fir_realtime_sim.py</code>, <code>lms_filter.py</code>, and <code>heartbeat.py</code> to call <code>import_ecg_data(...)</code> instead of duplicating <code>np.loadtxt</code>.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="s1-3" data-default="false" />
+          <label for="s1-3">Add <code>\lstinputlisting{../support_funcs.py}</code> to Appendix C of <code>Report/Assignment2_Report.tex</code>.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="s1-4" data-default="false" />
+          <label for="s1-4">Add vector plot export (<code>plt.savefig("Report/figures/....pdf")</code>) across plotting scripts so report figures stay in sync.</label>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 2 -->
+    <section>
+      <div class="section-header">
+        <h2>2. Task 1 — Time &amp; Frequency Analysis (<code>ecg_plot.py</code>) [20%]</h2>
+        <span class="badge done">Mostly Complete</span>
+      </div>
+      <ul class="checklist">
+        <li class="item">
+          <input type="checkbox" id="t1-1" data-default="true" />
+          <label for="t1-1">Implement <code>plot_ecg</code> with full time trace, single-heartbeat PQRST zoom (<code>5.5</code>–<code>6.7</code> s), full linear spectrum, and zoomed linear spectrum.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t1-2" data-default="false" />
+          <label for="t1-2">Check whether index <code>0</code> (DC bin) should be included in the full spectrum plot (currently slices <code>freqs[1:]</code>) or if low-frequency wander (&lt; 0.5 Hz) is clearly visible.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t1-3" data-default="false" />
+          <label for="t1-3">Optionally plot <code>will_c_ecg2.tsv</code> with <code>plot_ecg</code> to inspect the partner's recording and note the exact time window of a clean template beat for Task 5.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t1-4" data-default="false" />
+          <label for="t1-4">Remove draft comments in <code>ecg_plot.py</code> (lines 7, 60, 65).</label>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 3 -->
+    <section>
+      <div class="section-header">
+        <h2>3. Task 2 — FIR Coefficient Design (<code>fir_design.py</code>) [25%]</h2>
+        <span class="badge done">Mostly Complete</span>
+      </div>
+      <ul class="checklist">
+        <li class="item">
+          <input type="checkbox" id="t2-1" data-default="true" />
+          <label for="t2-1">Implement <code>fir_design(sample_rate, ranges)</code> using folded symmetric frequency axis, real IFFT, causal half-swap, and Hamming window.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t2-2" data-default="false" />
+          <label for="t2-2">Verify choice of stopband ranges (<code>[0, 0.5]</code> and <code>[45, 125]</code> Hz) and tap count <code>M = 1000</code> (or tune low cutoff if smaller delay / fewer taps is desired).</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t2-3" data-default="false" />
+          <label for="t2-3">Clean up self-question comments in <code>fir_design.py</code> (lines 20–21, 48).</label>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 4 -->
+    <section>
+      <div class="section-header">
+        <h2>4. Task 3 — Realtime FIR Filter (<code>fir_filter.py</code> &amp; <code>fir_realtime_sim.py</code>) [25%]</h2>
+        <span class="badge done">Mostly Complete</span>
+      </div>
+      <ul class="checklist">
+        <li class="item">
+          <input type="checkbox" id="t3-1" data-default="true" />
+          <label for="t3-1">Implement <code>FIRfilter.__init__</code> and scalar-in/scalar-out <code>dofilter(self, v)</code> with circular ring buffer in <code>fir_filter.py</code>.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t3-2" data-default="true" />
+          <label for="t3-2">Implement sample-by-sample filtering loop and plots (impulse/frequency response + raw vs. filtered ECG) in <code>fir_realtime_sim.py</code>.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t3-3" data-default="false" />
+          <label for="t3-3">Check the zoomed heartbeat window in <code>fir_realtime_sim.py</code> (line 89: <code>plt.xlim(5.5, 6.5)</code>) to account for the <code>M/2 = 500</code> sample (2.0 s) linear-phase group delay if comparing the exact same heartbeat as Task 1.</label>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 5 -->
+    <section>
+      <div class="section-header">
+        <h2>5. Task 4 — Adaptive LMS Filter (<code>lms_filter.py</code>) [20%]</h2>
+        <span class="badge warn">Needs Implementation</span>
+      </div>
+      <ul class="checklist">
+        <li class="item">
+          <input type="checkbox" id="t4-1" data-default="true" />
+          <label for="t4-1">Implement scalar-in/scalar-out <code>doFilterAdaptive(self, signal, noise, learningRate)</code> in <code>FIRfilter</code> (<code>fir_filter.py</code>).</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t4-2" data-default="false" />
+          <label for="t4-2">Load ECG in <code>lms_filter.py</code> and pre-remove DC / baseline wander (or high-pass filter 0–0.5 Hz) so the 50 Hz LMS canceller operates on a zero-mean ECG.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t4-3" data-default="false" />
+          <label for="t4-3">Run sample-by-sample LMS loop feeding scalar 50 Hz reference <code>noise = np.sin(2 * np.pi * 50 * n / sample_rate)</code> into <code>lms.doFilterAdaptive(...)</code>.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t4-4" data-default="false" />
+          <label for="t4-4">Tune LMS tap count <code>M_lms</code> and step size <code>learningRate</code> (&mu;) for rapid 50 Hz cancellation without PQRST distortion.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t4-5" data-default="false" />
+          <label for="t4-5">Plot and compare Adaptive LMS output vs. Task 3 FIR filter output (full time trace showing convergence, zoomed single heartbeat PQRST comparison, and frequency spectrum).</label>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 6 -->
+    <section>
+      <div class="section-header">
+        <h2>6. Task 5 — Matched Filter Heartbeat Detection (<code>heartbeat.py</code>) [20%]</h2>
+        <span class="badge warn">In Progress</span>
+      </div>
+      <ul class="checklist">
+        <li class="item">
+          <input type="checkbox" id="t5-1" data-default="true" />
+          <label for="t5-1">Fix import/syntax errors in <code>heartbeat.py</code> and filter partner's ECG (<code>will_c_ecg2.tsv</code>) sample-by-sample into <code>template_clean</code>.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t5-2" data-default="false" />
+          <label for="t5-2">Slice one clean PQRST beat from <code>template_clean</code> and time-reverse it (<code>matched_coeffs = template_beat[::-1]</code>) to form the matched filter impulse response.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t5-3" data-default="false" />
+          <label for="t5-3">Plot the isolated partner heartbeat template / matched filter coefficients (for Report Figure 5).</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t5-4" data-default="false" />
+          <label for="t5-4">Filter the primary ECG (<code>saad_ecg_2.tsv</code>) sample-by-sample and feed it sample-by-sample through <code>mf = FIRfilter(matched_coeffs)</code> (and optionally square the output to amplify R-peaks).</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t5-5" data-default="false" />
+          <label for="t5-5">Implement R-peak detection with physiological heuristics (ignore initial filter transient; enforce refractory period &ge; 0.3 s so heart rate &le; 200 bpm; reject implausible intervals).</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t5-6" data-default="false" />
+          <label for="t5-6">Calculate momentary heart rate (<code>60 / delta_t</code> bpm) and plot detected R-peaks + momentary heart rate against time.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="t5-7" data-default="false" />
+          <label for="t5-7">Remove draft comments in <code>heartbeat.py</code> (lines 11, 16, 28, 30).</label>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 7 -->
+    <section>
+      <div class="section-header">
+        <h2>7. Final Pre-Submission Verification</h2>
+        <span class="badge">Final Check</span>
+      </div>
+      <ul class="checklist">
+        <li class="item">
+          <input type="checkbox" id="f-1" data-default="false" />
+          <label for="f-1">Verify zero prohibited functions (<code>fftfreq</code>, <code>lfilter</code>, <code>firwin</code>, <code>conv</code>, <code>correl</code>, or array-in/array-out filtering) across all files.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="f-2" data-default="false" />
+          <label for="f-2">Verify no absolute paths exist anywhere in the codebase.</label>
+        </li>
+        <li class="item">
+          <input type="checkbox" id="f-3" data-default="false" />
+          <label for="f-3">Test running every script from a fresh terminal outside Spyder to confirm all plots display without errors.</label>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "ass02_todo_state_v1";
+    let currentFilter = "all";
+
+    function loadState() {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        if (cb.id in saved) {
+          cb.checked = saved[cb.id];
+        } else {
+          cb.checked = cb.dataset.default === "true";
+        }
+        cb.closest(".item").classList.toggle("checked", cb.checked);
+        cb.addEventListener("change", () => {
+          cb.closest(".item").classList.toggle("checked", cb.checked);
+          saveState();
+          updateProgress();
+          applyFilter();
+        });
+      });
+      updateProgress();
+      applyFilter();
+    }
+
+    function saveState() {
+      const state = {};
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        state[cb.id] = cb.checked;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      const checked = Array.from(all).filter(cb => cb.checked).length;
+      const pct = all.length ? Math.round((checked / all.length) * 100) : 0;
+      document.getElementById("progress-text").textContent = `${checked} / ${all.length} completed`;
+      document.getElementById("progress-pct").textContent = `${pct}%`;
+      document.getElementById("progress-fill").style.width = `${pct}%`;
+    }
+
+    function setFilter(mode) {
+      currentFilter = mode;
+      document.querySelectorAll(".controls button[id^='filter-']").forEach(btn => {
+        btn.classList.toggle("active", btn.id === `filter-${mode}`);
+      });
+      applyFilter();
+    }
+
+    function applyFilter() {
+      document.querySelectorAll("li.item").forEach(li => {
+        const isChecked = li.querySelector('input[type="checkbox"]').checked;
+        if (currentFilter === "todo" && isChecked) {
+          li.classList.add("hidden");
+        } else if (currentFilter === "done" && !isChecked) {
+          li.classList.add("hidden");
+        } else {
+          li.classList.remove("hidden");
+        }
+      });
+    }
+
+    function resetDefaults() {
+      localStorage.removeItem(STORAGE_KEY);
+      loadState();
+    }
+
+    loadState();
+  </script>
+</body>
+</html>
+
