@@ -1,3 +1,12 @@
+'''
+Plot the ECG in the time- and frequency domain (linear axis) and identify 
+the ECG and the noise in the spectrum. There is certainly baseline 
+wander and 50Hz interference but there might be other interferences. 
+Decide which frequency components need to be removed. Identify these 
+frequencies representing noise using your judgement and knowledge 
+about harmonics
+'''
+
 import numpy as np
 from scipy.fft import fft
 import matplotlib.pyplot as plt
@@ -52,7 +61,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.subplot(2, 1, 2)
     plt.title("zoomed-in spectrum")
     plt.plot(freqs[0:], mag_fft[0:n // 2])
-    plt.xlim(0, sample_rate / 2)
+    plt.xlim(0, sample_rate / 4)
     plt.ylim(0, 3e-5) # reveals the small peaks (TUNE IT)
     plt.xlabel("frequency (Hz)")
     plt.ylabel("magnitude (V)")

@@ -1,27 +1,16 @@
 #5 - simulating real time heartbeat detection using fir_filter
 
-from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 
 from fir_design import fir_design
 from fir_filter import FIRfilter
+from support_funcs import import_ecg_data
 
 
-#Load and format ECG data - CAN THIS BE STREAMLINED / CALLED FROM TASK 1?
-BASE_DIR = Path(__file__).resolve().parent
-ECG_COLUMN = 8
-ECG_FILE = BASE_DIR / "saad_ecg_2.tsv" #ECG to analyse
-
-TEMPLATE_ECG_FILE = BASE_DIR / "will_c_ecg2.tsv" #other lab partner's ECG #which of my ECG files to use?
-
-def load_ecg(file):
-        data = np.loadtxt(file)
-        t = data[:, 0]
-        return data[:, ECG_COLUMN], 1/(t[1] - t[0])
-
-ecg, sample_rate = load_ecg(ECG_FILE)
-template_ecg, template_sample_rate = load_ecg(TEMPLATE_ECG_FILE)
+# Load and format ECG data
+t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")  # ECG to analyse
+t_template, template_ecg, template_sample_rate = import_ecg_data("will_c_ecg2.tsv")  # other lab partner's ECG
 
 
 #Apply filter from Task 3
