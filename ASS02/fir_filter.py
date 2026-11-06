@@ -48,11 +48,11 @@ class FIRfilter:
             + np.dot(self.coefficients[k:], self.buffer[:self.offset:-1]) # backward sum
         ) # dot product multiply coefficients with samples in object
 
-        # itterate offset position, reset to zero 
-        if self.offset == self.ntaps:
+        # iterate offset position, reset to zero
+        if self.offset == self.ntaps - 1:
             self.offset = 0
         else:
-            self.offset += 1 
+            self.offset += 1
 
 
         return float(output)
@@ -71,19 +71,16 @@ class FIRfilter:
         float
             The cleaned ECG sample e[n] = d[n] - y[n].
         """
-        read_idx = self.offset
+        read_idx = self.offset # store current write index before dofilter increments offset
 
-        y = self.dofilter(noise)
+        y = self.dofilter(noise) # filter reference noise x[n] to estimate interference y[n]
 
-        e = signal - y
+        e = signal - y # subtract estimated noise from signal to get error / clean ECG e[n]
 
         k = read_idx + 1
-        step = learningRate * e
-        self.coefficients[:k] += step * self.buffer[read_idx::-1]
-        self.coefficients[k:] += step * self.buffer[:read_idx:-1]
+        step = learningRate * e # calculate LMS weight update factor (mu * e[n])
+        # w_m[n+1] = w_m[n] + mu * e[n] * x[n-m]
+        self.coefficients[:k] += step * self.buffer[read_idx::-1] # fwd tap weight update
+        self.coefficients[k:] += step * self.buffer[:read_idx:-1] # backward tap weight update
 
         return float(e)
-
-
-if __name__ == "__main__":
-    # add simple FIRfilter implementation here; plot and save two periods after passing through filter
