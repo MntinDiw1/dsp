@@ -37,7 +37,13 @@ LMS, added to the same class. You’ll need a noise reference, and for 50 Hz the
 --- Task 5 (20%) --- 
 the matched filter for R-peak detection. Think about how a matched filter could be built from your own FIR class, because correl/conv are banned.
 
-The tasks form a chain!
+Threshold was chosen to be 1.5x10^-11 as it is way below the lowest beat, and above the side spikes.
+
+HEURISTICS (COMMON SENSE RULES):
+- Heartrate cannot be higher than 200bpm or lower than 30bpm (evana justified)
+- Beat-to-beat change limit (whether the new rate differs significantly vs the last rate) -> catches missed beats (25% change?)
+- Avoid spike from buffer filling
+
 
 AI Acknowledgement:
 
@@ -49,6 +55,8 @@ Claude Opus 5.5
 - Design using 1 reading, test using the other reading.
 - Remember to use column 8 counting from 0
 - Use Hamming window when plotting spectra to make it look nicer
+- HEURISTIC (Common-sense rules)
+
 
 --- TDL ---
 - EMG noise, will help find cutoff (see moodle post)
@@ -56,8 +64,6 @@ Claude Opus 5.5
 - Make fir_filter way faster
 - tune ranges to make peaks less rounded
 - Plot and annotate PQRST (example heartbeat as reference)
+- How to eliminate start-tup transient (also defo mention in report)
 
 --- QUESTIONS ---
-- General look over code. Any feedback?
-- Is EMG recording worth doing?
-- Do you want to see the whole PQRST
