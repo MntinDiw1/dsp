@@ -52,6 +52,8 @@ def fir_design(sample_rate, ranges):
     '''
     return h_windowed
 
+
+###REMOVE THIS POOPY
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from scipy.fft import fft
