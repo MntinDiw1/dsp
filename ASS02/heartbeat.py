@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from fir_design import fir_design
 from fir_filter import FIRfilter
-from support_funcs import import_ecg_data
+from support_funcs import import_ecg_data, vector_plot_export
 
 #FUNCTIONISE MORE THINGS IN THIS ASSIGNMENT????
 
@@ -64,26 +64,53 @@ for i in range(len(ecg)):
 print(f"Heart rates calculated: {len(HEART_RATE)}, mean heart rate: {np.mean(HEART_RATE):.1f} bpm")
 
 
-# --- ANALYSIS PLOTS ---
+# --- PLOTS ---
+delay = (len(h) // 2 + len(template) // 2) / sample_rate # approx. delay added by cleaning + matched filter
+beat_idx = np.round(np.array(BEAT_TIMES) * sample_rate).astype(int)
+template_ms = (np.arange(len(template)) - len(template) // 2) / sample_rate * 1000 # time relative to R peak
 
-#Plot filtered template ecg against sample_number to locate R peak (REMOVE)
-plt.plot(template_clean)
-plt.xlim(2500, 2800)
-plt.xlabel("sample")
-plt.show()
+plt.figure(figsize=(12, 8))
+plt.suptitle("Matched Filter R-Peak Detection")
 
-#Plot template to check QRS range is covered
-plt.plot(template)
-plt.xlabel("sample")
-plt.ylabel("amplitude")
-plt.show()
-#plot matched_filter
-plt.plot(matched_fir_out)
-plt.xlabel("sample")
-plt.ylabel("amplitude")
-plt.xlim(1000, len(ecg))
+# Template (matched filter coefficients before time reversal)
+plt.subplot(2, 1, 1)
+plt.title(f"QRS Template from ECG 2 ({len(template)} samples)")
+plt.plot(template_ms, template, marker=".")
+plt.xlabel("Time relative to R peak (ms)")
+plt.ylabel("Amplitude (V)")
+plt.grid(True)
+
+# Squared matched filter output with threshold and detected beats
+plt.subplot(2, 1, 2)
+plt.title("Squared Matched Filter Output: ECG 1")
+plt.plot(t, matched_fir_out, label="Squared matched filter output")
+plt.axhline(THRESHOLD, color="red", linestyle="--", label=f"Threshold ({THRESHOLD:.1e})")
+plt.plot(t[beat_idx], matched_fir_out[beat_idx], "x", color="black", label=f"Detected beats ({len(beat_idx)})")
+plt.axvspan(0, TRANSIENTS / sample_rate, color="grey", alpha=0.2, label="Buffer fill (ignored)")
+plt.xlim(0, len(ecg) / sample_rate)
 plt.ylim(0, 0.5e-10)
-plt.show()
+plt.xlabel(f"Time (s), output delayed by {delay:.2f} s")
+plt.ylabel("Amplitude (V$^4$)")
+plt.legend(loc="upper right")
+plt.grid(True)
 
+plt.tight_layout()
+vector_plot_export("t5_detection")
+
+# Momentary heart rate after heuristics
+plt.figure(figsize=(12, 5))
+plt.title("Momentary Heart Rate: ECG 1")
+plt.plot(BEAT_TIMES, HEART_RATE, marker="o", label="Momentary heart rate")
+plt.axhline(np.mean(HEART_RATE), color="red", linestyle="--", label=f"Mean ({np.mean(HEART_RATE):.1f} bpm)")
+plt.xlim(0, len(ecg) / sample_rate)
+plt.xlabel(f"Time (s), output delayed by {delay:.2f} s")
+plt.ylabel("Heart rate (bpm)")
+plt.legend(loc="upper right")
+plt.grid(True)
+
+plt.tight_layout()
+vector_plot_export("t5_heartrate")
+
+plt.show()
 
 
