@@ -61,8 +61,7 @@ for i in range(len(ecg)):
                 BEAT_TIMES.append(peak / sample_rate)
         LAST_BEAT = peak     
 
-
-print("Number of pulses: ", len(HEART_RATE), "\n", "Heart Rate: ",  np.mean(HEART_RATE))
+print(f"Heart rates calculated: {len(HEART_RATE)}, mean heart rate: {np.mean(HEART_RATE):.1f} bpm")
 
 
 # --- ANALYSIS PLOTS ---
