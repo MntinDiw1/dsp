@@ -49,7 +49,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.xlabel("Frequency (Hz)")
     plt.ylabel("Magnitude (V)")
 
-    # zoomed in spectrum
+    # zoomed in
     plt.subplot(2, 1, 2)
     plt.title("Zoomed-in Spectrum")
     plt.plot(freqs[0:], mag_fft[0:n // 2])
