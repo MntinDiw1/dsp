@@ -5,16 +5,17 @@ import matplotlib.pyplot as plt
 
 from fir_design import fir_design
 from fir_filter import FIRfilter
-from support_funcs import import_ecg_data, vector_plot_export
+from fir_realtime_sim import BASELINE_WANDER, MAINS_AND_HF_HUM
+from support_funcs import import_ecg_data
 
 
 # Load and format ECG data
 t, ecg, sample_rate = import_ecg_data("ecg1.tsv")  # ECG to analyse
-t_template, template_ecg, template_sample_rate = import_ecg_data("ecg2.tsv")  # other lab partner's ECG
+_, template_ecg, _ = import_ecg_data("ecg2.tsv")  # other lab partner's ECG
 
 
 #Apply filter from Task 3
-h = fir_design(sample_rate, [[0,0.5], [45, 125]]) #these values were already set previously, seems wasteful to call them again.
+h = fir_design(sample_rate, [BASELINE_WANDER, MAINS_AND_HF_HUM])
 
 #Extract QRS from TEMPLATE
 template_fir = FIRfilter(h)
@@ -29,17 +30,17 @@ template = template_clean[R-12:R+13] #25 samples
 matched_fir = FIRfilter(np.flip(template)) #reverse coefficients in time
 ecg_fir = FIRfilter(h) #fresh cleaning filter for ECG
 
-#real time loop (rename this)
+#matched filter output, stored for plotting
 matched_fir_out = np.zeros(len(ecg))
 
 # --- Realtime detection ---
 THRESHOLD = 1.5e-11 #from matched filter plot
-TRANSIENTS = len(template) + len(h) #buffer fill time (cleaning + matched filter) = 1025 samples
+TRANSIENTS = len(template) + len(h) # ignore output until both filter buffers are full (cleaning + matched filter)
 MIN_BPM = 30
 MAX_BPM = 200
 last_beat = None #index of previous beat
 heart_rate = []
-beat_times = []
+beat_idx = [] #sample index of each beat with an accepted rate
 
 for i in range(len(ecg)):
     matched_fir_out[i] = matched_fir.dofilter(ecg_fir.dofilter(ecg[i])) ** 2 #square to make positive and emphasise peaks
@@ -56,14 +57,13 @@ for i in range(len(ecg)):
             consistency = 0.75*prev_rate < momentary_rate < 1.25*prev_rate #Heuristic 2
             if in_range and consistency:
                 heart_rate.append(momentary_rate)
-                beat_times.append(peak / sample_rate)
-        last_beat = peak     
+                beat_idx.append(peak)
+        last_beat = peak
 
 print(f"Heart rates calculated: {len(heart_rate)}, mean heart rate: {np.mean(heart_rate):.1f} bpm")
 
 # --- PLOTS ---
 delay = (len(h) // 2 + len(template) // 2) / sample_rate # approx. delay added by cleaning + matched filter
-beat_idx = np.round(np.array(beat_times) * sample_rate).astype(int)
 template_ms = (np.arange(len(template)) - len(template) // 2) / sample_rate * 1000 # time relative to R peak
 
 plt.figure(figsize=(12, 8))
@@ -92,19 +92,17 @@ plt.legend(loc="upper right")
 plt.grid(True)
 
 plt.tight_layout()
-vector_plot_export("t5_detection")
 
 # Momentary heart rate, shifted back by the filter delay so times match the ECG
 plt.figure(figsize=(12, 4))
 plt.title(f"Momentary Heart Rate: ECG 1 (mean {np.mean(heart_rate):.1f} bpm)")
-plt.plot(np.array(beat_times) - delay, heart_rate, marker=".")
+plt.plot(t[beat_idx] - delay, heart_rate, marker=".")
 plt.xlim(0, len(ecg) / sample_rate)
 plt.xlabel("Time (s)")
 plt.ylabel("Heart rate (bpm)")
 plt.grid(True)
 
 plt.tight_layout()
-vector_plot_export("t5_heartrate")
 
 plt.show()
 

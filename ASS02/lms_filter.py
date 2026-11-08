@@ -19,13 +19,13 @@ ecg_fir, group_delay = run_fir_filter(ecg, sample_rate)
 # DC / baseline wander canceller (constant reference = 1.0)
 M_DC = 1 # number of taps
 mu_dc = 0.0125 # learning rate
-lms_dc = FIRfilter(np.zeros(M_DC)) # generate buffer array
+lms_dc = FIRfilter(np.zeros(M_DC)) # adaptive filter, weights start at 0
 
 # 50 Hz mains canceller (50 Hz sine reference)
 M_lms = 10 # number of taps
-mu_lms = 0.01 # learnign rate
+mu_lms = 0.01 # learning rate
 f_noise = 50.0 # ref signal frequency
-lms = FIRfilter(np.zeros(M_lms)) # generate buffer aray
+lms = FIRfilter(np.zeros(M_lms)) # adaptive filter, weights start at 0
 
 # Realtime Adaptive Filtering
 ecg_lms = [] # results list

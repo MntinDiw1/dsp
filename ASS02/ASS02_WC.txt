@@ -48,6 +48,8 @@ the matched filter for R-peak detection. Think about how a matched filter could 
 
 Threshold was chosen to be 1.5x10^-11 as it is way below the lowest beat, and above the side spikes.
 
+Detection is disabled until both filter buffers are full (len(h) + len(template) = 1025 samples, 4.1 s), so only outputs of the designed filters are used."
+
 HEURISTICS (COMMON SENSE RULES):
 - Heartrate cannot be higher than 200bpm or lower than 30bpm (evana justified)
 - Beat-to-beat change limit (whether the new rate differs significantly vs the last rate) -> catches missed beats (25% change?)
@@ -58,7 +60,7 @@ AI Acknowledgement:
 
 Claude Opus 5.5
 - folded axis in Task 2
-- 
+- Plotted momentary heartrate
 
 --- GENERAL ---
 - Design using 1 reading, test using the other reading.

@@ -4,7 +4,7 @@ import numpy as np
 from scipy.fft import fft
 import matplotlib.pyplot as plt
 
-from support_funcs import import_ecg_data, vector_plot_export
+from support_funcs import import_ecg_data
 
 # Task 1 Plots
 # Function to plot ECG signal in the time and frequency domain
@@ -54,7 +54,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.title("Zoomed-in Spectrum")
     plt.plot(freqs[0:], mag_fft[0:n // 2])
     plt.xlim(0, sample_rate / 2)
-    plt.ylim(0, 3e-5) # reveals the small peaks (TUNE IT)
+    plt.ylim(0, 3e-5) # reveals the small peaks
     plt.xlabel("Frequency (Hz)")
     plt.ylabel("Magnitude (V)")
 
@@ -62,7 +62,5 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
 
 # import ECG Data & plot
 t, ecg, sample_rate = import_ecg_data("ecg1.tsv")
-plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.7) # pick a window containing a single beat
+plot_ecg("ECG 1", sample_rate, ecg, 5.5, 6.7) # zoom window containing two beats
 plt.show()
-
-#TODO: fix plot text, title, legend etc.
