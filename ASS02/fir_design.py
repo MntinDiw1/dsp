@@ -30,8 +30,8 @@ def fir_design(sample_rate, ranges):
     h_shift[0:M//2] = h[M//2:M]
     h_shift[M//2:M] = h[0:M//2]
 
-    h_windowed = h_shift * np.hamming(M) #apply hamming window to prevent Gibbs phenomenon (ripple).
+    h_windowed = h_shift * np.hamming(M) #apply hamming window to reduce Gibbs ripple from truncation
 
-    #Edge cases (DC and Nyquist) are covered by the folded axis (bin 0 and bin 500 [fs/2])
+    #Edge cases (DC and Nyquist) are covered by the folded axis (bin 0 and bin M/2 [fs/2])
     
     return h_windowed

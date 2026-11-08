@@ -6,7 +6,7 @@ class FIRfilter:
     def __init__(self, _coefficients):
         """
         Parameters:
-        fir_coefficients: array
+        _coefficients: array
             The M filter coefficients calculated in Task 2.
         """
         self.coefficients = np.array(_coefficients, dtype=float) # load coefficients into object
@@ -14,7 +14,7 @@ class FIRfilter:
 
         self.buffer = np.zeros(self.ntaps, dtype=float) # generate buffer array
 
-        self.offset = 0 # set offset to zero, is this necessary? is it not zero by default?
+        self.offset = 0 # ring buffer index where the next sample is written
 
     def dofilter(self, v):
         """
@@ -60,7 +60,6 @@ class FIRfilter:
         """
         read_idx = self.offset # store current write index before dofilter increments offset
 
-        # slight addidtional inefficency (overhead) that can be removed if we dont have to call another fuction every time vs repeating code exactly
         y = self.dofilter(noise) # filter reference noise x[n] to estimate interference y[n]
 
         e = signal - y # subtract estimated noise from signal to get error / clean ECG e[n]
