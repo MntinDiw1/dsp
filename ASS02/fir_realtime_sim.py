@@ -8,13 +8,13 @@ from fir_design import fir_design
 from fir_filter import FIRfilter
 from support_funcs import import_ecg_data
 
-def run_fir_filter(ecg, sample_rate): # functionised to prevent repeating code in tasks 4, 5
-    # FIR Filter params from Task 2
-    baseline_wander = [0, 0.5]  # Remove DC and low-frequency baseline drift
-    mains_and_HF_hum = [45, 125]  # Remove 50 Hz mains hum and high-frequency noise up to Nyquist (fs/2)
+# FIR Filter params from Task 2 (also used by heartbeat.py)
+BASELINE_WANDER = [0, 0.5]  # Remove DC and low-frequency baseline drift
+MAINS_AND_HF_HUM = [45, 125]  # Remove 50 Hz mains hum and high-frequency noise up to Nyquist (fs/2)
 
+def run_fir_filter(ecg, sample_rate):
     # generate list of tap coeffs
-    h = fir_design(sample_rate, [baseline_wander, mains_and_HF_hum])
+    h = fir_design(sample_rate, [BASELINE_WANDER, MAINS_AND_HF_HUM])
 
     # create object and generate output list
     fir = FIRfilter(h)
@@ -26,6 +26,7 @@ def run_fir_filter(ecg, sample_rate): # functionised to prevent repeating code i
     # convert list into np to plot
     ecg_filtered = np.array(ecg_filtered)
     group_delay = (len(h) // 2) / sample_rate
+    print(f"FIR filter: M = {len(h)} taps, group delay = {group_delay:.1f} s")
 
     return ecg_filtered, group_delay
 
