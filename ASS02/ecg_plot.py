@@ -61,7 +61,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.subplot(2, 1, 2)
     plt.title("Zoomed-in Spectrum")
     plt.plot(freqs[0:], mag_fft[0:n // 2])
-    plt.xlim(0, sample_rate / 4)
+    plt.xlim(0, sample_rate / 2)
     plt.ylim(0, 3e-5) # reveals the small peaks (TUNE IT)
     plt.xlabel("Frequency (Hz)")
     plt.ylabel("Magnitude (V)")
@@ -69,7 +69,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.tight_layout() # stop axes overlapping
     vector_plot_export("t1_freq") # DO NOT SUBMIT WITHOUT COMMENTING OUT EXPORT CODE!!
 
-# --- IMPORT ECG DATA ---
+# import ECG Data & plot
 t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
 plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.7) # pick a window containing a single beat
 plt.show()

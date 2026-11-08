@@ -8,35 +8,26 @@ from scipy.fft import fft
 from fir_filter import FIRfilter
 from support_funcs import import_ecg_data
 
-# Load ECG Data 
+# Load ECG Data
 t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
 n = len(ecg)
 
-# sequential Adaptive LMS Filter Setup
-# DC & baseline wander LMS canceller (constant reference = 1.0)
-M_dc = 1
-mu_dc = 0.0125 # justify learning rate?
-lms_dc = FIRfilter(np.zeros(M_dc))
-
-# 50 Hz mains hum LMS canceller (50 Hz sine reference)
-M_50 = 10
-mu_50 = 0.01 # justify learnign rate 
+# Adaptive LMS Filter Setup (combined DC + 50 Hz reference)
+M_lms = 10
+mu_lms = 0.01 # justify learning rate
 f_noise = 50.0
-lms_50 = FIRfilter(np.zeros(M_50))
+lms = FIRfilter(np.zeros(M_lms))
 
-# realtime adaptive Filtering ---
+# Realtime Adaptive Filtering
 ecg_lms = np.zeros(n)
 lms_latency_us = np.zeros(n) #REMOVE FOR SUBMISSION
 
 for i in range(n):
     t_start = time.perf_counter() #REMOVE FOR SUBMISSION
 
-    # remove DC offset and slow baseline wander
-    ecg_no_dc = lms_dc.doFilterAdaptive(ecg[i], 1.0, mu_dc)
-
-    # remove 50 Hz powerline interference
-    noise_50 = np.sin(2 * np.pi * f_noise * i / sample_rate)
-    ecg_lms[i] = lms_50.doFilterAdaptive(ecg_no_dc, noise_50, mu_50)
+    # Remove DC / baseline wander (1) & 50 Hz powerline interference (sine)
+    noise_ref = 1 + np.sin(2 * np.pi * f_noise * i / sample_rate)
+    ecg_lms[i] = lms.doFilterAdaptive(ecg[i], noise_ref, mu_lms)
 
     lms_latency_us[i] = (time.perf_counter() - t_start) * 1e6 #REMOVE FOR SUBMISSION
 
@@ -111,7 +102,7 @@ group_delay = (len(h_fixed) // 2) / sample_rate #REMOVE FOR SUBMISSION
 
 # Extra Plot 1: Three-way signal comparison (Raw vs Adaptive LMS vs Fixed FIR)
 plt.figure(figsize=(12, 8)) #REMOVE FOR SUBMISSION
-plt.suptitle(f"Task 4 Comparison: Raw ECG vs Adaptive LMS ($M_{{50}}$ = {M_50}, $\\mu_{{50}}$ = {mu_50}) vs Task 3 Fixed FIR") #REMOVE FOR SUBMISSION
+plt.suptitle(f"Task 4 Comparison: Raw ECG vs Adaptive LMS ($M$ = {M_lms}, $\\mu$ = {mu_lms}) vs Task 3 Fixed FIR") #REMOVE FOR SUBMISSION
 
 plt.subplot(3, 1, 1) #REMOVE FOR SUBMISSION
 plt.title("Time Domain: Raw ECG vs Adaptive LMS vs Fixed FIR") #REMOVE FOR SUBMISSION
@@ -159,8 +150,8 @@ fir_mean_us = np.mean(fir_latency_us) #REMOVE FOR SUBMISSION
 lms_median_us = np.median(lms_latency_us) #REMOVE FOR SUBMISSION
 fir_median_us = np.median(fir_latency_us) #REMOVE FOR SUBMISSION
 
-print(f"Adaptive LMS ({M_dc + M_50} taps total) -> Total: {lms_total_ms:.2f} ms | Mean: {lms_mean_us:.2f} us/sample | Median: {lms_median_us:.2f} us/sample") #REMOVE FOR SUBMISSION
-print(f"Fixed FIR ({len(h_fixed)} taps)        -> Total: {fir_total_ms:.2f} ms | Mean: {fir_mean_us:.2f} us/sample | Median: {fir_median_us:.2f} us/sample") #REMOVE FOR SUBMISSION
+print(f"Adaptive LMS ({M_lms} taps)     -> Total: {lms_total_ms:.2f} ms | Mean: {lms_mean_us:.2f} us/sample | Median: {lms_median_us:.2f} us/sample") #REMOVE FOR SUBMISSION
+print(f"Fixed FIR ({len(h_fixed)} taps) -> Total: {fir_total_ms:.2f} ms | Mean: {fir_mean_us:.2f} us/sample | Median: {fir_median_us:.2f} us/sample") #REMOVE FOR SUBMISSION
 
 plt.figure(figsize=(12, 7)) #REMOVE FOR SUBMISSION
 plt.suptitle("Computational Latency Comparison: Adaptive LMS vs Fixed FIR") #REMOVE FOR SUBMISSION
@@ -168,7 +159,7 @@ plt.suptitle("Computational Latency Comparison: Adaptive LMS vs Fixed FIR") #REM
 # Per-sample latency across the recording
 plt.subplot(2, 1, 1) #REMOVE FOR SUBMISSION
 plt.title("Per-Sample Processing Latency Over Time") #REMOVE FOR SUBMISSION
-plt.plot(t, lms_latency_us, alpha=0.7, label=f"Adaptive LMS ({M_dc + M_50} taps, mean = {lms_mean_us:.2f} $\\mu$s)") #REMOVE FOR SUBMISSION
+plt.plot(t, lms_latency_us, alpha=0.7, label=f"Adaptive LMS ({M_lms} taps, mean = {lms_mean_us:.2f} $\\mu$s)") #REMOVE FOR SUBMISSION
 plt.plot(t, fir_latency_us, alpha=0.7, label=f"Fixed FIR ({len(h_fixed)} taps, mean = {fir_mean_us:.2f} $\\mu$s)") #REMOVE FOR SUBMISSION
 plt.xlim(0, n / sample_rate) #REMOVE FOR SUBMISSION
 plt.ylim(0, max(np.percentile(lms_latency_us, 99), np.percentile(fir_latency_us, 99)) * 1.5) #REMOVE FOR SUBMISSION
@@ -180,7 +171,7 @@ plt.grid(True) #REMOVE FOR SUBMISSION
 # Bar chart comparing mean per-sample latency and total execution time
 plt.subplot(2, 1, 2) #REMOVE FOR SUBMISSION
 plt.title(f"Mean Per-Sample Latency & Total Runtime ({n} samples)") #REMOVE FOR SUBMISSION
-methods = [f"Adaptive LMS\n({M_dc + M_50} taps, 0 s group delay)", f"Task 3 Fixed FIR\n({len(h_fixed)} taps, {group_delay:.1f} s group delay)"] #REMOVE FOR SUBMISSION
+methods = [f"Adaptive LMS\n({M_lms} taps, 0 s group delay)", f"Task 3 Fixed FIR\n({len(h_fixed)} taps, {group_delay:.1f} s group delay)"] #REMOVE FOR SUBMISSION
 means = [lms_mean_us, fir_mean_us] #REMOVE FOR SUBMISSION
 bars = plt.bar(methods, means, width=0.4, color=["tab:blue", "tab:orange"]) #REMOVE FOR SUBMISSION
 plt.ylabel("Mean Latency ($\\mu$s / sample)") #REMOVE FOR SUBMISSION
