@@ -30,7 +30,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
 
     # zoomed in
     plt.subplot(2, 1, 2)
-    plt.title("Zoomed: Two Peaks")
+    plt.title("Zoomed: two heartbeats")
     plt.plot(time, ecg)
     plt.xlim(beat_start, beat_end)
     plt.xlabel("Time (s)")

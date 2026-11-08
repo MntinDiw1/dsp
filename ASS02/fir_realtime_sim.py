@@ -25,8 +25,8 @@ def run_fir_filter(ecg, sample_rate):
 
     # convert list into np to plot
     ecg_filtered = np.array(ecg_filtered)
-    group_delay = (len(h) // 2) / sample_rate
-    print(f"FIR filter: M = {len(h)} taps, group delay = {group_delay:.1f} s")
+    group_delay = (len(h) - 1) / 2 / sample_rate # linear-phase FIR delay: (M-1)/2 samples
+    print(f"FIR filter: M = {len(h)} taps, group delay = {group_delay:.3f} s")
 
     return ecg_filtered, group_delay
 
