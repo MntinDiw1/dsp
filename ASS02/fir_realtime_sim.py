@@ -9,7 +9,7 @@ from fir_filter import FIRfilter
 from support_funcs import import_ecg_data, vector_plot_export
 
 # --- 1. Load ECG Data ---
-t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
+t, ecg, sample_rate = import_ecg_data("ecg1.tsv")
 n = len(ecg)
 
 # --- 2. Design FIR Filter (Task 2) ---

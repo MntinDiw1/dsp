@@ -70,7 +70,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     vector_plot_export("t1_freq") # DO NOT SUBMIT WITHOUT COMMENTING OUT EXPORT CODE!!
 
 # import ECG Data & plot
-t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
+t, ecg, sample_rate = import_ecg_data("ecg1.tsv")
 plot_ecg("Saad 2", sample_rate, ecg, 5.5, 6.7) # pick a window containing a single beat
 plt.show()
 

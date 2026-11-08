@@ -51,7 +51,7 @@ if __name__ == "__main__":
     from scipy.fft import fft
     from support_funcs import import_ecg_data, vector_plot_export
 
-    _, _, sample_rate = import_ecg_data("saad_ecg_2.tsv")
+    _, _, sample_rate = import_ecg_data("ecg1.tsv")
     baseline_wander = [0, 0.5]
     mains_hum = [45, 125]
 
