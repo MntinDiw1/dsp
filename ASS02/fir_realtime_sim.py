@@ -8,7 +8,7 @@ from fir_design import fir_design
 from fir_filter import FIRfilter
 from support_funcs import import_ecg_data
 
-def run_fir_filter(ecg, sample_rate):
+def run_fir_filter(ecg, sample_rate): # functionised to prevent repeating code in tasks 4, 5
     # FIR Filter params from Task 2
     baseline_wander = [0, 0.5]  # Remove DC and low-frequency baseline drift
     mains_and_HF_hum = [45, 125]  # Remove 50 Hz mains hum and high-frequency noise up to Nyquist (fs/2)
@@ -30,7 +30,7 @@ def run_fir_filter(ecg, sample_rate):
     return ecg_filtered, group_delay
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # since its being imported we need to prevent plotting repeats
     # load ECG Data
     t, ecg, sample_rate = import_ecg_data("ecg1.tsv")
 
