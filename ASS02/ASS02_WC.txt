@@ -34,6 +34,9 @@ the FIRfilter class with dofilter(v), one scalar in and one scalar out. The effi
 --- Task 4 (20%) --- 
 LMS, added to the same class. You’ll need a noise reference, and for 50 Hz the usual choice is a generated sine.
 
+Decision:
+“A single LMS filter with a combined reference (DC + 50 Hz sine) was tried first, but its DC term adapted at the speed of all ten taps and acted as a high-pass filter, attenuating the ECG by 10.9 dB [how was this value obtained?] at 1–3 Hz. Two cancellers in series, a slow 1-tap DC canceller followed by a 10-tap 50 Hz canceller, removed the same 30 dB [obtained how?] of 50 Hz while leaving the ECG unchanged (0.99 shape match with the FIR output).”
+
 --- Task 5 (20%) --- 
 the matched filter for R-peak detection. Think about how a matched filter could be built from your own FIR class, because correl/conv are banned.
 
