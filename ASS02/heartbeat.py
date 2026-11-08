@@ -19,7 +19,7 @@ t_template, template_ecg, template_sample_rate = import_ecg_data("will_c_ecg2.ts
 #Apply filter from Task 3
 h = fir_design(sample_rate, [[0,0.5], [45, 125]]) #these values were already set previously, seems wasteful to call them again.
 
-#Extract PQRST from TEMPLATE - AI, UNDERSTAND THIS SQUILLIAM
+#Extract PQRST from TEMPLATE
 template_fir = FIRfilter(h)
 template_clean = np.zeros(len(template_ecg))
 for i in range(len(template_ecg)):
@@ -28,7 +28,7 @@ for i in range(len(template_ecg)):
 
 #Cut around the R peak (include QRS). An earlier sample would be affected by cleaning filter transient
 R = 2576
-template = template_clean[R-12:R+13]
+template = template_clean[R-12:R+13] #25 sampples
 matched_fir = FIRfilter(np.flip(template)) #reverse coefficients in time
 ecg_fir = FIRfilter(h) #fresh cleaning filter for ECG
 
@@ -49,15 +49,20 @@ for i in range(len(ecg)):
         continue
     if matched_fir_out[i] > THRESHOLD and matched_fir_out[i-1] <= THRESHOLD:
         peak = i
-    if LAST_BEAT != None:
-        #Ensure heartrate is within reasonable range (30-200 bpm)
-        momentary_rate = (60* sample_rate / peak - LAST_BEAT)
-        in_range =  MIN < momentary_rate < MAX
-        hysteresis = abs(momentary_rate - HEART_RATE[-1]) < 0.25 * HEART_RATE[-1] #is that the right thing to call it?
+        if LAST_BEAT != None:
+            #Ensure heartrate is within reasonable range (30-200 bpm)
+            momentary_rate = 60* sample_rate / (peak - LAST_BEAT) #bpm
+            in_range =  MIN < momentary_rate < MAX #Heuristic 1
+
+            prev_rate = HEART_RATE[-1] if HEART_RATE else momentary_rate #prevent IndexError
+            consistency = 0.75*prev_rate < momentary_rate < 1.25*prev_rate #Heuristic 2
+            if in_range and consistency:
+                HEART_RATE.append(momentary_rate)
+                BEAT_TIMES.append(peak / sample_rate)
+        LAST_BEAT = peak     
 
 
-
-#print("", len*(heart_rates), np.mean(heart_rates))
+print("Number of pulses: ", len(HEART_RATE), "\n", "Heart Rate: ",  np.mean(HEART_RATE))
 
 
 # --- ANALYSIS PLOTS ---
