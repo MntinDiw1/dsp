@@ -12,9 +12,15 @@ from support_funcs import import_ecg_data
 t, ecg, sample_rate = import_ecg_data("ecg1.tsv")
 n = len(ecg)
 
-# Adaptive LMS Filter Setup (combined DC + 50 Hz reference)
+# Adaptive LMS Filter Setup: two cancellers in series
+# 1) DC / baseline wander canceller (constant reference = 1.0)
+M_dc = 1
+mu_dc = 0.0125
+lms_dc = FIRfilter(np.zeros(M_dc))
+
+# 2) 50 Hz mains canceller (50 Hz sine reference)
 M_lms = 10
-mu_lms = 0.01 # justify learning rate
+mu_lms = 0.01
 f_noise = 50.0
 lms = FIRfilter(np.zeros(M_lms))
 
@@ -25,9 +31,10 @@ lms_latency_us = np.zeros(n) #REMOVE FOR SUBMISSION
 for i in range(n):
     t_start = time.perf_counter() #REMOVE FOR SUBMISSION
 
-    # Remove DC / baseline wander (1) & 50 Hz powerline interference (sine)
-    noise_ref = 1 + np.sin(2 * np.pi * f_noise * i / sample_rate)
-    ecg_lms[i] = lms.doFilterAdaptive(ecg[i], noise_ref, mu_lms)
+    # 1) remove DC / baseline wander, 2) remove 50 Hz powerline interference
+    ecg_no_dc = lms_dc.doFilterAdaptive(ecg[i], 1.0, mu_dc)
+    noise_50 = np.sin(2 * np.pi * f_noise * i / sample_rate)
+    ecg_lms[i] = lms.doFilterAdaptive(ecg_no_dc, noise_50, mu_lms)
 
     lms_latency_us[i] = (time.perf_counter() - t_start) * 1e6 #REMOVE FOR SUBMISSION
 
