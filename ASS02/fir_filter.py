@@ -1,17 +1,4 @@
-'''
-Create a Python FIR filter class which implements an FIR filter which has 
-a method of the form value dofilter(self,value) where both the value 
-argument and return value are scalars and not vectors (!) so that it can 
-be used in a realtime system. The constructor of the class takes the 
-coefficients as its input:
-    class FIRfilter:
-        def __init__(self,_coefficients):
-            # your code here
-        def dofilter(self,v):
-            # your code here
-        return result
-Filter your ECG with the above FIR filter class using the coefficients from 
-'''
+# task 3a + 4a - FIRfilter class functions
 import numpy as np
 
 
@@ -73,6 +60,7 @@ class FIRfilter:
         """
         read_idx = self.offset # store current write index before dofilter increments offset
 
+        # slight addidtional inefficency (overhead) that can be removed if we dont have to call another fuction every time vs repeating code exactly
         y = self.dofilter(noise) # filter reference noise x[n] to estimate interference y[n]
 
         e = signal - y # subtract estimated noise from signal to get error / clean ECG e[n]
