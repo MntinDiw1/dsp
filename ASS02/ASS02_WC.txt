@@ -28,6 +28,12 @@ coefficient design. Build the frequency response you want, IFFT it to get the im
     - 
     Tradeoff: Increasing resolution (number of bins) doubles the delay (not good for realtime.)
 
+    The number of coefficients, M, is calculated based on the minimum width of the frequency range arguments.
+    The minimum width is divided by 2 so that each range alway has at least 2 bins to operate on.
+    The number of coefficients is then calculated by dividing the sample rate by the bin size.
+    M is made even so that the impulse response can be split into two equal halves when it is shifted.
+
+
 --- Task 3 (25%) --- 
 the FIRfilter class with dofilter(v), one scalar in and one scalar out. The efficiency trap is named in the brief: don’t shift the whole delay line every sample. A ring buffer avoids that.
 
@@ -68,5 +74,6 @@ Claude Opus 5.5
 - tune ranges to make peaks less rounded
 - Plot and annotate PQRST (example heartbeat as reference)
 - How to eliminate start-tup transient (also defo mention in report)
+- Make sure all printed values are legible and realistic (not ai slop code)
 
 --- QUESTIONS ---
