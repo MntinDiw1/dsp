@@ -17,6 +17,9 @@ baseline_wander = [0, 0.5]  # Remove DC and low-frequency baseline drift
 mains_hum = [45, 125]       # Remove 50 Hz mains hum and high-frequency noise up to Nyquist (fs/2)
 
 h = fir_design(sample_rate, [baseline_wander, mains_hum])
+M = len(h)
+group_delay = (M // 2) / sample_rate
+print(f"M = {M} taps, resolution = {sample_rate / M:.2f} Hz, buffer fill = {M / sample_rate:.1f} s, group delay = {group_delay:.1f} s")
 
 # --- 3. Realtime Sample-by-Sample FIR Filtering (Task 3) ---
 fir = FIRfilter(h)
@@ -27,6 +30,7 @@ for i in range(n):
 
 # --- 4. Essential Plots: Filtered ECG (Time Domain, Zoomed Heartbeat, Frequency Spectrum) ---
 freqs = np.arange(n // 2) * sample_rate / n
+raw_fft = (1 / n) * np.abs(fft(ecg))
 filt_fft = (1 / n) * np.abs(fft(ecg_filtered))
 
 plt.figure(figsize=(12, 8))
@@ -34,11 +38,13 @@ plt.suptitle("Realtime FIR Filtered ECG")
 
 # Full time domain
 plt.subplot(3, 1, 1)
-plt.title("Time Domain: Filtered ECG")
-plt.plot(t, ecg_filtered)
+plt.title("Time Domain: Raw vs Filtered ECG")
+plt.plot(t, ecg, alpha=0.5, label="Raw ECG")
+plt.plot(t, ecg_filtered, label="Filtered ECG")
 plt.xlim(0, n / sample_rate)
 plt.xlabel("Time (s)")
 plt.ylabel("Amplitude (V)")
+plt.legend(loc="upper right")
 
 # Zoomed single heartbeat (PQRST check)
 plt.subplot(3, 1, 2)
@@ -50,12 +56,14 @@ plt.ylabel("Amplitude (V)")
 
 # Linear frequency spectrum
 plt.subplot(3, 1, 3)
-plt.title("Frequency Spectrum: Filtered ECG")
-plt.plot(freqs, filt_fft[:n // 2])
+plt.title("Frequency Spectrum: Raw vs Filtered ECG")
+plt.plot(freqs[1:], raw_fft[1:n // 2], alpha=0.5, label="Raw Spectrum")
+plt.plot(freqs[1:], filt_fft[1:n // 2], label="Filtered Spectrum")
 plt.xlim(0, sample_rate / 2)
 plt.ylim(0, 3e-5)
 plt.xlabel("Frequency (Hz)")
 plt.ylabel("Magnitude (V)")
+plt.legend(loc="upper right")
 
 plt.tight_layout()
 vector_plot_export("t3_filtered") # DO NOT SUBMIT WITHOUT COMMENTING OUT EXPORT CODE!!
@@ -66,7 +74,6 @@ vector_plot_export("t3_filtered") # DO NOT SUBMIT WITHOUT COMMENTING OUT EXPORT 
 # ==============================================================================
 
 # Extra Plot 1: Task 2 FIR Filter Impulse & Frequency Response
-M = len(h)
 freqs_h = np.arange(M // 2 + 1) * sample_rate / M
 H_mag = np.abs(fft(h))[:M // 2 + 1]
 
@@ -96,7 +103,6 @@ plt.tight_layout()
 vector_plot_export("t2_coeffs")
 
 # Extra Plot 2: Initial Filter Transient & Delay-Aligned Unfiltered vs Filtered Comparison
-group_delay = (M // 2) / sample_rate
 transient_duration = M / sample_rate
 beat_start, beat_end = 5.2, 6.8
 in_window = (t >= beat_start) & (t <= beat_end)
