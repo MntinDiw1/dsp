@@ -9,7 +9,7 @@ from fir_filter import FIRfilter
 from support_funcs import import_ecg_data
 
 # Load ECG Data
-t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
+t, ecg, sample_rate = import_ecg_data("ecg1.tsv")
 n = len(ecg)
 
 # Adaptive LMS Filter Setup (combined DC + 50 Hz reference)

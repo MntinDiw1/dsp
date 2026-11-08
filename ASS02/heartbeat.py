@@ -12,8 +12,8 @@ from support_funcs import import_ecg_data
 #INCLUDE CLEARERR STAGES SEPERATED BY COMMENTS
 
 # Load and format ECG data
-t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")  # ECG to analyse
-t_template, template_ecg, template_sample_rate = import_ecg_data("will_c_ecg2.tsv")  # other lab partner's ECG
+t, ecg, sample_rate = import_ecg_data("ecg1.tsv")  # ECG to analyse
+t_template, template_ecg, template_sample_rate = import_ecg_data("ecg2.tsv")  # other lab partner's ECG
 
 
 #Apply filter from Task 3
