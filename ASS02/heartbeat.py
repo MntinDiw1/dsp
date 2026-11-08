@@ -57,7 +57,7 @@ for i in range(len(ecg)):
 
 
 
-print("", len*(heart_rates), np.mean(heart_rates))
+#print("", len*(heart_rates), np.mean(heart_rates))
 
 
 # --- ANALYSIS PLOTS ---

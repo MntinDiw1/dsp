@@ -29,45 +29,45 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
 
     # whole recording
     plt.subplot(2, 1, 1)
-    plt.title("time domain")
+    plt.title("Time domain")
     plt.plot(time, ecg)
     plt.xlim(0, n / sample_rate)
-    plt.xlabel("time (s)")
-    plt.ylabel("amplitude (V)")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude (V)")
 
-    # one heartbeat (PQRST)
+    # zoomed in
     plt.subplot(2, 1, 2)
-    plt.title("one heartbeat")
+    plt.title("Zoomed: Two Peaks")
     plt.plot(time, ecg)
     plt.xlim(beat_start, beat_end)
-    plt.xlabel("time (s)")
-    plt.ylabel("amplitude (V)")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude (V)")
 
     plt.tight_layout() # stop axes overlapping
-    vector_plot_export("t1_time")
+    vector_plot_export("t1_time") # DO NOT SUBMIT WITHOUT COMMENTING OUT EXPORT CODE!!
 
     # --- figure 2: frequency domain ---
     plt.figure(figsize=(12, 8))
     plt.suptitle(f"ECG spectrum: {name}")
 
     plt.subplot(2, 1, 1)
-    plt.title("full spectrum")
+    plt.title("Full spectrum")
     plt.plot(freqs[0:], mag_fft[0:n // 2])
     plt.xlim(0, sample_rate / 2)
-    plt.xlabel("frequency (Hz)")
-    plt.ylabel("magnitude (V)")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Magnitude (V)")
 
     # zoomed in spectrum
     plt.subplot(2, 1, 2)
-    plt.title("zoomed-in spectrum")
+    plt.title("Zoomed-in Spectrum")
     plt.plot(freqs[0:], mag_fft[0:n // 2])
     plt.xlim(0, sample_rate / 4)
     plt.ylim(0, 3e-5) # reveals the small peaks (TUNE IT)
-    plt.xlabel("frequency (Hz)")
-    plt.ylabel("magnitude (V)")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Magnitude (V)")
 
     plt.tight_layout() # stop axes overlapping
-    vector_plot_export("t1_freq")
+    vector_plot_export("t1_freq") # DO NOT SUBMIT WITHOUT COMMENTING OUT EXPORT CODE!!
 
 # --- IMPORT ECG DATA ---
 t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
