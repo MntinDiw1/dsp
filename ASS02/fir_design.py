@@ -18,7 +18,7 @@ def fir_design(sample_rate, ranges):
 
     bin_size = min_width / 2
     M = int(sample_rate / bin_size) #number of coefficients (explain!)
-    #why does M have to be even?
+
     M += M%2 # ensure M is even
 
     '''
