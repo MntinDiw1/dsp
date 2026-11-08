@@ -54,7 +54,7 @@ for i in range(len(ecg)):
             in_range =  MIN_BPM < momentary_rate < MAX_BPM #Heuristic 1
 
             prev_rate = heart_rate[-1] if heart_rate else momentary_rate #prevent IndexError
-            consistency = 0.75*prev_rate < momentary_rate < 1.25*prev_rate #Heuristic 2
+            consistency = 0.80*prev_rate < momentary_rate < 1.20*prev_rate #Heuristic 2
             if in_range and consistency:
                 heart_rate.append(momentary_rate)
                 beat_idx.append(peak)
