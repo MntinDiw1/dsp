@@ -8,11 +8,11 @@ from fir_design import fir_design
 from fir_filter import FIRfilter
 from support_funcs import import_ecg_data, vector_plot_export
 
-# --- 1. Load ECG Data ---
+# load ECG data 
 t, ecg, sample_rate = import_ecg_data("saad_ecg_2.tsv")
 n = len(ecg)
 
-# --- 2. Filter Setup (Task 4 Adaptive LMS & Task 3 Fixed FIR for Comparison) ---
+# filter Setup (Task 4 Adaptive LMS & Task 3 Fixed FIR for Comparison)
 baseline_wander = [0, 0.5]
 mains_hum = [45, 125]
 
@@ -20,7 +20,7 @@ mains_hum = [45, 125]
 h_hp = fir_design(sample_rate, [baseline_wander])
 hp_filter = FIRfilter(h_hp)
 
-# Fixed FIR filter from Task 3 for comparison
+# Fixed FIR filter from Task 3 for comparison # SHOULD WE REMOVE? CHANGE COMPARISON PLOTS?
 h_fixed = fir_design(sample_rate, [baseline_wander, mains_hum])
 fixed_fir = FIRfilter(h_fixed)
 
@@ -84,7 +84,7 @@ plt.tight_layout()
 
 
 # ==============================================================================
-# --- NON-ESSENTIAL / EXTRA ANALYSIS PLOTS (Comment out or remove before submit)
+# --- NON-ESSENTIAL / EXTRA ANALYSIS PLOTS (remove before submit)
 # ==============================================================================
 
 # Extra Plot 1: Full Report Comparison Including HP-Only Intermediate Signal
