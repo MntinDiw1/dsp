@@ -1,11 +1,4 @@
-'''
-Plot the ECG in the time- and frequency domain (linear axis) and identify 
-the ECG and the noise in the spectrum. There is certainly baseline 
-wander and 50Hz interference but there might be other interferences. 
-Decide which frequency components need to be removed. Identify these 
-frequencies representing noise using your judgement and knowledge 
-about harmonics
-'''
+# Task 1
 
 import numpy as np
 from scipy.fft import fft
@@ -13,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from support_funcs import import_ecg_data, vector_plot_export
 
-# ------ TASK 1 PLOTS ------ 
+# Task 1 Plots
 # Function to plot ECG signal in the time and frequency domain
 def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     n = len(ecg)
@@ -27,7 +20,7 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.figure(figsize=(12, 8))
     plt.suptitle(f"ECG Analysis: {name}")
 
-    # whole recording
+    # fig 1: time domain
     plt.subplot(2, 1, 1)
     plt.title("Time domain")
     plt.plot(time, ecg)
@@ -44,9 +37,8 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.ylabel("Amplitude (V)")
 
     plt.tight_layout() # stop axes overlapping
-    vector_plot_export("t1_time") # DO NOT SUBMIT WITHOUT COMMENTING OUT EXPORT CODE!!
 
-    # --- figure 2: frequency domain ---
+    # fig 2: frequency domain
     plt.figure(figsize=(12, 8))
     plt.suptitle(f"ECG spectrum: {name}")
 
@@ -67,7 +59,6 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.ylabel("Magnitude (V)")
 
     plt.tight_layout() # stop axes overlapping
-    vector_plot_export("t1_freq") # DO NOT SUBMIT WITHOUT COMMENTING OUT EXPORT CODE!!
 
 # import ECG Data & plot
 t, ecg, sample_rate = import_ecg_data("ecg1.tsv")
