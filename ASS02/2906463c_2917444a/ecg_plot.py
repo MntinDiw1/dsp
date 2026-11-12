@@ -1,0 +1,66 @@
+# Task 1
+
+import numpy as np
+from scipy.fft import fft
+import matplotlib.pyplot as plt
+
+from support_funcs import import_ecg_data
+
+# Task 1 Plots
+# Function to plot ECG signal in the time and frequency domain
+def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
+    n = len(ecg)
+    time = np.arange(n) / sample_rate # array of times
+
+    # Frequency domain (linear)
+    ecg_fft = (1 / n) * fft(ecg)
+    mag_fft = np.abs(ecg_fft)
+    freqs = np.arange(n // 2) * sample_rate / n # frequency bins up to sample_rate/2
+
+    plt.figure(figsize=(12, 8))
+    plt.suptitle(f"ECG Analysis: {name}")
+
+    # fig 1: time domain
+    plt.subplot(2, 1, 1)
+    plt.title("Time domain")
+    plt.plot(time, ecg)
+    plt.xlim(0, n / sample_rate)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude (V)")
+
+    # zoomed in
+    plt.subplot(2, 1, 2)
+    plt.title("Zoomed: two heartbeats")
+    plt.plot(time, ecg)
+    plt.xlim(beat_start, beat_end)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude (V)")
+
+    plt.tight_layout() # stop axes overlapping
+
+    # fig 2: frequency domain
+    plt.figure(figsize=(12, 8))
+    plt.suptitle(f"ECG spectrum: {name}")
+
+    plt.subplot(2, 1, 1)
+    plt.title("Full spectrum")
+    plt.plot(freqs[0:], mag_fft[0:n // 2])
+    plt.xlim(0, sample_rate / 2)
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Magnitude (V)")
+
+    # zoomed in
+    plt.subplot(2, 1, 2)
+    plt.title("Zoomed-in Spectrum")
+    plt.plot(freqs[0:], mag_fft[0:n // 2])
+    plt.xlim(0, sample_rate / 2)
+    plt.ylim(0, 3e-5) # reveals the small peaks
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Magnitude (V)")
+
+    plt.tight_layout() # stop axes overlapping
+
+# import ECG Data & plot
+_, ecg, sample_rate = import_ecg_data("ecg1.tsv")
+plot_ecg("ECG 1", sample_rate, ecg, 5.5, 6.7) # zoom window containing two beats
+plt.show()
