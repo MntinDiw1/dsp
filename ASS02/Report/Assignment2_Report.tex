@@ -11,6 +11,7 @@
 \usepackage{amsmath}
 \usepackage{siunitx}
 \sisetup{detect-all}
+\DeclareSIUnit\bpm{bpm}
 
 % ---------- Figures (vector only) ----------
 \usepackage{graphicx}
@@ -27,7 +28,7 @@
 
 % ---------- Code listings for the appendix ----------
 \usepackage{xcolor}
-\newcommand{\todo}[1]{\textcolor{red}{[#1]}} % draft notes; set to {} to hide before submitting
+\newcommand{\todo}[1]{} % draft notes, hidden for submission
 \usepackage{listings}
 \lstset{
   language=Python,
@@ -61,63 +62,94 @@
 % =====================================================
 \section{Recordings}
 % =====================================================
-\todo{State the lab recording setup: two ECG recordings saved as \texttt{ecg1.tsv} (primary recording analysed across Tasks 1--5, chosen for its clear P-wave visibility) and \texttt{ecg2.tsv} (partner's recording used exclusively in Task 5 to extract the QRS matched-filter template). Note that the signal is read from ADC channel 2 (column 8, 0-indexed) and the sampling rate is $f_s = 1/(t_1 - t_0) = \SI{250}{Hz}$ (Nyquist frequency $f_s/2 = \SI{125}{Hz}$). Reminder: only quote numbers the submitted code prints or plots ($M = 1000$ taps, group delay $\SI{1.998}{s}$, and $45$ heart rates at a mean of $\SI{92.0}{bpm}$); argue all other values visually from the figures.}
+Two ECGs were recorded in the lab following the Moodle instructions, with one electrode on the wrist and one on the ankle; the wrist electrode was the ground.
+\texttt{ecg1.tsv} is Saad's ECG and is the recording analysed in Tasks 1--5; it was chosen because its P waves are the clearer of the two.
+\texttt{ecg2.tsv} is Will's ECG and is used only for the matched-filter template in Task~5.
+The ECG is in column 8 of each file (counting from 0, ADC channel 2).
+The time stamps in column 0 give the sampling rate, $f_s = 1/(t_1 - t_0) = \SI{250}{\hertz}$, so the Nyquist frequency is \SI{125}{\hertz}.
+Each recording is about \SI{34}{\second} long.
 
 % =====================================================
 \section{Task 1: Time and Frequency Analysis}
 % =====================================================
-\todo{Briefly state how the time vector $t = n / f_s$ and single-sided linear magnitude spectrum $|\mathrm{FFT}(\text{ecg})|/N$ up to $f_s/2$ were computed in \texttt{ecg\_plot.py} without using prohibited high-level functions such as \texttt{fftfreq}. Emphasise that the spectrum is plotted on a \textbf{linear axis} as required by the brief.}
+The time axis is $n/f_s$.
+The spectrum is $|\mathrm{FFT}(x)|/N$, plotted on linear axes; only the first $N/2$ bins (up to $f_s/2$) are shown, because the spectrum of a real signal is mirrored.
+The frequency of bin $k$ is calculated by hand as $k f_s/N$.
+Figures~\ref{fig:t1_time} and~\ref{fig:t1_freq} show the raw recording in the time and frequency domains.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t1_time.pdf}
-  \caption{Raw primary ECG (\texttt{ecg1.tsv}) in the time domain: (top) full recording showing downward baseline drift, and (bottom) zoomed window ($\rng{5.5}{6.7}\,\si{s}$) spanning two heartbeats with visible PQRST complexes and $\SI{50}{Hz}$ ripple. \todo{Annotate P, Q, R, S, T peaks in Inkscape if required.}}
+  \caption{Raw ECG (\texttt{ecg1.tsv}) in the time domain: (a) the full recording, with the baseline drifting downwards; (b) two heartbeats, with the \SI{50}{\hertz} ripple riding on the ECG.}
   \label{fig:t1_time}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t1_freq.pdf}
-  \caption{Single-sided linear frequency spectrum of \texttt{ecg1.tsv}: (top) full magnitude scale dominated by the $\SI{0}{Hz}$ DC/baseline spike and $\SI{50}{Hz}$ mains interference, and (bottom) zoomed magnitude scale (\rng{0}{\SI{3e-5}{V}}) revealing the fundamental heart-rate peak and its harmonic comb.}
+  \caption{Spectrum of the raw ECG on linear axes: (a) full scale, dominated by the spike at \SI{0}{\hertz} and the \SI{50}{\hertz} peak; (b) magnitude axis zoomed to show the ECG harmonics; (c) the lowest \SI{10}{\hertz}, with the heart-rate fundamental and its harmonics. The shaded regions are the two stopbands chosen for the FIR filter.}
   \label{fig:t1_freq}
 \end{figure}
 
 \paragraph{ECG signal and harmonics.}
-\todo{From Fig.~\ref{fig:t1_time} (bottom), point out the two heartbeats in the $\rng{5.5}{6.7}\,\si{s}$ window (period $\approx \SI{0.66}{s}$, fundamental heart-rate frequency $\approx \SI{1.5}{Hz}$). In Fig.~\ref{fig:t1_freq} (bottom), identify the comb of equally spaced ECG harmonics at multiples of the heart rate that gradually fade out by about $\SI{40}{Hz}$.}
+In Figure~\ref{fig:t1_time}(b) the two R peaks are about \SI{0.66}{\second} apart, which is a heart rate of about \SI{1.5}{\hertz}.
+The spectrum has a peak at this frequency followed by a series of evenly spaced peaks at its multiples (about \SI{3.0}{}, \SI{4.6}{} and \SI{6.2}{\hertz} in Figure~\ref{fig:t1_freq}(c)).
+Because they sit at integer multiples of the heart rate, they are the harmonics of the heartbeat and not noise.
+The series fades out by about \SI{40}{\hertz} (Figure~\ref{fig:t1_freq}(b)).
 
-\paragraph{Noise and interferences.}
-\todo{Identify each interference source from Figs.~\ref{fig:t1_time}--\ref{fig:t1_freq}:
-(1) \textbf{DC offset and baseline wander:} the whole time trace drifts downwards over the recording (while the R-peaks keep the same height above the local baseline, proving it is baseline wander rather than signal attenuation), producing the large spike at $\SI{0}{Hz}$ and the lowest frequency bins ($<\SI{0.5}{Hz}$). Explicitly explain that \textbf{the DC bin is kept on purpose} because the $\SI{0}{Hz}$ spike represents the ADC offset plus baseline wander that our filter must remove---which is why a second, vertically zoomed spectrum is plotted;
-(2) \textbf{$\SI{50}{Hz}$ mains interference:} visible as a regular sinusoidal ripple riding on the baseline in Fig.~\ref{fig:t1_time} (bottom) and as a sharp peak at $\SI{50}{Hz}$ in Fig.~\ref{fig:t1_freq}. Explicitly state that \textbf{no $\SI{100}{Hz}$ harmonic is visible} on the zoomed spectrum below the $\SI{125}{Hz}$ Nyquist frequency;
-(3) \textbf{Broadband EMG / muscle noise:} any broadband muscle noise overlaps the $\rng{0.5}{40}\,\si{Hz}$ ECG harmonic band and therefore cannot be removed by frequency-selective filtering without distorting the heartbeat itself.}
+\paragraph{Noise and interference.}
+\begin{description}
+  \item[DC offset and baseline wander:] the trace starts about \SI{2}{\milli\volt} above zero and drifts downwards over the recording (Figure~\ref{fig:t1_time}(a)).
+  The R peaks keep the same height above the local baseline, so the drift is added to the ECG and is not a change in its amplitude.
+  In the spectrum it is the large spike at \SI{0}{\hertz} and the bins just above it.
+  The DC bin is kept in the plot on purpose, because the offset is part of what has to be removed; it is so much larger than everything else that the magnitude axis is zoomed in Figures~\ref{fig:t1_freq}(b) and~(c).
+  \item[\SI{50}{\hertz} mains:] visible as the regular ripple on the trace in Figure~\ref{fig:t1_time}(b) and as the sharp peak at \SI{50}{\hertz} in the spectrum.
+  No harmonic is visible at \SI{100}{\hertz}.
+  At this sampling rate a third harmonic at \SI{150}{\hertz} would alias onto \SI{100}{\hertz} as well, so neither is present.
+  \item[Muscle noise (EMG):] any muscle noise is broadband and overlaps the ECG harmonics, so it cannot be removed with a frequency-selective filter without distorting the heartbeat itself.
+  It is left in.
+\end{description}
 
 \paragraph{Frequencies to remove.}
-\todo{State and justify the two stopbands chosen for Task 2:
-(1) $\rng{0}{0.5}\,\si{Hz}$ to remove the DC offset and slow respiration/movement baseline wander while staying well below the $\approx \SI{1.5}{Hz}$ fundamental heart rate;
-(2) $\rng{45}{125}\,\si{Hz}$ to remove the $\SI{50}{Hz}$ mains interference and all high-frequency noise up to Nyquist. Justify \textbf{why $\SI{45}{Hz}$ was chosen}: in Fig.~\ref{fig:t1_freq} (bottom), the ECG harmonics fade by about $\SI{40}{Hz}$ and the $\SI{50}{Hz}$ interference skirt begins at about $\SI{48}{Hz}$, so placing the cut-off at $\SI{45}{Hz}$ centres the filter's transition band in that natural spectral gap.}
+Two ranges are removed.
+\rng{0}{\SI{0.5}{\hertz}} removes the DC offset and the baseline wander, and stays well below the \SI{1.5}{\hertz} fundamental of the heartbeat.
+\rng{45}{\SI{125}{\hertz}} removes the \SI{50}{\hertz} mains and everything above it up to Nyquist, where the spectrum contains no ECG harmonics.
+The edge is at \SI{45}{\hertz} because the harmonics have faded by about \SI{40}{\hertz} and the foot of the \SI{50}{\hertz} peak begins a few hertz below it, so \SI{45}{\hertz} lies in the gap between the two.
 
 % =====================================================
 \section{Task 2: FIR Filter Coefficient Design}
 % =====================================================
 
 \paragraph{Number of coefficients.}
-\todo{Explain how \texttt{fir\_design(sample\_rate, ranges)} in \texttt{fir\_design.py} automatically determines the tap count $M = 1000$:
-(1) It finds the narrowest stopband width $\Delta f_{\min} = \min(\text{high} - \text{low})$, which is $\rng{0}{0.5}\,\si{Hz}$ ($\Delta f_{\min} = \SI{0.5}{Hz}$);
-(2) It halves this width to set the frequency bin spacing $\delta f = \Delta f_{\min}/2 = \SI{0.25}{Hz}$ so that even the narrowest stopband spans at least two frequency bins;
-(3) It computes $M = \lfloor f_s / \delta f \rfloor = 250 / 0.25 = 1000$, and enforces even parity (\texttt{M += M \% 2}) so the impulse response splits into two equal halves of length $M/2$ during the causal shift;
-(4) Discuss the delay trade-off: a linear-phase FIR filter has a group delay of $(M-1)/2 \text{ samples} = \SI{1.998}{s}$. For a fixed $M$, increasing $f_s$ reduces the delay; however, for a fixed frequency resolution $\delta f$, the delay $\approx (M-1)/(2f_s) \approx 1/(2\,\delta f)$ is fundamentally set by how close to DC ($\SI{0.5}{Hz}$) the filter must cut.}
+\texttt{fir\_design(sample\_rate, ranges)} takes the sampling rate and a list of stopbands, each given as [low, high] in hertz.
+A filter with $M$ coefficients designed with an $M$-point IFFT has frequency bins $f_s/M$ apart, so $M$ decides how narrow a stopband can be.
+The function finds the narrowest stopband, here \rng{0}{\SI{0.5}{\hertz}}, and sets the bin spacing to half its width, $\Delta f = \SI{0.25}{\hertz}$, so that every stopband covers at least two bins.
+The number of coefficients is then $M = f_s/\Delta f = 250/0.25 = 1000$.
+$M$ is made even so that the impulse response can be split into two equal halves (see below).
 
-\paragraph{IFFT coefficient calculation and edge cases.}
-\todo{Walk through the design steps in \texttt{fir\_design.py}:
-(1) \textbf{Folded frequency axis and edge cases:} the bin frequencies $f_k = k\,f_s / M$ are folded via \texttt{f = np.minimum(f, sample\_rate - f)} so bin $M-k$ is assigned the same frequency as bin $k$. This guarantees conjugate symmetry and handles the \textbf{DC and Nyquist edge cases} automatically: bin $0$ is labelled $\SI{0}{Hz}$ (DC) and bin $M/2$ is labelled $f_s/2 = \SI{125}{Hz}$ (Nyquist);
-(2) \textbf{Ideal response:} $H[k]$ is initialised to $1$ everywhere (passband) and set to $0$ for every bin falling within the target stopband ranges ($\rng{0}{0.5}\,\si{Hz}$ and $\rng{45}{125}\,\si{Hz}$);
-(3) \textbf{IFFT and half-swap:} applying \texttt{np.real(ifft(H))} yields the zero-phase impulse response (the imaginary part vanishes because $H$ is symmetric). Swapping the first and second halves (\texttt{h\_shift}) centres the impulse response at $M/2$ to make the filter causal;
-(4) \textbf{Windowing:} multiplying by a Hamming window (\texttt{np.hamming(M)}) tapers the truncated impulse response tails to suppress Gibbs phenomenon passband/stopband ringing.}
+The cost of a fine resolution is delay.
+The centre of the impulse response is at tap $M/2$, so the output is delayed by $M/(2f_s) = 1/(2\Delta f) = \SI{2.000}{\second}$ (printed by \texttt{fir\_realtime\_sim.py}).
+The delay depends only on the bin spacing, that is on how close to DC the filter has to cut: halving the spacing doubles the delay.
+
+\paragraph{IFFT design and edge cases.}
+The bin frequencies $k f_s/M$ run from 0 to just below $f_s$.
+They are folded with $\min(f, f_s - f)$, so that bin $M-k$ gets the same frequency as bin $k$.
+The ideal response $H$ starts as all ones (pass), and every bin whose folded frequency lies inside a stopband is set to zero.
+Because both halves of the spectrum go through the same test, $H$ is always mirrored, which makes the IFFT real (\texttt{np.real} only removes rounding residue).
+The edge cases need no special code: bin 0 is DC and is removed by any band starting at \SI{0}{\hertz}, and bin $M/2$ is Nyquist and is removed by any band ending at $f_s/2$.
+
+The IFFT returns an impulse response centred on $n = 0$, with its second half wrapped round to the end of the array.
+Swapping the two halves moves the centre to tap $M/2$.
+This makes the filter causal and keeps the coefficients symmetric about the centre tap, so the filter has linear phase: every frequency is delayed by the same $M/2$ samples and the shape of the heartbeat is preserved.
+Finally the coefficients are multiplied by a Hamming window, which tapers the truncated ends and reduces the ripple in the pass- and stopbands (Gibbs phenomenon).
+
+Figure~\ref{fig:t2_coeffs} shows the result.
+The response does not switch instantly: the edges at \SI{0.5}{} and \SI{45}{\hertz} lie in the middle of a transition band roughly \SI{0.5}{\hertz} wide (Figures~\ref{fig:t2_coeffs}(c) and~(d)), which is the price of the window.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t2_coeffs.pdf}
-  \caption{Designed FIR filter ($M = 1000$ taps, $f_s = \SI{250}{Hz}$): (top) shifted and Hamming-windowed impulse response $h[n]$ centred at $M/2 = 500$, and (bottom) frequency response magnitude $|H(f)|$ showing the $\rng{0}{0.5}\,\si{Hz}$ and $\rng{45}{125}\,\si{Hz}$ stopbands.}
+  \caption{The designed FIR filter ($M = 1000$): (a) coefficients after the half swap and the Hamming window, centred on tap $M/2 = 500$; (b) frequency response, with the stopbands shaded; (c) and (d) the two band edges, which lie inside the transition bands.}
   \label{fig:t2_coeffs}
 \end{figure}
 
@@ -125,22 +157,31 @@
 \section{Task 3: Realtime FIR Filtering}
 % =====================================================
 
-\paragraph{Ring-buffer implementation.}
-\todo{Explain \texttt{class FIRfilter} in \texttt{fir\_filter.py}:
-(1) \texttt{\_\_init\_\_(self, \_coefficients)} stores the $M$ tap weights, allocates a zero-initialised delay buffer of length $M$, and sets the write pointer \texttt{self.offset = 0};
-(2) \texttt{dofilter(self, v)} takes a single scalar input sample $x[n]$ and returns a single scalar output $y[n] = \sum_{m=0}^{M-1} h[m]\,x[n-m]$;
-(3) Emphasise that \textbf{a circular ring buffer is used instead of \texttt{np.roll} or array shifting}: nothing in the buffer is shifted in memory (which the brief penalises). Only the write pointer \texttt{self.offset} moves forward (wrapping to $0$ at $M-1$), and the convolution sum is vectorised as two sliced dot products across the wrap-around boundary (\texttt{coefficients[:k]} with \texttt{buffer[offset::-1]} and \texttt{coefficients[k:]} with \texttt{buffer[:offset:-1]}).}
+\paragraph{Ring buffer.}
+\texttt{FIRfilter} stores the coefficients, a buffer of the same length filled with zeros, and \texttt{offset}, the index at which the next sample is written.
+\texttt{dofilter(v)} takes one sample and returns one sample, $y[n] = \sum_{m=0}^{M-1} h[m]\,x[n-m]$.
+The new sample overwrites the oldest one at \texttt{offset}, and then only \texttt{offset} moves on, wrapping back to 0 at the end of the buffer.
+Nothing in the buffer is shifted.
+Reading backwards from \texttt{offset} gives the samples from newest to oldest, but the read wraps round the end of the array, so the sum is calculated as two dot products: \texttt{coefficients[:k]} with \texttt{buffer[offset::-1]} (the newest sample back to index 0) and \texttt{coefficients[k:]} with \texttt{buffer[:offset:-1]} (the end of the array back to the oldest sample), where \texttt{k = offset + 1}.
 
-\paragraph{Filtered ECG results.}
-\todo{Discuss the realtime simulation in \texttt{fir\_realtime\_sim.py} (Fig.~\ref{fig:t3_filtered}):
-(1) \textbf{Start-up transient:} the first $M = 1000$ samples ($\approx \SI{4}{s}$) exhibit a start-up transient while the zero-initialised ring buffer fills with the DC-offset ECG signal, after which the baseline sits flat on $\SI{0}{V}$;
-(2) \textbf{Delay-aligned PQRST verification:} after aligning the filtered trace by the $(M-1)/2 = \SI{1.998}{s}$ group delay (labelled $\SI{2.0}{s}$ in the plot legend), the zoomed comparison in Fig.~\ref{fig:t3_filtered} (middle) confirms that the $\SI{50}{Hz}$ ripple is completely eliminated while the P, Q, R, S, and T waves remain intact and undistorted;
-(3) \textbf{Spectral verification:} the filtered spectrum (bottom) confirms complete attenuation below $\SI{0.5}{Hz}$ and above $\SI{45}{Hz}$ while preserving the ECG harmonic comb.}
+\paragraph{Filtered ECG.}
+\texttt{run\_fir\_filter} in \texttt{fir\_realtime\_sim.py} feeds the ECG into \texttt{dofilter} one sample at a time.
+The result is shown in Figure~\ref{fig:t3_filtered}.
+
+\begin{description}
+  \item[Start-up:] the buffer starts as zeros, so for the first $M = 1000$ samples (\SI{4}{\second}) the filter sees a step from zero up to the DC offset of the recording and its output is not yet valid.
+  The largest swing comes after about \SI{2}{\second}, when the step reaches the centre tap.
+  Once the buffer is full the baseline sits on \SI{0}{\volt} and the drift is gone (Figure~\ref{fig:t3_filtered}(a)).
+  \item[PQRST:] in Figure~\ref{fig:t3_filtered}(b) the filtered trace is shifted back by the \SI{2.000}{\second} delay so that it lies on top of the raw trace.
+  The \SI{50}{\hertz} ripple is gone, and the P wave, the QRS complex and the T wave keep their shape and timing, so the heartbeat is not distorted.
+  \item[Spectrum:] in Figure~\ref{fig:t3_filtered}(c) the spike at \SI{0}{\hertz} and the \SI{50}{\hertz} peak are gone, while the ECG harmonics between the two stopbands are unchanged.
+  The band edges themselves lie in the transition bands (Figure~\ref{fig:t2_coeffs}), so components close to \SI{0.5}{} and \SI{45}{\hertz} are attenuated but not removed.
+\end{description}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t3_filtered.pdf}
-  \caption{Task 3 sample-by-sample FIR filtering of \texttt{ecg1.tsv} ($M = 1000$, group delay $\SI{1.998}{s}$): (top) full time-domain trace, (middle) zoomed heartbeat window ($\rng{5.5}{6.7}\,\si{s}$) verifying intact PQRST morphology, and (bottom) linear frequency spectrum.}
+  \caption{ECG filtered sample by sample with the FIR filter: (a) full recording, with the start-up transient while the buffer fills; (b) two heartbeats, with the filtered trace shifted back by the filter delay and P, Q, R, S and T labelled; (c) spectrum before and after filtering.}
   \label{fig:t3_filtered}
 \end{figure}
 
@@ -148,22 +189,50 @@
 \section{Task 4: Adaptive LMS Filter}
 % =====================================================
 
-\paragraph{Implementation and series architecture.}
-\todo{Explain \texttt{doFilterAdaptive(self, signal, noise, learningRate)} in \texttt{fir\_filter.py} and the two-stage design in \texttt{lms\_filter.py}:
-(1) \textbf{Method operation:} on each scalar step, \texttt{doFilterAdaptive} saves the current write pointer \texttt{read\_idx = self.offset}, passes the scalar reference \texttt{noise} $x[n]$ through \texttt{self.dofilter(noise)} to form the interference estimate $y[n]$, computes the cleaned ECG error $e[n] = \text{signal} - y[n]$, and updates the tap weights in-place via $w_m \leftarrow w_m + \mu\,e[n]\,x[n-m]$ using the same two-slice ring-buffer indexing;
-(2) \textbf{Two cancellers in series:} a 1-tap DC/baseline canceller (constant reference $1.0$, $\mu_{\text{dc}} = 0.0125$) is placed in series before a 10-tap $\SI{50}{Hz}$ canceller (sine reference $\sin(2\pi \cdot 50\,i / f_s)$, $\mu_{\text{lms}} = 0.01$, which requires multiple taps to adjust both amplitude and phase of the $\SI{50}{Hz}$ sinusoid);
-(3) \textbf{Qualitative justification of the design change:} state that a single LMS filter with a combined reference ($1.0 + \sin(\dots)$) was tried first, but its DC term adapted too quickly and acted as a high-pass filter that visibly flattened the slow P and T waves. Splitting into two series cancellers decouples the slow baseline adaptation from the fast $\SI{50}{Hz}$ cancellation.}
+\paragraph{Implementation.}
+\texttt{doFilterAdaptive} is a second method of the same class, taking one sample of the signal, one sample of the noise reference and the learning rate.
+The delay line now holds the noise reference instead of the ECG.
+\texttt{dofilter(noise)} returns $y[n]$, the filter's current estimate of the interference, and the output is the error $e[n] = \mathrm{signal} - y[n]$, which is the cleaned ECG.
+Every weight is then adjusted by $w_m \leftarrow w_m + \mu\,e[n]\,x[n-m]$, using the same two slices of the ring buffer as \texttt{dofilter}, so again nothing is shifted.
+The write index is saved before \texttt{dofilter} is called, because \texttt{dofilter} moves it on.
 
-\paragraph{Comparison with the Task 3 FIR filter.}
-\todo{Compare the adaptive LMS output against the Task 3 fixed FIR output using Fig.~\ref{fig:t4_compare}:
-(1) \textbf{Waveform overlap:} once the Task 3 FIR trace is shifted back by its $\SI{1.998}{s}$ delay, the zoomed heartbeats overlap closely with intact PQRST waves;
-(2) \textbf{Frequency-domain difference:} the LMS filter acts as a narrow notch at DC and $\SI{50}{Hz}$---it retains frequency content above $\SI{45}{Hz}$ and leaves a small $\SI{50}{Hz}$ spectral residual---whereas the Task 3 FIR filter removes everything from $\rng{45}{125}\,\si{Hz}$, so the two filters do not perform quite the same job;
-(3) \textbf{Delay and settling:} the LMS filter has \textbf{no $\SI{2}{s}$ group delay} (only the FIR trace requires delay alignment) and uses only $1 + 10 = 11$ taps versus $M = 1000$ taps, while the DC canceller visibly settles to $\SI{0}{V}$ over the first few seconds of the recording.}
+\paragraph{Two cancellers in series.}
+\texttt{lms\_filter.py} uses two of these filters, one after the other, both starting with all weights at zero.
+The first has one tap and a constant reference of 1 ($\mu = 0.0125$); its single weight follows the slowly changing offset, which removes the DC and the baseline wander.
+The second has 10 taps and the reference $\sin(2\pi \cdot 50\,n/f_s)$ ($\mu = 0.01$), and removes the mains.
+Cancelling a sine needs at least two taps, so that both its amplitude and its phase can be matched; ten taps span two full periods of the reference (five samples each).
+
+The first learning rate was chosen to match the FIR filter.
+With one tap and a reference of 1 the canceller is $e[n] = d[n] - w[n]$ and $w[n+1] = w[n] + \mu\,e[n]$, which gives
+\[
+  \frac{E(z)}{D(z)} = \frac{1 - z^{-1}}{1 - (1-\mu)\,z^{-1}} .
+\]
+This is a first-order high-pass filter with a zero at DC and a pole at $1-\mu$.
+For small $\mu$ its cut-off frequency is about $\mu f_s/(2\pi)$, so $\mu = 0.0125$ gives about \SI{0.5}{\hertz}, the same edge as the lower stopband of the FIR filter.
+
+A single 10-tap filter with the combined reference $1 + \sin(2\pi \cdot 50\,n/f_s)$ was tried first.
+It removed the mains, but it flattened the slow parts of the heartbeat, most visibly the T wave.
+The reason is that all ten taps see the constant, so the DC part adapts ten times faster and its cut-off moves from about \SI{0.5}{\hertz} to about \SI{4}{\hertz}, which is above the heart rate.
+Splitting the filter in two lets the baseline canceller be slow while the mains canceller stays fast.
+
+\paragraph{Comparison with the FIR filter.}
+Figure~\ref{fig:t4_compare} compares the two outputs.
+
+\begin{description}
+  \item[Shape:] with the FIR output shifted back by its delay, the two traces lie almost on top of each other and P, QRS and T are intact in both (Figure~\ref{fig:t4_compare}(c)).
+  The LMS trace sits slightly lower after each QRS complex and T wave, because its first-order high-pass also reacts a little to the heartbeat itself.
+  \item[Delay and start-up:] the LMS output has no group delay and is plotted without any shift, against \SI{2.000}{\second} for the FIR filter.
+  Its baseline settles within about \SI{1}{\second}, while the FIR filter needs its \SI{4}{\second} buffer fill (Figure~\ref{fig:t4_compare}(b)).
+  \item[Size:] the LMS filter uses $1 + 10 = 11$ weights against 1000 coefficients.
+  \item[Spectrum:] the LMS filter only removes what its references describe, DC and \SI{50}{\hertz}.
+  It keeps everything else, including the content above \SI{45}{\hertz} that the FIR filter removes, and it leaves a small residual at \SI{50}{\hertz} (Figure~\ref{fig:t4_compare}(d)).
+  The two filters therefore do not do quite the same job: the LMS filter needs to know the interference in advance, and the FIR filter removes whole bands whatever they contain.
+\end{description}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t4_compare.pdf}
-  \caption{Comparison between the Task 3 fixed FIR filter ($M = 1000$) and the Task 4 two-stage adaptive LMS filter ($M_{\text{DC}} = 1, \mu_{\text{dc}} = 0.0125$; $M_{\text{LMS}} = 10, \mu_{\text{lms}} = 0.01$) across (top) full time domain, (middle) delay-aligned zoomed heartbeat, and (bottom) linear frequency spectrum.}
+  \caption{FIR filter (1000 coefficients) against the two LMS cancellers in series (1 tap, $\mu = 0.0125$; 10 taps, $\mu = 0.01$): (a) full recording; (b) start-up; (c) two heartbeats, with only the FIR output shifted back by its delay; (d) spectra.}
   \label{fig:t4_compare}
 \end{figure}
 
@@ -171,60 +240,97 @@
 \section{Task 5: ECG Heartbeat Detection}
 % =====================================================
 
-\paragraph{Template extraction and matched filter.}
-\todo{Explain the matched filter design in \texttt{heartbeat.py}:
-(1) \textbf{Template source:} the partner's recording (\texttt{ecg2.tsv}) is first cleaned sample-by-sample using the exact same Task 2 FIR filter ($h$) so that both the template and the test ECG have the same filtered shape. A 25-sample QRS segment ($\pm 12$ samples around $R = 2576$, i.e.\ $\pm \SI{48}{ms}$) is sliced \emph{after} the cleaning filter's 1000-sample buffer has completely filled (Fig.~\ref{fig:t5_detection}, top);
-(2) \textbf{Time reversal:} the matched filter coefficients are set to the time-reversed template (\texttt{np.flip(template)}), because an FIR filter multiplies its first coefficient with the newest input sample (convolution), which equals cross-correlation when the template is reversed in time---avoiding prohibited functions like \texttt{correl} or \texttt{conv};
-(3) \textbf{Squaring:} the matched filter output is squared (\texttt{** 2}) at each sample so that it is strictly positive and the tall R-peak correlation spikes are strongly emphasised relative to smaller Q/S/T side lobes.}
+\paragraph{Template and matched filter.}
+\texttt{ecg2.tsv} is first cleaned with the same FIR filter as \texttt{ecg1.tsv}, sample by sample, so that the template and the signal have been through the same filter.
+The template is the 25 samples centred on the R peak at sample 2576 ($\pm 12$ samples, $\pm\SI{48}{\milli\second}$), which is long after the \num{1000}-sample buffer of the cleaning filter has filled.
+It covers the QRS complex (Figure~\ref{fig:t5_detection}(a)).
 
-\paragraph{Thresholding, warm-up, and physiological heuristics.}
-\todo{Explain the realtime R-peak detector and heuristics in \texttt{heartbeat.py} (Fig.~\ref{fig:t5_detection}, bottom):
-(1) \textbf{Warm-up transient exclusion:} the first $\texttt{TRANSIENTS} = \text{len}(h) + \text{len}(\text{template}) = 1000 + 25 = 1025$ samples ($\approx \SI{4.1}{s}$, shaded grey) are ignored because both cascaded filters in series (cleaning FIR + matched FIR) must fill their ring buffers before producing valid outputs;
-(2) \textbf{Threshold justification ($\SI{1.5e-11}{V^4}$):} chosen directly from Fig.~\ref{fig:t5_detection} (bottom), sitting with wide margin below all true R-peak spikes ($\ge \SI{2.1e-11}{V^4}$) and well above the secondary side spikes ($\approx \SI{0.8e-11}{V^4}$);
-(3) \textbf{Rising-edge detection:} a beat is triggered only when the squared output crosses upward through the threshold (\texttt{out[i] > THRESHOLD and out[i-1] <= THRESHOLD}), ensuring each peak is counted once;
-(4) \textbf{Heuristics:} two rules filter the momentary heart rate $\mathrm{HR} = 60\,f_s / (n_{\text{peak}} - n_{\text{last}})$: first, physiological bounds of $\rng{30}{200}\,\si{bpm}$ (established from discussion with a physiology student); second, a beat-to-beat consistency check requiring each new rate to fall within $\pm 20\%$ ($\rng{0.80}{1.20}\times$) of the previous accepted rate, which automatically rejects missed beats ($-50\%$ apparent rate) and double detections ($+100\%$ apparent rate).}
+The matched filter is an \texttt{FIRfilter} whose coefficients are the template reversed in time.
+An FIR filter calculates a convolution, which runs its coefficients backwards along the signal, so reversing the template first turns the convolution into a correlation with the template.
+The output is squared, which makes it positive and makes the beats stand out further from everything else; its unit is therefore \si{\volt\tothe{4}}.
+
+\paragraph{Detection.}
+Each sample of the ECG goes through the cleaning filter, the matched filter, the squaring and the tests below before the next sample is read.
+
+\begin{description}
+  \item[Warm-up:] the output is ignored for the first $\mathrm{len}(h) + \mathrm{len}(\mathrm{template}) = 1025$ samples (\SI{4.1}{\second}), until both buffers hold only real data.
+  The start-up transient of the cleaning filter produces the largest spike of the whole output, at about \SI{2}{\second}; it falls inside this window (Figure~\ref{fig:t5_detection}(b)) and would otherwise be counted as a beat.
+  \item[Threshold:] \SI{1.5e-11}{\volt\tothe{4}}, chosen from the plot.
+  Every beat peaks above about \SI{2.1e-11}{\volt\tothe{4}}, and the smaller side spike just before each beat stays below about \SI{0.9e-11}{\volt\tothe{4}}, so the threshold lies in the gap with a margin on both sides (Figure~\ref{fig:t5_detection}(c)).
+  \item[Crossing:] a beat is registered at the sample where the output rises through the threshold (above it now, and at or below it one sample earlier), so each beat is counted once.
+  This is the upward crossing and not the top of the peak: the crosses in Figure~\ref{fig:t5_detection} mark the first sample above the threshold, which comes at most a couple of samples before the peak.
+\end{description}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t5_detection.pdf}
-  \caption{Task 5 matched-filter R-peak detection: (top) 25-sample QRS template extracted from cleaned \texttt{ecg2.tsv} around sample $R = 2576$, and (bottom) squared matched-filter output on \texttt{ecg1.tsv} showing the $\SI{1025}{sample}$ buffer-fill exclusion zone, the $\SI{1.5e-11}{V^4}$ threshold, and the $45$ accepted beat intervals.}
+  \caption{Matched-filter detection: (a) the 25-sample QRS template cut from the cleaned \texttt{ecg2.tsv}; (b) squared matched-filter output for \texttt{ecg1.tsv}, with the ignored warm-up, the threshold and the 45 beats that give a heart rate; (c) two beats, showing the threshold between the beat peaks and the side spikes.}
   \label{fig:t5_detection}
 \end{figure}
 
-\paragraph{Momentary heart rate analysis.}
-\todo{Discuss the momentary heart-rate plot in Fig.~\ref{fig:t5_heartrate}:
-(1) \textbf{46 beats $\to$ 45 heart rates:} the detector finds $46$ valid R-peaks after the warm-up period, yielding $45$ inter-beat intervals and a printed mean heart rate of $\SI{92.0}{bpm}$ (the first detected beat has no preceding beat to form an interval, so it produces no rate and is not plotted);
-(2) \textbf{Heart-rate variability (HRV):} the momentary heart rate fluctuates naturally by a few bpm from beat to beat around $\SI{92.0}{bpm}$. Explain that this is normal physiological heart-rate variability (respiratory sinus arrhythmia, where heart rate rises slightly during inhalation and falls during exhalation) rather than detection jitter;
-(3) \textbf{Effect of filter delay:} the combined linear-phase delay of the cleaning filter ($\SI{1.998}{s}$) and matched filter ($\SI{0.048}{s}$) is $\SI{2.046}{s}$ (displayed as $\SI{2.05}{s}$). Because every detected beat is delayed by the exact same constant offset, the time intervals between beats---and hence the momentary heart rates---are completely unaffected (and the plotted time axis is shifted back by \texttt{delay} to align with the raw ECG).}
+\paragraph{Heuristics.}
+The momentary heart rate is $60\,f_s/(n_{\mathrm{beat}} - n_{\mathrm{last}})$ in beats per minute, where $n$ is the sample index of a crossing.
+A rate is accepted only if it passes two rules.
+First, it must lie between 30 and \SI{200}{\bpm}, limits for a human heart suggested by a physiology student.
+Second, it must be within $\pm 20\%$ of the previous accepted rate.
+A missed beat doubles the interval and halves the rate.
+A false detection between two beats splits one interval into two, and at least one of the two rates is then at least doubled.
+Both fall far outside $\pm 20\%$, while the rate of this recording changes by only a few \si{\bpm} from one beat to the next.
+
+Neither rule rejected a rate on this recording, so here they are safeguards.
+The second rule has a limitation: it compares with the last \emph{accepted} rate, so a genuine jump of more than $20\%$ from one beat to the next would be rejected, and so would every beat after it.
+
+\paragraph{Momentary heart rate.}
+After the warm-up the detector finds 46 beats.
+The first has no beat before it and gives no rate, which leaves the 45 rates printed by the script, with a mean of \SI{92.0}{\bpm} (Figure~\ref{fig:t5_heartrate}).
+The rate varies between about 86 and \SI{96}{\bpm}.
+Some of this is expected to be natural, possibly the heart rate rising and falling with breathing.
+Some of it is resolution: an interval is a whole number of samples (\SI{4}{\milli\second} each), and at \SI{92}{\bpm} one sample changes the rate by about \SI{0.6}{\bpm}, which shows as the repeated levels in the plot.
+
+The cleaning filter and the matched filter together delay every beat by the same $500 + 12$ samples (\SI{2.05}{\second}).
+A constant delay cancels in the intervals, so the heart rates are not affected by it; the time axis of Figure~\ref{fig:t5_heartrate} is shifted back by this delay so that it lines up with the ECG.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t5_heartrate.pdf}
-  \caption{Momentary heart rate over time for \texttt{ecg1.tsv} across $45$ beat-to-beat intervals (mean heart rate $\SI{92.0}{bpm}$), delay-aligned to the input ECG timeline.}
+  \caption{Momentary heart rate of \texttt{ecg1.tsv} from the 45 beat-to-beat intervals (mean \SI{92.0}{\bpm}), with the time axis shifted back by the filter delay.}
   \label{fig:t5_heartrate}
 \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------
-\pagebreak
+\clearpage
 % =====================================================
 \appendix
 
 \section{Acknowledgement of GenAI Use}
 % =====================================================
 \textbf{Tools:}
-\todo{State exact tool name, version, and publisher, e.g.\ Claude Opus 4.5 / 5.5 (Anthropic).}\\
+Claude Opus 5.5 and Claude Fable 5.2 (Anthropic), used through Claude Code;
+the Claude desktop app (Anthropic);
+Gemini (Google);
+GitHub Copilot (Microsoft).\\
 \textbf{Use:}
-\todo{State how GenAI was used (e.g.\ suggesting the folded frequency axis \texttt{np.minimum(f, sample\_rate - f)} in Task 2 and assisting with matplotlib formatting for the momentary heart-rate plot in Task 5) and what work the team contributed directly (lab ECG recordings, spectral diagnosis and cut-off selection, tap-count derivation, ring-buffer FIR and two-stage series LMS implementation, matched-filter template extraction and heuristic design, and writing the report).}
+Claude Opus 5.5 suggested the folded frequency axis in Task~2; reviewed and debugged our code (for example operator-precedence and indexing errors in the Task~5 detection loop); explained concepts, such as why the start-up spike appears and why the one-tap LMS canceller is a high-pass filter; wrote the plotting code in \texttt{heartbeat.py}; tidied comments; and resolved Git merge conflicts.
+Claude Fable 5.2 corrected the group delay in the code from $(M-1)/2$ to $M/2$ samples, wrote the script that exports the figures of this report in one style, and drafted the text of this report from our notes, our outline and the output of our code; we then checked and edited it.
+The Claude desktop app was used to produce the outline and the checklist that the report was reviewed against.
+Gemini was used for general lookups and GitHub Copilot for inline autocomplete.\\
+\textbf{Our own work:}
+the ECG recordings; the analysis of the spectrum and the choice of the stopbands; the calculation of the number of coefficients; the FIR design function; the ring-buffer \texttt{FIRfilter} class and its LMS method; the two LMS cancellers in series and their learning rates; the matched filter, its template, the threshold and the heuristics.
 
 \section{Usage Instructions}
 % =====================================================
-All scripts use platform-independent relative paths (\texttt{pathlib.Path}) and require \texttt{numpy}, \texttt{scipy}, and \texttt{matplotlib}. After unzipping the submission archive, run each script directly from a terminal in the unzipped directory:
+From a terminal, while in the project folder, run:
 \begin{verbatim}
-python ecg_plot.py
-python fir_realtime_sim.py
-python lms_filter.py
-python heartbeat.py
+python3 ecg_plot.py
+python3 fir_realtime_sim.py
+python3 lms_filter.py
+python3 heartbeat.py
 \end{verbatim}
+The scripts need \texttt{numpy}, \texttt{scipy} and \texttt{matplotlib}, and \texttt{ecg1.tsv} and \texttt{ecg2.tsv} must be in the same folder.
+\texttt{fir\_design.py}, \texttt{fir\_filter.py} and \texttt{support\_funcs.py} are imported by the scripts.
+Each script opens its plots with \texttt{plt.show()}.
+\texttt{fir\_realtime\_sim.py} and \texttt{lms\_filter.py} print the number of coefficients and the group delay, and \texttt{heartbeat.py} prints the number of heart rates and their mean.
+The figures in this report were drawn from the variables of these scripts by a separate plotting script, so that they share one style; the scripts themselves show the same data.
 
 \section{Python Code}
 % =====================================================

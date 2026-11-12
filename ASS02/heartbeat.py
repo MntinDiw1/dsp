@@ -63,7 +63,7 @@ for i in range(len(ecg)):
 print(f"Heart rates calculated: {len(heart_rate)}, mean heart rate: {np.mean(heart_rate):.1f} bpm")
 
 # --- PLOTS ---
-delay = ((len(h) - 1) / 2 + (len(template) - 1) / 2) / sample_rate # exact delay of cleaning + matched filter: (M-1)/2 samples each
+delay = (len(h) // 2 + len(template) // 2) / sample_rate # delay of cleaning + matched filter: centre tap of each
 template_ms = (np.arange(len(template)) - len(template) // 2) / sample_rate * 1000 # time relative to R peak
 
 plt.figure(figsize=(12, 8))
