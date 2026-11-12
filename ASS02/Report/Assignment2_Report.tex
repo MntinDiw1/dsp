@@ -28,8 +28,8 @@
 
 % ---------- Code listings for the appendix ----------
 \usepackage{xcolor}
-\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}} % draft notes; to hide for submission use: \newcommand{\todo}[1]{}
-\newcommand{\fix}[1]{\textcolor{red}{#1}} % proposed rewording to review; to accept for submission use: \newcommand{\fix}[1]{#1}
+\newcommand{\todo}[1]{}
+\newcommand{\fix}[1]{#1}
 \usepackage{listings}
 \lstset{
   language=Python,
@@ -102,8 +102,7 @@ The R peaks keep the same base-to-peak amplitude throughout the recording, so th
 In the spectrum it is the large spike at \SI{0}{\hertz} and the bins just above it.
 \paragraph{\SI{50}{\hertz} mains.} Visible as the regular ripple on the trace in Figure~\ref{fig:t1_time}(b) and as the sharp peak at \SI{50}{\hertz} in the spectrum.
 \fix{It sits at exactly the UK mains frequency, so it is mains hum picked up by the body and the leads.
-Mains hum usually comes with harmonics, but there is no peak at \SI{100}{\hertz}.
-A \SI{150}{\hertz} harmonic would alias to $250 - 150 = \SI{100}{\hertz}$, so that one is not visible either.}
+Mains hum usually comes with harmonics, but there is no peak at \SI{100}{\hertz}.}
 
 \paragraph{Muscle noise (EMG).} Muscle activity adds broadband noise, which may be part of the low noise floor between the ECG harmonics in Figure~\ref{fig:t1_freq}(b).
 This is broadband and overlaps with the ECG harmonics, so it cannot be removed with a frequency-selective filter without affecting the heartbeat itself.
