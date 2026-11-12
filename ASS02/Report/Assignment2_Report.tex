@@ -260,11 +260,11 @@ The momentary heart rate is $60\,f_s/(n_{\mathrm{beat}} - n_{\mathrm{last}})$ in
 A rate is accepted only if it passes two rules.
 First, it must lie between 30 and \SI{200}{\bpm}, limits for a human heart suggested by a physiology student.
 Second, it must be within $\pm 20\%$ of the previous accepted rate.
-A missed beat doubles the interval and halves the rate.
+A missed beat halves the rate.
 A false detection between two beats splits one interval into two, and at least one of the two rates is then at least doubled.
 Both fall far outside $\pm 20\%$, while the rate of this recording changes by only a few \si{\bpm} from one beat to the next.
 
-Neither rule rejected a rate on this recording, so here they are safeguards.
+Neither heuristic rejected a rate on this recording, so they act purely as safeguards.
 The second rule has a limitation: it compares with the last \emph{accepted} rate, so a genuine jump of more than $20\%$ from one beat to the next would be rejected, and so would every beat after it.
 
 \paragraph{Momentary heart rate.}
