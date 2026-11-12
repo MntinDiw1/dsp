@@ -62,16 +62,16 @@
 % =====================================================
 \section{Recordings}
 % =====================================================
-\todo{hello will}Two ECGs were recorded in the lab following the Moodle instructions, with one electrode on the wrist and one on the ankle; the wrist electrode was the ground.
-\texttt{ecg1.tsv} is Saad's ECG and is the recording analysed in Tasks 1--5; it was chosen because its P waves are the clearer of the two.
+Two ECGs were recorded in the lab following the Moodle instructions, with one electrode on the wrist and one on the ankle; the wrist electrode was the ground.
+\texttt{ecg1.tsv} is Saad's ECG and is the recording analysed in Tasks 1--5; it was chosen because a singificant baseline wander was present.
 \texttt{ecg2.tsv} is Will's ECG and is used only for the matched-filter template in Task~5.
-The ECG is in column 8 of each file (counting from 0, ADC channel 2).
-The time stamps in column 0 give the sampling rate, $f_s = 1/(t_1 - t_0) = \SI{250}{\hertz}$, so the Nyquist frequency is \SI{125}{\hertz}.
-Each recording is about \SI{34}{\second} long.
+The ECG is in column 8 of each file (counting from 0).
+The data was sampled at $\SI{250}{\hertz}$, so the Nyquist frequency is \SI{125}{\hertz}.
 
 % =====================================================
 \section{Task 1: Time and Frequency Analysis}
 % =====================================================
+\todo{Is the mathematical explanation in the first 2 sentences needed and correct?}
 The time axis is $n/f_s$.
 The spectrum is $|\mathrm{FFT}(x)|/N$, plotted on linear axes; only the first $N/2$ bins (up to $f_s/2$) are shown, because the spectrum of a real signal is mirrored.
 The frequency of bin $k$ is calculated by hand as $k f_s/N$.
@@ -80,7 +80,7 @@ Figures~\ref{fig:t1_time} and~\ref{fig:t1_freq} show the raw recording in the ti
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t1_time.pdf}
-  \caption{Raw ECG (\texttt{ecg1.tsv}) in the time domain: (a) the full recording, with the baseline drifting downwards; (b) two heartbeats, with the \SI{50}{\hertz} ripple riding on the ECG.}
+  \caption{Raw ECG (\texttt{ecg1.tsv}) in the time domain: (a) the full recording, with the baseline drifting downwards; (b) two heartbeats, with the \SI{50}{\hertz} ripple.}
   \label{fig:t1_time}
 \end{figure}
 
@@ -93,55 +93,53 @@ Figures~\ref{fig:t1_time} and~\ref{fig:t1_freq} show the raw recording in the ti
 
 \paragraph{ECG signal and harmonics.}
 In Figure~\ref{fig:t1_time}(b) the two R peaks are about \SI{0.66}{\second} apart, which is a heart rate of about \SI{1.5}{\hertz}.
-The spectrum has a peak at this frequency followed by a series of evenly spaced peaks at its multiples (about \SI{3.0}{}, \SI{4.6}{} and \SI{6.2}{\hertz} in Figure~\ref{fig:t1_freq}(c)).
-Because they sit at integer multiples of the heart rate, they are the harmonics of the heartbeat and not noise.
+The spectrum has a peak at this frequency followed by a series of evenly spaced peaks at its multiples (about \SI{3.0}{}, \SI{4.5}{} and \SI{6.2}{\hertz} in Figure~\ref{fig:t1_freq}(c)).
+Because they sit at multiples of the heart rate, they are the harmonics of the heartbeat and not noise.
 The series fades out by about \SI{40}{\hertz} (Figure~\ref{fig:t1_freq}(b)).
 
-\paragraph{Noise and interference.}
-\begin{description}
-  \item[DC offset and baseline wander:] the trace starts about \SI{2}{\milli\volt} above zero and drifts downwards over the recording (Figure~\ref{fig:t1_time}(a)).
-  The R peaks keep the same height above the local baseline, so the drift is added to the ECG and is not a change in its amplitude.
-  In the spectrum it is the large spike at \SI{0}{\hertz} and the bins just above it.
-  The DC bin is kept in the plot on purpose, because the offset is part of what has to be removed; it is so much larger than everything else that the magnitude axis is zoomed in Figures~\ref{fig:t1_freq}(b) and~(c).
-  \item[\SI{50}{\hertz} mains:] visible as the regular ripple on the trace in Figure~\ref{fig:t1_time}(b) and as the sharp peak at \SI{50}{\hertz} in the spectrum.
-  No harmonic is visible at \SI{100}{\hertz}.
-  At this sampling rate a third harmonic at \SI{150}{\hertz} would alias onto \SI{100}{\hertz} as well, so neither is present.
-  \item[Muscle noise (EMG):] any muscle noise is broadband and overlaps the ECG harmonics, so it cannot be removed with a frequency-selective filter without distorting the heartbeat itself.
-  It is left in.
-\end{description}
+\paragraph{DC offset and baseline wander.} The trace starts about \SI{2}{\milli\volt} above zero and drifts downwards over the recording (Figure~\ref{fig:t1_time}(a)).
+The R peaks keep the same base-to-peak amplitude throughout the recording, so the drift is a simple offset to the ECG trace.
+In the spectrum it is the large spike at \SI{0}{\hertz} and the bins just above it.
+\paragraph{\SI{50}{\hertz} mains.} Visible as the regular ripple on the trace in Figure~\ref{fig:t1_time}(b) and as the sharp peak at \SI{50}{\hertz} in the spectrum.
+This observation is supported by the fact there are no harmonics.
+
+\paragraph{Muscle noise (EMG).} Some EMG noise is present and forms higher frequency noise and distortion caused by aliasing of high frequency components.  This is broadband and overlaps with the ECG harmonics, so it cannot be removed with a bandpass filter without affecting the heartbeat itself.
 
 \paragraph{Frequencies to remove.}
 Two ranges are removed.
 \rng{0}{\SI{0.5}{\hertz}} removes the DC offset and the baseline wander, and stays well below the \SI{1.5}{\hertz} fundamental of the heartbeat.
-\rng{45}{\SI{125}{\hertz}} removes the \SI{50}{\hertz} mains and everything above it up to Nyquist, where the spectrum contains no ECG harmonics.
-The edge is at \SI{45}{\hertz} because the harmonics have faded by about \SI{40}{\hertz} and the foot of the \SI{50}{\hertz} peak begins a few hertz below it, so \SI{45}{\hertz} lies in the gap between the two.
+\rng{45}{\SI{125}{\hertz}} removes the \SI{50}{\hertz} mains and everything above it up to Nyquist, where the spectrum contains no visble ECG harmonics.
+The edge is at \SI{45}{\hertz} because \todo{I thought it was the window function?}
 
 % =====================================================
 \section{Task 2: FIR Filter Coefficient Design}
 % =====================================================
 
 \paragraph{Number of coefficients.}
-\texttt{fir\_design(sample\_rate, ranges)} takes the sampling rate and a list of stopbands, each given as [low, high] in hertz.
-A filter with $M$ coefficients designed with an $M$-point IFFT has frequency bins $f_s/M$ apart, so $M$ decides how narrow a stopband can be.
+\texttt{fir\_design(sample\_rate, ranges)} takes the sampling rate and a a 2D array of stopbands, each given as [low, high] in hertz.
+\todo{reword this so there are less 'M' mentions, just simply explain how it works, here is my description and justification:     The number of coefficients, M, is calculated based on the minimum width of the frequency range arguments.
+    The minimum width is divided by 2 so that each range alway has at least 2 bins to operate on.
+    The number of coefficients is then calculated by dividing the sample rate by the bin size.
+    M is made even so that the impulse response can be split into two equal halves when it is shifted.} A filter with $M$ coefficients designed with an $M$-point IFFT has frequency bins $f_s/M$ apart, so $M$ decides how narrow a stopband can be.
 The function finds the narrowest stopband, here \rng{0}{\SI{0.5}{\hertz}}, and sets the bin spacing to half its width, $\Delta f = \SI{0.25}{\hertz}$, so that every stopband covers at least two bins.
 The number of coefficients is then $M = f_s/\Delta f = 250/0.25 = 1000$.
 $M$ is made even so that the impulse response can be split into two equal halves (see below).
 
 The cost of a fine resolution is delay.
-The centre of the impulse response is at tap $M/2$, so the output is delayed by $M/(2f_s) = 1/(2\Delta f) = \SI{2.000}{\second}$ (printed by \texttt{fir\_realtime\_sim.py}).
-The delay depends only on the bin spacing, that is on how close to DC the filter has to cut: halving the spacing doubles the delay.
+The centre of the impulse response is at tap $M/2$, so the output is delayed by $M/(2f_s) = \SI{2.0}{\second}$.
+The delay depends only on the bin spacing, \todo{connect to bin width justification above}vhalving the spacing doubles the delay for a constant sampling rate.
 
 \paragraph{IFFT design and edge cases.}
 The bin frequencies $k f_s/M$ run from 0 to just below $f_s$.
-They are folded with $\min(f, f_s - f)$, so that bin $M-k$ gets the same frequency as bin $k$.
-The ideal response $H$ starts as all ones (pass), and every bin whose folded frequency lies inside a stopband is set to zero.
-Because both halves of the spectrum go through the same test, $H$ is always mirrored, which makes the IFFT real (\texttt{np.real} only removes rounding residue).
-The edge cases need no special code: bin 0 is DC and is removed by any band starting at \SI{0}{\hertz}, and bin $M/2$ is Nyquist and is removed by any band ending at $f_s/2$.
+They are folded with so that bin $M-k$ gets the same frequency as bin $k$.
+The ideal response $H$ starts as all ones (all-pass), and every bin whose folded frequency lies inside a the stopband ranges is set to zero.
+Because both halves of the spectrum go through the same test, $H$ is mirrored, which makes the IFFT real (\texttt{np.real} only removes rounding residue).
+The edge cases need no extra code because bin 0 is removed by the band starting at \SI{0}{\hertz}, and bin $M/2$ is Nyquist and is removed by any band ending at $f_s/2$.
 
-The IFFT returns an impulse response centred on $n = 0$, with its second half wrapped round to the end of the array.
+The IFFT returns an impulse response.
 Swapping the two halves moves the centre to tap $M/2$.
-This makes the filter causal and keeps the coefficients symmetric about the centre tap, so the filter has linear phase: every frequency is delayed by the same $M/2$ samples and the shape of the heartbeat is preserved.
-Finally the coefficients are multiplied by a Hamming window, which tapers the truncated ends and reduces the ripple in the pass- and stopbands (Gibbs phenomenon).
+This makes the filter causal and keeps the coefficients symmetric about the centre tap, so the filter has linear phase. Thus, group delay is constant and the shape of the heartbeat is preserved.
+Finally the coefficients are multiplied by a Hamming window function, which tapers the truncated ends and reduces the ripple at the edges of the bands (Gibbs phenomenon).
 
 Figure~\ref{fig:t2_coeffs} shows the result.
 The response does not switch instantly: the edges at \SI{0.5}{} and \SI{45}{\hertz} lie in the middle of a transition band roughly \SI{0.5}{\hertz} wide (Figures~\ref{fig:t2_coeffs}(c) and~(d)), which is the price of the window.
