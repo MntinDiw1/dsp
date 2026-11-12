@@ -127,8 +127,6 @@ It is made even so that the impulse response can be split into two equal halves 
 
 The cost of a fine resolution is delay.
 The centre of the impulse response is at tap $M/2$, so the output is delayed by $M/(2f_s) = \SI{2.0}{\second}$.
-\fix{\texttt{fir\_realtime\_sim.py} prints \SI{1.998}{\second} because it uses $(M-1)/2$; after the half swap our centre is at tap $M/2$, so the true delay is \SI{2.000}{\second}.
-The difference is half a sample and does not show in any of the plots.}
 The delay depends only on the bin spacing, which was set above by the narrowest stopband: a filter that cuts closer to DC needs finer bins and so a longer delay; halving the spacing doubles the delay for a constant sampling rate.
 
 \paragraph{IFFT design and edge cases.}
