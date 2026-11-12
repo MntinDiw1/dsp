@@ -46,6 +46,7 @@
   literate={≈}{{$\approx$}}1 {’}{{'}}1 {—}{{---}}1 {–}{{--}}1 {μ}{{$\mu$}}1 {Δ}{{$\Delta$}}1 {×}{{$\times$}}1 {−}{{$-$}}1 {≥}{{$\ge$}}1
 }
 
+
 % ---------- Title info ----------
 \title{Digital Signal Processing -- Assignment 2\\
        FIR Filters, Adaptive LMS Filtering, and Realtime ECG Peak Detection}
@@ -60,7 +61,7 @@
 \maketitle
 
 % =====================================================
-\section{Recordings}
+\section*{Recordings}
 % =====================================================
 Two ECGs were recorded in the lab following the Moodle instructions, with one electrode on the wrist and one on the ankle; the wrist electrode was the ground.
 \texttt{ecg1.tsv} is Saad's ECG and is the recording analysed in Tasks 1--5; it was chosen because a singificant baseline wander was present.
@@ -69,7 +70,7 @@ The ECG is in column 8 of each file (counting from 0).
 The data was sampled at $\SI{250}{\hertz}$, so the Nyquist frequency is \SI{125}{\hertz}.
 
 % =====================================================
-\section{Task 1: Time and Frequency Analysis}
+\section*{Task 1: Time and Frequency Analysis}
 % =====================================================
 \todo{Is the mathematical explanation in the first 2 sentences needed and correct?}
 The time axis is $n/f_s$.
@@ -112,7 +113,7 @@ Two ranges are removed.
 The edge is at \SI{45}{\hertz} because \todo{I thought it was the window function?}
 
 % =====================================================
-\section{Task 2: FIR Filter Coefficient Design}
+\section*{Task 2: FIR Filter Coefficient Design}
 % =====================================================
 
 \paragraph{Number of coefficients.}
@@ -152,29 +153,27 @@ The response does not switch instantly: the edges at \SI{0.5}{} and \SI{45}{\her
 \end{figure}
 
 % =====================================================
-\section{Task 3: Realtime FIR Filtering}
+\section*{Task 3: Realtime FIR Filtering}
 % =====================================================
 
 \paragraph{Ring buffer.}
 \texttt{FIRfilter} stores the coefficients, a buffer of the same length filled with zeros, and \texttt{offset}, the index at which the next sample is written.
-\texttt{dofilter(v)} takes one sample and returns one sample, $y[n] = \sum_{m=0}^{M-1} h[m]\,x[n-m]$.
+\texttt{dofilter(v)} takes one sample and returns one sample, $y[n]$.
 The new sample overwrites the oldest one at \texttt{offset}, and then only \texttt{offset} moves on, wrapping back to 0 at the end of the buffer.
-Nothing in the buffer is shifted.
-Reading backwards from \texttt{offset} gives the samples from newest to oldest, but the read wraps round the end of the array, so the sum is calculated as two dot products: \texttt{coefficients[:k]} with \texttt{buffer[offset::-1]} (the newest sample back to index 0) and \texttt{coefficients[k:]} with \texttt{buffer[:offset:-1]} (the end of the array back to the oldest sample), where \texttt{k = offset + 1}.
+Reading backwards from \texttt{offset} gives the samples from newest to oldest, but the read wraps round the end of the array, so the sum is calculated as two dot products.
 
 \paragraph{Filtered ECG.}
 \texttt{run\_fir\_filter} in \texttt{fir\_realtime\_sim.py} feeds the ECG into \texttt{dofilter} one sample at a time.
 The result is shown in Figure~\ref{fig:t3_filtered}.
 
-\begin{description}
-  \item[Start-up:] the buffer starts as zeros, so for the first $M = 1000$ samples (\SI{4}{\second}) the filter sees a step from zero up to the DC offset of the recording and its output is not yet valid.
-  The largest swing comes after about \SI{2}{\second}, when the step reaches the centre tap.
-  Once the buffer is full the baseline sits on \SI{0}{\volt} and the drift is gone (Figure~\ref{fig:t3_filtered}(a)).
-  \item[PQRST:] in Figure~\ref{fig:t3_filtered}(b) the filtered trace is shifted back by the \SI{2.000}{\second} delay so that it lies on top of the raw trace.
-  The \SI{50}{\hertz} ripple is gone, and the P wave, the QRS complex and the T wave keep their shape and timing, so the heartbeat is not distorted.
-  \item[Spectrum:] in Figure~\ref{fig:t3_filtered}(c) the spike at \SI{0}{\hertz} and the \SI{50}{\hertz} peak are gone, while the ECG harmonics between the two stopbands are unchanged.
-  The band edges themselves lie in the transition bands (Figure~\ref{fig:t2_coeffs}), so components close to \SI{0.5}{} and \SI{45}{\hertz} are attenuated but not removed.
-\end{description}
+\paragraph{Start up} The buffer starts as zeros, so for the first $M = 1000$ samples (\SI{4}{\second}) the filter sees a step from zero up to the DC offset of the recording and its output is not yet valid.
+The largest swing comes after about \SI{2}{\second}, when the step reaches the centre tap.
+Once the buffer is full the baseline sits on \SI{0}{\volt} and the drift is gone (Figure~\ref{fig:t3_filtered}(a)).
+\paragraph{PQRST} In Figure~\ref{fig:t3_filtered}(b) the filtered trace is shifted back by the \SI{2.000}{\second} delay so that it lies on top of the raw trace.
+The \SI{50}{\hertz} ripple is gone, and the P wave, the QRS complex and the T wave keep their shape and timing, so the heartbeat is not distorted.
+\paragraph{Spectrum} in Figure~\ref{fig:t3_filtered}(c) the spike at \SI{0}{\hertz} and the \SI{50}{\hertz} peak are gone, while the ECG harmonics between the two stopbands are unchanged.
+The band edges in the transition bands (Figure~\ref{fig:t2_coeffs}) close to \SI{0.5}{\hertz} and \SI{45}{\hertz} are attenuated but not removed.
+
 
 \begin{figure}[H]
   \centering
@@ -184,29 +183,23 @@ The result is shown in Figure~\ref{fig:t3_filtered}.
 \end{figure}
 
 % =====================================================
-\section{Task 4: Adaptive LMS Filter}
+\section*{Task 4: Adaptive LMS Filter}
 % =====================================================
 
 \paragraph{Implementation.}
 \texttt{doFilterAdaptive} is a second method of the same class, taking one sample of the signal, one sample of the noise reference and the learning rate.
 The delay line now holds the noise reference instead of the ECG.
-\texttt{dofilter(noise)} returns $y[n]$, the filter's current estimate of the interference, and the output is the error $e[n] = \mathrm{signal} - y[n]$, which is the cleaned ECG.
-Every weight is then adjusted by $w_m \leftarrow w_m + \mu\,e[n]\,x[n-m]$, using the same two slices of the ring buffer as \texttt{dofilter}, so again nothing is shifted.
-The write index is saved before \texttt{dofilter} is called, because \texttt{dofilter} moves it on.
+\texttt{dofilter(noise)} returns $y[n]$, the filter's current estimate of the interference, and the output is the error $e[n] = \mathrm{signal} - y[n]$.
+Every weight is then adjusted using the same two slices of the ring buffer as \texttt{dofilter}, so again nothing is shifted.
 
 \paragraph{Two cancellers in series.}
 \texttt{lms\_filter.py} uses two of these filters, one after the other, both starting with all weights at zero.
-The first has one tap and a constant reference of 1 ($\mu = 0.0125$); its single weight follows the slowly changing offset, which removes the DC and the baseline wander.
+The first has one tap and a constant reference of 1; its single weight follows the slowly changing offset, which removes the DC and the baseline wander.
 The second has 10 taps and the reference $\sin(2\pi \cdot 50\,n/f_s)$ ($\mu = 0.01$), and removes the mains.
-Cancelling a sine needs at least two taps, so that both its amplitude and its phase can be matched; ten taps span two full periods of the reference (five samples each).
+Cancelling a sine needs at least two taps, so that both its amplitude and its phase can be matched; ten taps span two full periods of the reference \todo{add justification for 10 taps}.
 
 The first learning rate was chosen to match the FIR filter.
-With one tap and a reference of 1 the canceller is $e[n] = d[n] - w[n]$ and $w[n+1] = w[n] + \mu\,e[n]$, which gives
-\[
-  \frac{E(z)}{D(z)} = \frac{1 - z^{-1}}{1 - (1-\mu)\,z^{-1}} .
-\]
-This is a first-order high-pass filter with a zero at DC and a pole at $1-\mu$.
-For small $\mu$ its cut-off frequency is about $\mu f_s/(2\pi)$, so $\mu = 0.0125$ gives about \SI{0.5}{\hertz}, the same edge as the lower stopband of the FIR filter.
+With one tap and a reference of 1 the canceller is a first-order high-pass filter. For small $\mu$ its cut-off frequency is about $\mu f_s/(2\pi)$, so $\mu = 0.0125$ gives about \SI{0.5}{\hertz}, the same edge as the lower stopband of the FIR filter.
 
 A single 10-tap filter with the combined reference $1 + \sin(2\pi \cdot 50\,n/f_s)$ was tried first.
 It removed the mains, but it flattened the slow parts of the heartbeat, most visibly the T wave.
@@ -216,26 +209,26 @@ Splitting the filter in two lets the baseline canceller be slow while the mains 
 \paragraph{Comparison with the FIR filter.}
 Figure~\ref{fig:t4_compare} compares the two outputs.
 
-\begin{description}
-  \item[Shape:] with the FIR output shifted back by its delay, the two traces lie almost on top of each other and P, QRS and T are intact in both (Figure~\ref{fig:t4_compare}(c)).
-  The LMS trace sits slightly lower after each QRS complex and T wave, because its first-order high-pass also reacts a little to the heartbeat itself.
-  \item[Delay and start-up:] the LMS output has no group delay and is plotted without any shift, against \SI{2.000}{\second} for the FIR filter.
-  Its baseline settles within about \SI{1}{\second}, while the FIR filter needs its \SI{4}{\second} buffer fill (Figure~\ref{fig:t4_compare}(b)).
-  \item[Size:] the LMS filter uses $1 + 10 = 11$ weights against 1000 coefficients.
-  \item[Spectrum:] the LMS filter only removes what its references describe, DC and \SI{50}{\hertz}.
-  It keeps everything else, including the content above \SI{45}{\hertz} that the FIR filter removes, and it leaves a small residual at \SI{50}{\hertz} (Figure~\ref{fig:t4_compare}(d)).
-  The two filters therefore do not do quite the same job: the LMS filter needs to know the interference in advance, and the FIR filter removes whole bands whatever they contain.
-\end{description}
+\paragraph{Shape} With the FIR output shifted back by its delay, the two traces lie almost on top of each other and P, QRS and T are intact in both (Figure~\ref{fig:t4_compare}(c)).
+The LMS trace sits slightly lower after each QRS complex and T wave, because its first-order high-pass also reacts a little to the heartbeat itself.
+\paragraph{Delay and start-up} The LMS output has no group delay and is plotted without any shift, against \SI{2.000}{\second} for the FIR filter.
+Its baseline settles within about \SI{1}{\second}, while the FIR filter needs its \SI{4}{\second} buffer fill (Figure~\ref{fig:t4_compare}(b)).
+
+\paragraph{Size and Latency} The LMS filter uses $1 + 10 = 11$ weights against 1000 coefficients. Out of curiosity we measured the per sample latency for each filter; this showed that the LMS filter latency is $> 3\times$ that of the FIR filter. We suppose this is because it has two sequential filters and because it is calling more functions resulting in a higher overhead.
+
+\paragraph{Spectrum} The LMS filter only removes what its references describe, DC and \SI{50}{\hertz}.
+It keeps everything else, including the content above \SI{45}{\hertz} that the FIR filter removes, and it leaves a small residual at \SI{50}{\hertz} (Figure~\ref{fig:t4_compare}(d)).
+The two filters therefore do not do quite the same job: the LMS filter needs to know the interference in advance, and the FIR filter removes whole bands whatever they contain.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t4_compare.pdf}
-  \caption{FIR filter (1000 coefficients) against the two LMS cancellers in series (1 tap, $\mu = 0.0125$; 10 taps, $\mu = 0.01$): (a) full recording; (b) start-up; (c) two heartbeats, with only the FIR output shifted back by its delay; (d) spectra.}
+  \caption{FIR filter (1000 coefficients) against the two LMS cancellers in series (DC: 1 tap, $\mu = 0.0125$; \SI{50}{\hertz}: 10 taps, $\mu = 0.01$): (a) full recording; (b) start-up; (c) two heartbeats, with only the FIR output shifted back by its delay; (d) spectra.}
   \label{fig:t4_compare}
 \end{figure}
 
 % =====================================================
-\section{Task 5: ECG Heartbeat Detection}
+\section*{Task 5: ECG Heartbeat Detection}
 % =====================================================
 
 \paragraph{Template and matched filter.}
