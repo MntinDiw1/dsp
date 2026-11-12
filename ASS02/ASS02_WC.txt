@@ -82,16 +82,11 @@ Claude Opus 5.5
 
 
 --- NOTES FOR REPORT ---
-- What is V^4 ?
-- Verify EMG paragraph
-- Reword Task 2: 'Number of coefficients'
-- The report should focus on WHY and less on how (i.e. not every equation is necessary)
-- Do not touch the Acknowledgement of GenAI Use, leave as is currently is.
+- Is the first beat missing mentioned (heartbeat.py)
 
 
 --- SUBMISSION ---
 - Ensure naming conventions are followed
 - Test run once
 - Make sure there are no subdirectories like a figures folder.
-- Is the first beat missing mentioned (heartbeat.py)
 
