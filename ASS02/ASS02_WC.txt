@@ -79,3 +79,8 @@ Claude Opus 5.5
 - Make sure all printed values are legible and realistic (not ai slop code)
 
 --- QUESTIONS ---
+
+
+--- NOTES FOR REPORT ---
+- What is V^4 ?
+- Annotate heartbeats (INKSCAPE)
