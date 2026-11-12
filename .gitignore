@@ -11,3 +11,6 @@ __pycache__/
 *.log
 *.out
 *.synctex.gz
+
+# Report PDF is regenerated locally from the .tex
+ASS02/Report/Assignment2_Report.pdf

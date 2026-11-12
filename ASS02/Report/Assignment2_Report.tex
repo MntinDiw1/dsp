@@ -28,7 +28,7 @@
 
 % ---------- Code listings for the appendix ----------
 \usepackage{xcolor}
-\newcommand{\todo}[1]{} % draft notes, hidden for submission
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}} % draft notes; to hide for submission use: \newcommand{\todo}[1]{}
 \usepackage{listings}
 \lstset{
   language=Python,
@@ -62,8 +62,8 @@
 % =====================================================
 \section{Recordings}
 % =====================================================
-Two ECGs were recorded in the lab following the Moodle instructions, with one electrode on the wrist and one on the ankle; the wrist electrode was the ground.
-\texttt{ecg1.tsv} is Saad's ECG and is the recording analysed in Tasks 1--5; it was chosen because its P waves are the clearer of the two. \todo{ihfrhuh}
+\todo{hello will}Two ECGs were recorded in the lab following the Moodle instructions, with one electrode on the wrist and one on the ankle; the wrist electrode was the ground.
+\texttt{ecg1.tsv} is Saad's ECG and is the recording analysed in Tasks 1--5; it was chosen because its P waves are the clearer of the two.
 \texttt{ecg2.tsv} is Will's ECG and is used only for the matched-filter template in Task~5.
 The ECG is in column 8 of each file (counting from 0, ADC channel 2).
 The time stamps in column 0 give the sampling rate, $f_s = 1/(t_1 - t_0) = \SI{250}{\hertz}$, so the Nyquist frequency is \SI{125}{\hertz}.
