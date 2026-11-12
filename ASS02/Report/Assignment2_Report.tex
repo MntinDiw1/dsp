@@ -232,30 +232,27 @@ The two filters therefore do not do quite the same job: the LMS filter needs to 
 % =====================================================
 
 \paragraph{Template and matched filter.}
-\texttt{ecg2.tsv} is first cleaned with the same FIR filter as \texttt{ecg1.tsv}, sample by sample, so that the template and the signal have been through the same filter.
-The template is the 25 samples centred on the R peak at sample 2576 ($\pm 12$ samples, $\pm\SI{48}{\milli\second}$), which is long after the \num{1000}-sample buffer of the cleaning filter has filled.
-It covers the QRS complex (Figure~\ref{fig:t5_detection}(a)).
+\texttt{ecg2.tsv} is first cleaned with the same FIR filter as \texttt{ecg1.tsv}, sample by sample, so that both the template and the signal have been through the same filter.
+The template is a 25 sample snippet containing a single QRS peak (Figure~\ref{fig:t5_detection}(a)), centred on R at sample 2576, this was done so that the cleaning filter had time to fill. 
 
-The matched filter is an \texttt{FIRfilter} whose coefficients are the template reversed in time.
-An FIR filter calculates a convolution, which runs its coefficients backwards along the signal, so reversing the template first turns the convolution into a correlation with the template.
+The matched filter is an \texttt{FIRfilter} with coefficients reversed in time.
 The output is squared, which makes it positive and makes the beats stand out further from everything else; its unit is therefore \si{\volt\tothe{4}}.
+\todo{SHOULD THIS UNIT BE MENTIONED?}
 
 \paragraph{Detection.}
 Each sample of the ECG goes through the cleaning filter, the matched filter, the squaring and the tests below before the next sample is read.
 
-\begin{description}
-  \item[Warm-up:] the output is ignored for the first $\mathrm{len}(h) + \mathrm{len}(\mathrm{template}) = 1025$ samples (\SI{4.1}{\second}), until both buffers hold only real data.
-  The start-up transient of the cleaning filter produces the largest spike of the whole output, at about \SI{2}{\second}; it falls inside this window (Figure~\ref{fig:t5_detection}(b)) and would otherwise be counted as a beat.
-  \item[Threshold:] \SI{1.5e-11}{\volt\tothe{4}}, chosen from the plot.
+  \paragraph{Warm-up.} The output is ignored for the first $\mathrm{len}(h) + \mathrm{len}(\mathrm{template}) = 1025$ samples , until both buffers hold only real data.
+  The start-up transient of the cleaning filter produces the largest spike of the whole output, at about \SI{2}{\second}. It sits inside this window (Figure~\ref{fig:t5_detection}(b)) and isn't counted because would otherwise register as a beat.
+  \paragraph{Threshold.} \SI{1.5e-11}{\volt\tothe{4}}, chosen from the plot.
   Every beat peaks above about \SI{2.1e-11}{\volt\tothe{4}}, and the smaller side spike just before each beat stays below about \SI{0.9e-11}{\volt\tothe{4}}, so the threshold lies in the gap with a margin on both sides (Figure~\ref{fig:t5_detection}(c)).
-  \item[Crossing:] a beat is registered at the sample where the output rises through the threshold (above it now, and at or below it one sample earlier), so each beat is counted once.
-  This is the upward crossing and not the top of the peak: the crosses in Figure~\ref{fig:t5_detection} mark the first sample above the threshold, which comes at most a couple of samples before the peak.
-\end{description}
+  \paragraph{Crossing.} A beat is registered at the sample where the output rises through the threshold, so each beat is counted once.
+  This is the upward crossing and not the top of the peak: the crosses in Figure~\ref{fig:t5_detection} mark the first sample above the threshold, which is sometimes a couple samples before the peak.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{t5_detection.pdf}
-  \caption{Matched-filter detection: (a) the 25-sample QRS template cut from the cleaned \texttt{ecg2.tsv}; (b) squared matched-filter output for \texttt{ecg1.tsv}, with the ignored warm-up, the threshold and the 45 beats that give a heart rate; (c) two beats, showing the threshold between the beat peaks and the side spikes.}
+  \caption{Matched-filter detection: (a) the QRS template cut from the cleaned \texttt{ecg2.tsv}; (b) squared matched-filter output for \texttt{ecg1.tsv}, with the warm-up ignored, the threshold and the 45 beats that the heart rate is calculated from; (c) two beats, showing the threshold between the beat peaks and the side spikes.}
   \label{fig:t5_detection}
 \end{figure}
 
@@ -296,17 +293,13 @@ A constant delay cancels in the intervals, so the heart rates are not affected b
 \section{Acknowledgement of GenAI Use}
 % =====================================================
 \textbf{Tools:}
-Claude Opus 5.5 and Claude Fable 5.2 (Anthropic), used through Claude Code;
-the Claude desktop app (Anthropic);
+Claude Opus 5.5 (Anthropic);
 Gemini (Google);
 GitHub Copilot (Microsoft).\\
 \textbf{Use:}
-Claude Opus 5.5 suggested the folded frequency axis in Task~2; reviewed and debugged our code (for example operator-precedence and indexing errors in the Task~5 detection loop); explained concepts, such as why the start-up spike appears and why the one-tap LMS canceller is a high-pass filter; wrote the plotting code in \texttt{heartbeat.py}; tidied comments; and resolved Git merge conflicts.
-Claude Fable 5.2 corrected the group delay in the code from $(M-1)/2$ to $M/2$ samples, wrote the script that exports the figures of this report in one style, and drafted the text of this report from our notes, our outline and the output of our code; we then checked and edited it.
-The Claude desktop app was used to produce the outline and the checklist that the report was reviewed against.
-Gemini was used for general lookups and GitHub Copilot for inline autocomplete.\\
-\textbf{Our own work:}
-the ECG recordings; the analysis of the spectrum and the choice of the stopbands; the calculation of the number of coefficients; the FIR design function; the ring-buffer \texttt{FIRfilter} class and its LMS method; the two LMS cancellers in series and their learning rates; the matched filter, its template, the threshold and the heuristics.
+Claude Opus 5.5 Reviewed and debugged our code; explained theoretical concepts, wrote the plotting code in \texttt{heartbeat.py}; suggested optimisation strategies, wrote the script that exports the figures of this report in one style, and resolved Git merge conflicts.
+Gemini was used for general lookups \todo{SAAD MUST ADD A LITTLE MORE DETAI L} and GitHub Copilot for inline autocomplete.\\
+
 
 \section{Usage Instructions}
 % =====================================================
