@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ASS02 Report Master Checklist</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 850px;
+      margin: 20px auto;
+      padding: 0 15px;
+      line-height: 1.5;
+    }
+    h1, h2, h3 {
+      margin-top: 1.2em;
+      margin-bottom: 0.4em;
+    }
+    ul {
+      list-style: none;
+      padding-left: 10px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    input[type="checkbox"]:checked + span {
+      text-decoration: line-through;
+      color: #666;
+    }
+    code {
+      background: #f0f0f0;
+      padding: 1px 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ENG4053 DSP 4 — ASS02 Report Master Checklist</h1>
+  <p>Reference: <code>ASS02_guide.pdf</code>, submitted codebase, and Report Notes.</p>
+
+  <h2>0. General &amp; Formatting Rules (from Brief &amp; Notes)</h2>
+  <ul>
+    <li><label><input type="checkbox"> <span><strong>Short and clear:</strong> Explain clearly <em>what</em> was done and <em>why</em> it was done, based on the team's own lab recordings.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Only quote numbers printed/plotted by submitted code:</strong> <code>M = 1000</code> taps, group delay = <code>1.998 s</code> (or <code>2.0 s</code> / <code>2.05 s</code> on plot labels), and <code>45</code> heart rates at a mean of <code>92.0 bpm</code>. Argue everything else from the figures.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Vector figures only:</strong> All figures in the report are vector formats (<code>.pdf</code>, <code>.svg</code>, <code>.eps</code>, or <code>.emf</code>), placed at the correct section in the report (not attached separately).</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Proper axis labels &amp; units:</strong> Every time-domain and frequency-domain plot has proper labels and units (<code>Time (s)</code>, <code>Frequency (Hz)</code>, <code>Amplitude (V)</code>, <code>Magnitude (V)</code>, etc.).</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Inkscape annotations:</strong> Annotate ECG peaks (P, Q, R, S, T) on zoomed single-heartbeat traces and key spectral features (DC/baseline wander, ECG harmonics, 50 Hz mains interference) where necessary.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Complete Python code included:</strong> All submitted <code>.py</code> files are included in the report appendix.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>GenAI acknowledgement:</strong> Include tool name, version, publisher (e.g. Claude Opus 5.5, Anthropic), how it was used (e.g. folded axis in Task 2, plotting momentary heart rate), and what work the team contributed.</span></label></li>
+  </ul>
+
+  <h2>1. Lab Recording Setup &amp; Task 1: ECG Analysis [20%]</h2>
+  <ul>
+    <li><label><input type="checkbox"> <span>Briefly state the recording setup: <code>ecg1.tsv</code> (primary ECG analysed in Tasks 1–4) and <code>ecg2.tsv</code> (partner's ECG used for the Task 5 template), ADC channel 2 (column 8, 0-indexed), and sampling rate <code>fs = 250 Hz</code> (Nyquist = <code>125 Hz</code>) derived from column 0 timestamps.</span></label></li>
+    <li><label><input type="checkbox"> <span>Include <strong>Task 1 Time-Domain Figure</strong> (full recording + zoomed heartbeat trace showing PQRST) and <strong>Task 1 Frequency-Domain Figure</strong> on a <strong>linear axis</strong> (full spectrum + zoomed-in magnitude spectrum).</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Explain why the DC bin (0 Hz) is kept on purpose:</strong> The 0 Hz spike is the ADC offset plus baseline wander, which is part of what needs to be removed; that is why both a full spectrum and a zoomed-in spectrum (<code>ylim(0, 3e-5)</code>) are shown.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Identify ECG signal &amp; harmonics:</strong> Relate the beat-to-beat period in the time domain (~0.66 s, ~1.5 Hz fundamental) to the comb of harmonics (multiples of the heart rate) in the zoomed spectrum, noting they fade out by about 40 Hz.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Identify noise sources:</strong>
+      (1) Baseline wander &amp; DC offset (lowest bins &lt; 0.5 Hz in spectrum; downward drift of the trace in time domain while R-peak height above baseline stays constant),
+      (2) 50 Hz mains power-line interference (sharp spike at 50 Hz; explicitly note <strong>no 100 Hz harmonic</strong> is visible on the zoomed spectrum below 125 Hz),
+      (3) Broadband muscle (EMG) noise overlaps the ECG band and therefore cannot be removed by linear frequency filtering without distorting the heartbeat.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>State &amp; justify frequencies to remove:</strong> <code>0–0.5 Hz</code> (removes DC offset and respiration/movement baseline wander below the ~1.5 Hz heart-rate fundamental) and <code>45–125 Hz</code> (removes 50 Hz mains interference and high-frequency noise).</span></label></li>
+  </ul>
+
+  <h2>2. Task 2: FIR Filter Coefficient Design [25%]</h2>
+  <ul>
+    <li><label><input type="checkbox"> <span><strong>Explain the IFFT design method step-by-step:</strong>
+      (1) Build desired frequency response <code>H</code> of ones (passband) with stopband ranges zeroed on a folded frequency axis <code>f = np.minimum(f, sample_rate - f)</code>,
+      (2) Apply <code>ifft(H)</code> and take the real part <code>np.real(ifft(H))</code> (imaginary part cancels due to symmetry),
+      (3) Swap the two halves (<code>h_shift</code>) to centre the causal impulse response at <code>M/2</code>,
+      (4) Multiply by a Hamming window (<code>np.hamming(M)</code>) to reduce Gibbs phenomenon ripples caused by truncation.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Explain calculation of the number of coefficients <code>M = 1000</code>:</strong> The narrowest stopband is <code>0–0.5 Hz</code> (width <code>0.5 Hz</code>); halving this gives a bin width of <code>0.25 Hz</code> so every stopband spans at least 2 bins, yielding <code>M = fs / 0.25 = 1000</code>. Explain that <code>M</code> is forced even (<code>M += M % 2</code>) so the half-swap splits into two equal halves.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Explain edge cases (DC and Nyquist):</strong> Handled automatically by the folded frequency axis, where bin <code>0</code> maps to <code>0 Hz</code> (DC) and bin <code>M/2</code> maps to <code>fs/2 = 125 Hz</code> (Nyquist), while bin <code>M - k</code> gets the same frequency as bin <code>k</code>.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Justify choosing 45 Hz for the upper stopband edge:</strong> ECG harmonics fade by ~40 Hz and the 50 Hz mains skirt begins around ~48 Hz, so placing the cut-off at 45 Hz centres the finite transition band in the gap between signal and interference.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Discuss filter delay &amp; resolution trade-off:</strong> Linear-phase FIR delay is <code>(M - 1) / 2</code> samples = <code>1.998 s</code>. Explain that for a fixed <code>M</code>, a higher <code>fs</code> reduces delay, but for a fixed frequency resolution <code>&Delta;f</code>, the delay <code>&approx; 1 / (2 &Delta;f)</code> is fundamentally dictated by how close to DC (<code>0.5 Hz</code>) the filter must cut.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Include FIR Filter Response Plot (if generated):</strong> Plot showing shifted/windowed impulse response <code>h[n]</code> and frequency response magnitude <code>|H(f)|</code> confirming the <code>0–0.5 Hz</code> and <code>45–125 Hz</code> stopbands.</span></label></li>
+  </ul>
+
+  <h2>3. Task 3: Realtime FIR Filter Class &amp; ECG Filtering [25%]</h2>
+  <ul>
+    <li><label><input type="checkbox"> <span><strong>Explain <code>FIRfilter</code> class &amp; ring buffer efficiency:</strong> <code>__init__(self, _coefficients)</code> allocates a fixed circular buffer and write pointer <code>self.offset</code>; <code>dofilter(self, v)</code> accepts a scalar sample and returns a scalar output. Emphasise that samples are <strong>never shifted</strong> (avoiding <code>np.roll</code> or array shifting penalty); only <code>self.offset</code> increments modulo <code>ntaps</code>, and the convolution sum is computed as two sliced dot products across the wrap-around boundary.</span></label></li>
+    <li><label><input type="checkbox"> <span>Include <strong>Task 3 Filtered ECG Figure</strong>: Full time-domain trace (raw vs filtered), zoomed heartbeat (delay-aligned by <code>1.998 s</code> / <code>2.0 s</code> showing PQRST intact), and linear frequency spectrum (raw vs filtered).</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Discuss startup transient &amp; PQRST preservation:</strong> Point out the initial <code>M = 1000</code> sample (~4 s) startup transient while the ring buffer fills from zeros, the <code>1.998 s</code> group delay alignment on the zoomed plot, complete removal of DC drift and 50 Hz ripple, and intact PQRST morphology.</span></label></li>
+  </ul>
+
+  <h2>4. Task 4: Adaptive LMS Filter [20%]</h2>
+  <ul>
+    <li><label><input type="checkbox"> <span><strong>Explain <code>doFilterAdaptive(self, signal, noise, learningRate)</code>:</strong> Receives scalars, filters reference <code>noise</code> via <code>self.dofilter(noise)</code> to estimate interference <code>y[n]</code>, computes clean ECG error <code>e[n] = signal - y[n]</code>, and updates tap weights in-place via <code>w[m] += learningRate * e[n] * x[n - m]</code> using the saved ring-buffer index <code>read_idx</code>.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Explain the two-stage series architecture &amp; justify parameters:</strong>
+      Stage 1: 1-tap DC/baseline canceller (constant reference <code>1.0</code>, <code>&mu;_dc = 0.0125</code>).
+      Stage 2: 10-tap 50 Hz canceller (sine reference <code>sin(2&pi; &middot; 50 &middot; i / fs)</code>, <code>&mu;_lms = 0.01</code>).</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Describe the design change qualitatively:</strong> Explain that a single combined reference (<code>1.0 + sin(...)</code>) was tried first, but its DC weight adapted too fast and acted as a high-pass filter that visibly flattened the slow P and T waves; separating into two series cancellers decouples slow baseline tracking from fast 50 Hz phase/amplitude tracking.</span></label></li>
+    <li><label><input type="checkbox"> <span>Include <strong>Task 4 FIR vs LMS Comparison Figure</strong>: Full time trace, zoomed PQRST overlay (with FIR delay-aligned), and frequency spectrum comparison.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Compare LMS vs Task 3 FIR:</strong>
+      (1) Heartbeats overlap closely with PQRST preserved,
+      (2) LMS forms a narrow notch at 50 Hz (retaining content above 45 Hz with a small 50 Hz residual), whereas FIR removes everything from 45–125 Hz, so they do slightly different jobs,
+      (3) LMS has <strong>no 2 s group delay</strong> (only the FIR trace needs shifting to align), though the DC canceller visibly settles over the first few seconds,
+      (4) LMS uses only <code>1 + 10 = 11</code> taps vs <code>1000</code> taps for the fixed FIR filter.</span></label></li>
+  </ul>
+
+  <h2>5. Task 5: ECG Heartbeat Detection (Matched Filter) [20%]</h2>
+  <ul>
+    <li><label><input type="checkbox"> <span><strong>Explain template extraction:</strong> Extracted a 25-sample QRS complex (<code>R &plusmn; 12</code> samples around <code>R = 2576</code>) from the <em>other</em> lab partner's ECG (<code>ecg2.tsv</code>), chosen after the cleaning FIR filter's 1000-sample buffer had filled, and pre-filtered with the exact same Task 2 cleaning filter so both template and test signal share the same bandwidth and phase shape.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Explain the matched filter implementation:</strong> The template coefficients are time-reversed (<code>np.flip(template)</code>) because <code>FIRfilter.dofilter</code> computes convolution (multiplying its first coefficient with the newest sample), which is equivalent to cross-correlation with the unflipped template without using banned functions (<code>correl</code>/<code>conv</code>). The output is squared (<code>** 2</code>) to make all values positive and strongly amplify R-peak correlation peaks over background noise.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Justify the threshold (<code>1.5 &times; 10<sup>-11</sup></code>) and rising-edge trigger:</strong> Justified directly from the squared matched filter plot, sitting cleanly between the true R-peak spikes (<code>&ge; 2.1 &times; 10<sup>-11</sup></code>) and the secondary side lobes (<code>&approx; 0.8 &times; 10<sup>-11</sup></code>). Rising-edge detection (<code>out[i] &gt; THRESHOLD and out[i-1] &le; THRESHOLD</code>) ensures each heartbeat is counted once.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Explain the warm-up / transient exclusion:</strong> Detection is ignored for <code>TRANSIENTS = len(h) + len(template) = 1025</code> samples because both cascaded filters (1000-tap cleaning filter + 25-tap matched filter) must fill their buffers first.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Explain the two heuristics:</strong>
+      (1) Physiological range limit of <code>30–200 bpm</code> (from discussion with a physiology student),
+      (2) Beat-to-beat consistency rule requiring the new rate to lie within <code>&plusmn;20%</code> (<code>0.80</code> to <code>1.20</code>) of the previous accepted rate, which catches missed beats (<code>-50%</code> apparent rate) and double detections (<code>+100%</code> apparent rate).</span></label></li>
+    <li><label><input type="checkbox"> <span>Include <strong>Task 5 Figures</strong>: (1) Extracted 25-sample QRS template &amp; squared matched filter output with threshold, shaded buffer-fill region, and detected beats, and (2) Momentary heart rate vs time plot.</span></label></li>
+    <li><label><input type="checkbox"> <span><strong>Discuss the results (45 rates, mean 92.0 bpm, HRV, and delay):</strong>
+      (1) Explain why 46 detected beats yield <strong>45 plotted heart rates</strong>: the first detected beat has no preceding beat to form an interval,
+      (2) Explain that the beat-to-beat variation of a few bpm around the <code>92.0 bpm</code> mean is normal physiological <strong>heart-rate variability (HRV)</strong> (respiratory sinus arrhythmia: rate rises slightly on inhalation and falls on exhalation), not detector error,
+      (3) Note that the total linear-phase delay of the two cascaded filters (<code>1.998 s + 0.048 s = 2.046 s</code>, plotted as <code>2.05 s</code>) shifts every beat by the same constant offset, leaving inter-beat intervals and momentary heart rates unaffected.</span></label></li>
+  </ul>
+
+  <h2>6. Code &amp; Submission Final Checks (from Brief)</h2>
+  <ul>
+    <li><label><input type="checkbox"> <span>No prohibited functions used anywhere (<code>fftfreq</code>, <code>lfilter</code>, <code>firwin</code>, <code>conv</code>, <code>correl</code>, or array-in/array-out filtering).</span></label></li>
+    <li><label><input type="checkbox"> <span>Platform-independent relative paths only (no absolute paths).</span></label></li>
+    <li><label><input type="checkbox"> <span>Unzip submission in a fresh folder and run each Python script from a terminal (outside Spyder) to verify no crashes and all plots display properly.</span></label></li>
+    <li><label><input type="checkbox"> <span>Ensure report figures in <code>Report/figs/</code> match the exact plots generated by the final submitted scripts.</span></label></li>
+  </ul>
+
+  <script>
+    const KEY = "ass02_report_master_checklist";
+    const boxes = document.querySelectorAll('input[type="checkbox"]');
+    const saved = JSON.parse(localStorage.getItem(KEY) || "[]");
+    boxes.forEach((b, i) => {
+      if (saved[i]) b.checked = true;
+      b.addEventListener("change", () => {
+        localStorage.setItem(KEY, JSON.stringify(Array.from(boxes).map(x => x.checked)));
+      });
+    });
+  </script>
+</body>
+</html>

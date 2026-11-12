@@ -61,6 +61,6 @@ def plot_ecg(name, sample_rate, ecg, beat_start, beat_end):
     plt.tight_layout() # stop axes overlapping
 
 # import ECG Data & plot
-t, ecg, sample_rate = import_ecg_data("ecg1.tsv")
+_, ecg, sample_rate = import_ecg_data("ecg1.tsv")
 plot_ecg("ECG 1", sample_rate, ecg, 5.5, 6.7) # zoom window containing two beats
 plt.show()
