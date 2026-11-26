@@ -1,0 +1,19 @@
+
+--- TDL --- 
+- Setup analogue side (clear peaks)
+- Test on lab keyboards, characterise the response 
+- Take recording of response to test
+- Test multiple analogueReferences potentials in setup (testing different resolutions)
+
+--- Questions ---
+- Amplification YES OR NO (after testing on keyboard)
+
+
+--- AI Acknowledgement ---
+
+- record.py suggestions:
+    - disabling matplotlib shortcuts when typing
+    - error handling: 'space' instead of ' ' in the .tsv
+    - record keyboard inputs
+
+

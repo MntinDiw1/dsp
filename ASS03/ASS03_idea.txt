@@ -1,3 +1,15 @@
 Real-time typing-speed monitor. A piezo sensor on the laptop picks up the vibration of each keystroke; the signal is sampled by an Arduino (pyFirmata2, ~1 kHz) and cleaned in real time by a chain of IIR filters (high-pass, 50 Hz notch, band-pass) so individual keystrokes can be detected. The keystroke rate is smoothed with an IIR low-pass into words per minute (1 word = 5 characters) and shown on two 7-segment displays. Telling the spacebar apart from other keys (a true word count) is an extension if the first version works.
 
 Analogue front end: (to be defined)
+
+
+--- WILL --- 
+
+The standard definition of a word is 5 keystrokes with spaces and punctuation counted, and WPM = (characters ÷ 5) ÷ minutes - MacKenzie's note on text-entry speed (York University)
+
+Test:
+
+1. Type lower-case text with no punctuation or spaces or corrections (detected presses = characters).
+
+2. Type with capitals, spaces, corrections, etc. This will show the overcount, which will be good for critical analysis.
+
