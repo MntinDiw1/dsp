@@ -1,0 +1,8 @@
+reading at 980 - fixed 
+changed analog circuit to include a voltage follower; this is good because the Zin(dc) ~10^13 and the very high frequency elements (like >2Mhz) are rolled off due to GBWP
+
+pizo_basic.ino:
+- stripped-down Firmata sketch (Nano Every / ATmega4809): uses INTERNAL2V5 (2.5 V) AREF for 2x ADC resolution, polls enabled analog pins via bitmask
+- changed millis() (1.024 ms tick -> ~980 Hz cap) to micros() with += scheduling -> ~1000 Hz (~1004.5 Hz w/ internal RC osc)
+- bumped serial baud 57600 -> 115200
+- TODO: code needs to be cleaned up
