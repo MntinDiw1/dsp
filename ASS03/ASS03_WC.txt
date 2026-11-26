@@ -7,11 +7,12 @@
 
 --- Questions ---
 - Amplification YES OR NO (after testing on keyboard)
+- Board sample_rate is 980.5Hz not stated 1000Hz (Saad will fix).
 
 
 --- AI Acknowledgement ---
 
-- record.py suggestions:
+- record.py suggestions and general framework:
     - disabling matplotlib shortcuts when typing
     - error handling: 'space' instead of ' ' in the .tsv
     - record keyboard inputs

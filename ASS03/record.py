@@ -15,9 +15,10 @@ import time
 BASE_DIR = Path(__file__).resolve().parent #data/ is always next to the script
 
 SAMPLE_RATE = 1000 #Arduino maximum sampling rate (Hz)
+VREF = 5 # ADC reference (V): default AREF on the Uno = its 5 V supply
 PLOT_N = 2 * SAMPLE_RATE # 2s sampling window
 
-# name the recording test1, test2, ...
+# name the recording test1, test2, ...h
 n = 1
 while (BASE_DIR / "data" / f"test{n}.tsv").exists():
     n += 1
@@ -47,19 +48,22 @@ plt.title("Type here, close the window to stop")
 plt.gcf().canvas.mpl_connect("key_press_event", key_press)
 
 line, = plt.plot(np.zeros(PLOT_N))
-plt.ylim(0, 1) # full ADC range, so clipping is visible
+plt.ylim(0, VREF) # full ADC range, so clipping is visible
+plt.ylabel("Voltage (V)")
 
 def update(frame):
     if len(samples) >= PLOT_N:
-        line.set_ydata(samples[-PLOT_N:])
+        line.set_ydata(np.array(samples[-PLOT_N:]) * VREF)
 
-ani = animation.FuncAnimation(plt.gcf(), update, interval=100, cache_frame_data=False) # redraw at 10 Hz, outside the callback
+ani = animation.FuncAnimation(plt.gcf(), update, interval=50, cache_frame_data=False) # redraw at ~20 Hz (matplotlib's limit here), outside the callback
 plt.show() # blocks until the window is closed
 
 elapsed = time.perf_counter() - start
 board.exit() # also stops sampling and closes the serial port
 
 (BASE_DIR / "data").mkdir(exist_ok=True)
-np.savetxt(BASE_DIR / "data" / f"{name}.tsv", samples, fmt="%.4f", header=f"fs = {SAMPLE_RATE} Hz, A0 as fraction of AREF")
-np.savetxt(BASE_DIR / "data" / f"{name}_keys.tsv", np.array(keys, dtype=str), fmt="%s", delimiter="\t")
+# header: key list at the top of the file (np.loadtxt skips these # lines), samples below
+key_list = "\n".join(f"{i}\t{i / SAMPLE_RATE:.3f}\t{key}" for i, key in keys)
+header = f"fs = {SAMPLE_RATE} Hz, samples: A0 as fraction of AREF\nkeys: sample index, time (s), key\n{key_list}"
+np.savetxt(BASE_DIR / "data" / f"{name}.tsv", samples, fmt="%.4f", header=header)
 print(f"Saved {name}: {len(samples)} samples and {len(keys)} key presses, measured sampling rate: {len(samples) / elapsed:.0f} Hz")
